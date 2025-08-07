@@ -77,9 +77,9 @@ function showLoginScreen() {
 // Atualiza a UI baseado no usuário logado
 function updateUIForUser(user) {
     const userInfo = document.getElementById('user-info');
-    userInfo.textContent = `Logado como: ${user.email}`;
+    userInfo.innerHTML = `Logado como: ${user.email}`;
+    setupLogout(); // Adiciona o botão de logout
     
-    // Mostra funcionalidades extras para supervisor/admin
     if (isSupervisorOrAdmin(user)) {
         document.getElementById('add-blocked-day').classList.remove('d-none');
     }
@@ -119,6 +119,11 @@ function setupEventListeners() {
 // Manipula o envio do formulário
 function handleFormSubmit(e) {
     e.preventDefault();
+    
+    if (!currentUser) {
+        showAlert("Sessão expirada. Faça login novamente.", "danger");
+        return;
+    }
     
     const data = document.getElementById('data').value;
     const cliente = document.getElementById('cliente').value;
@@ -187,16 +192,21 @@ function createAgendamento(agendamento) {
 
 // Atualiza um agendamento existente
 function updateAgendamento(id, agendamento) {
+    if (!currentUser) {
+        showAlert("Faça login para editar agendamentos", "danger");
+        return;
+    }
+
     database.ref('agendamentos/' + id).update(agendamento)
         .then(() => {
             showAlert('Agendamento atualizado com sucesso!', 'success');
             cancelEdit();
         })
         .catch(error => {
-            showAlert('Erro ao atualizar agendamento: ' + error.message, 'danger');
+            console.error("Erro detalhado:", error);
+            showAlert('Erro ao atualizar: ' + (error.message || "Sem permissão"), 'danger');
         });
 }
-
 // Carrega agendamentos do Firebase
 function loadAgendamentos() {
     database.ref('agendamentos').on('value', snapshot => {
@@ -613,4 +623,18 @@ function showAlert(message, type) {
         alert.classList.remove('show');
         setTimeout(() => alert.remove(), 150);
     }, 5000);
+}
+
+// Adicione esta função para logout
+function setupLogout() {
+    const logoutBtn = document.createElement('button');
+    logoutBtn.className = 'btn btn-sm btn-outline-danger ms-2';
+    logoutBtn.innerHTML = '<i class="bi bi-box-arrow-right"></i> Sair';
+    logoutBtn.addEventListener('click', () => {
+        auth.signOut().then(() => {
+            window.location.reload();
+        });
+    });
+    
+    document.getElementById('user-info').appendChild(logoutBtn);
 }
