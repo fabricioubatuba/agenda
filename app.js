@@ -21,9 +21,56 @@ function initAuth() {
             loadAgendamentos();
             loadBlockedDays();
         } else {
-            // Redireciona para página de login se não estiver autenticado
-            window.location.href = 'https://agendains.firebaseapp.com/__/auth/handler';
+            // Redireciona para login apenas se não estiver na página de callback
+            if (!window.location.href.includes('__/auth/handler')) {
+                auth.signInWithEmailAndPassword('atendente@sejafibra.net', 'senha')
+                    .catch(error => {
+                        console.error("Erro de autenticação:", error);
+                        // Mostra tela de login personalizada se falhar
+                        showLoginScreen();
+                    });
+            }
         }
+    });
+}
+
+function showLoginScreen() {
+    document.body.innerHTML = `
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">Login - Seja Fibra</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="login-form">
+                                <div class="mb-3">
+                                    <label for="login-email" class="form-label">E-mail</label>
+                                    <input type="email" class="form-control" id="login-email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="login-password" class="form-label">Senha</label>
+                                    <input type="password" class="form-control" id="login-password" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        auth.signInWithEmailAndPassword(email, password)
+            .catch(error => {
+                alert('Erro ao fazer login: ' + error.message);
+            });
     });
 }
 
@@ -491,4 +538,5 @@ function showAlert(message, type) {
         alert.classList.remove('show');
         setTimeout(() => alert.remove(), 150);
     }, 5000);
+
 }
