@@ -122,6 +122,10 @@ function handleFormSubmit(e) {
     const bairro = document.getElementById('bairro').value;
     const periodo = document.getElementById('periodo').value;
     const observacoes = document.getElementById('observacoes').value;
+    const loginPPPoE = document.getElementById('login-pppoe').value;
+    const senhaPPPoE = document.getElementById('senha-pppoe').value;
+    const nomeWifi = document.getElementById('nome-wifi').value;
+    const senhaWifi = document.getElementById('senha-wifi').value;
     const roteador = document.getElementById('roteador').checked;
     
     const agendamento = {
@@ -133,6 +137,10 @@ function handleFormSubmit(e) {
         bairro,
         periodo,
         observacoes: observacoes || '',
+        loginPPPoE,
+        senhaPPPoE,
+        nomeWifi,
+        senhaWifi,
         roteador,
         createdAt: firebase.database.ServerValue.TIMESTAMP,
         createdBy: currentUser.email,
@@ -326,6 +334,10 @@ function copyAgendamentoToClipboard(e) {
                 agendamento.bairro,
                 agendamento.periodo,
                 agendamento.observacoes,
+                agendamento.loginPPPoE || '',
+                agendamento.senhaPPPoE || '',
+                agendamento.nomeWifi || '',
+                agendamento.senhaWifi || '',
                 agendamento.roteador ? 'Sim' : 'Não'
             ].join('\t'); // Tab como separador para Excel
             
@@ -350,6 +362,10 @@ function editAgendamento(e) {
             document.getElementById('bairro').value = agendamento.bairro;
             document.getElementById('periodo').value = agendamento.periodo;
             document.getElementById('observacoes').value = agendamento.observacoes;
+            document.getElementById('login-pppoe').value = agendamento.loginPPPoE || '';
+            document.getElementById('senha-pppoe').value = agendamento.senhaPPPoE || '';
+            document.getElementById('nome-wifi').value = agendamento.nomeWifi || '';
+            document.getElementById('senha-wifi').value = agendamento.senhaWifi || '';
             document.getElementById('roteador').checked = agendamento.roteador;
             
             editingAgendamentoId = agendamentoId;
@@ -540,3 +556,4 @@ function showAlert(message, type) {
     }, 5000);
 
 }
+
