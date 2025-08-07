@@ -19,3 +19,17 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
     .catch((error) => {
         console.error("Erro ao configurar persistence:", error);
     });
+
+// Adicione este trecho no final do arquivo
+database.ref('.info/connected').on('value', (snapshot) => {
+    if (snapshot.val() === false) {
+        console.warn("Offline: sem conexão com o Firebase");
+    }
+});
+
+// Tratamento global de erros de autenticação
+auth.onAuthStateChanged(user => {
+    if (!user && window.location.pathname !== '/login.html') {
+        console.warn("Usuário não autenticado - redirecionando...");
+    }
+});
