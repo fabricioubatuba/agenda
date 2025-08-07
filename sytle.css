@@ -117,3 +117,24 @@ body {
 .delete-blocked-day:hover {
     opacity: 0.8;
 }
+.btn-outline-danger {
+    margin-left: 10px;
+}
+
+#user-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* Melhore a visualização de erros */
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Adicione estilo para o ícone de logout */
+.bi-box-arrow-right {
+    margin-right: 5px;
+}
