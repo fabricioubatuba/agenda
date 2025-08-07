@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -59,6 +59,8 @@
                                     <option value="Manhã">Manhã</option>
                                     <option value="Tarde">Tarde</option>
                                     <option value="Encaixe">Encaixe</option>
+                                    <option value="1ª do dia">1ª do dia</option>
+                                    <option value="Horário Comercial">Horário Comercial</option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -84,6 +86,14 @@
                             <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input" id="roteador">
                                 <label class="form-check-label" for="roteador">Roteador OK</label>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="reserva">
+                                <label class="form-check-label" for="reserva">Reservar data (sem cliente definido)</label>
+                            </div>
+                            <div class="mb-3" id="responsavel-container" style="display: none;">
+                                <label for="responsavel" class="form-label">Responsável pela reserva</label>
+                                <input type="text" class="form-control" id="responsavel">
                             </div>
                             <input type="hidden" id="agendamento-id">
                             <button type="submit" class="btn btn-primary w-100" id="submit-btn">Agendar</button>
@@ -129,8 +139,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Este dia já possui 3 agendamentos. Deseja solicitar autorização para um agendamento extra?</p>
-                    <p class="text-muted">Máximo de 2 agendamentos extras por dia (total de 5).</p>
+                    <p id="modal-extra-message"></p>
+                    <p class="text-muted" id="modal-extra-info"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -168,5 +178,4 @@
     <script src="firebase.js"></script>
     <script src="app.js"></script>
 </body>
-
 </html>
