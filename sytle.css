@@ -23,7 +23,12 @@ body {
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
 }
 
-.manha {
+.agendamento-card.reservado {
+    border-left-color: #6c757d;
+    background-color: #f8f9fa;
+}
+
+.manhã {
     border-left-color: #ffc107;
 }
 
@@ -33,6 +38,14 @@ body {
 
 .encaixe {
     border-left-color: #6f42c1;
+}
+
+.1ª-do-dia {
+    border-left-color: #20c997;
+}
+
+.horário-comercial {
+    border-left-color: #0dcaf0;
 }
 
 .blocked-day {
@@ -53,6 +66,13 @@ body {
 
 .badge-roteador {
     background-color: #198754;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-roteador i {
+    font-size: 0.9em;
 }
 
 .badge-periodo {
@@ -78,4 +98,22 @@ body {
 .warning-count {
     color: #dc3545;
     font-weight: bold;
+}
+
+.success-count {
+    color: #198754;
+    font-weight: bold;
+}
+
+#responsavel-container {
+    transition: all 0.3s ease;
+}
+
+.delete-blocked-day {
+    cursor: pointer;
+    color: #dc3545;
+}
+
+.delete-blocked-day:hover {
+    opacity: 0.8;
 }
