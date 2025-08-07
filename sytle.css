@@ -1,0 +1,81 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    font-weight: bold;
+}
+
+.agendamento-card {
+    border-left: 4px solid #0d6efd;
+    margin-bottom: 10px;
+    transition: all 0.3s;
+}
+
+.agendamento-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+}
+
+.manha {
+    border-left-color: #ffc107;
+}
+
+.tarde {
+    border-left-color: #fd7e14;
+}
+
+.encaixe {
+    border-left-color: #6f42c1;
+}
+
+.blocked-day {
+    background-color: #ffe8e8;
+    border-left: 4px solid #dc3545;
+    padding: 8px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#user-info {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.badge-roteador {
+    background-color: #198754;
+}
+
+.badge-periodo {
+    background-color: #0dcaf0;
+    color: #000;
+}
+
+.copy-btn {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.copy-btn:hover {
+    transform: scale(1.1);
+}
+
+.agendamento-count {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.warning-count {
+    color: #dc3545;
+    font-weight: bold;
+}
