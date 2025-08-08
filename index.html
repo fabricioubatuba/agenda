@@ -557,6 +557,7 @@
 
     // Formata a data para exibição ANTES de buscar no Firebase
     const dataObj = new Date(dateInput);
+    dataObj.setDate(dataObj.getDate() + 1);        
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const dataFormatada = dataObj.toLocaleDateString('pt-BR', options);
     
@@ -970,6 +971,7 @@
     </script>
 </body>
 </html>
+
 
 
 
