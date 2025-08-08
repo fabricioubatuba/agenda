@@ -50,7 +50,7 @@
             border-left-color: #fd7e14;
         }
 
-        .horário comercial {
+        .horário-comercial {
             border-left-color: #fdf914;
         }
         
@@ -114,6 +114,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+
+        .alert-fixed {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1100;
+            max-width: 500px;
+            width: 90%;
         }
     </style>
 </head>
@@ -312,6 +322,11 @@
             
             // Configura listeners
             setupEventListeners();
+            
+            // Configura data mínima para hoje
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('data').min = today;
+            document.getElementById('filter-date').min = today;
         });
 
         // Configura a autenticação
@@ -323,15 +338,12 @@
                     loadAgendamentos();
                     loadBlockedDays();
                 } else {
-                    // Redireciona para login apenas se não estiver na página de callback
-                    if (!window.location.href.includes('__/auth/handler')) {
-                        auth.signInWithEmailAndPassword('atendente@sejafibra.net', 'senha')
-                            .catch(error => {
-                                console.error("Erro de autenticação:", error);
-                                // Mostra tela de login personalizada se falhar
-                                showLoginScreen();
-                            });
-                    }
+                    // Tenta fazer login automaticamente
+                    auth.signInWithEmailAndPassword('atendente@sejafibra.net', 'senha')
+                        .catch(error => {
+                            console.error("Erro de autenticação:", error);
+                            showLoginScreen();
+                        });
                 }
             });
         }
@@ -389,7 +401,7 @@
 
         // Verifica se o usuário é supervisor ou admin
         function isSupervisorOrAdmin(user) {
-            return ['supervisor@sejafibra.net', 'bioranss@sejafibra.net'].includes(user.email);
+            return user && ['supervisor@sejafibra.net', 'bioranss@sejafibra.net'].includes(user.email);
         }
 
         // Configura os event listeners
@@ -413,296 +425,211 @@
         }
 
         function handleFormSubmit(e) {
-    e.preventDefault();
-    
-    // Captura dos dados
-    const formData = {
-        dataInput: document.getElementById('data').value,
-        cliente: document.getElementById('cliente').value,
-        endereco: document.getElementById('endereco').value,
-        numero: document.getElementById('numero').value,
-        complemento: document.getElementById('complemento').value,
-        bairro: document.getElementById('bairro').value,
-        periodo: document.getElementById('periodo').value,
-        observacoes: document.getElementById('observacoes').value,
-        loginPPPoE: document.getElementById('login-pppoe').value,
-        senhaPPPoE: document.getElementById('senha-pppoe').value,
-        nomeWifi: document.getElementById('nome-wifi').value,
-        senhaWifi: document.getElementById('senha-wifi').value,
-        roteador: document.getElementById('roteador').checked
-    };
+            e.preventDefault();
+            
+            // Captura dos dados
+            const formData = {
+                data: document.getElementById('data').value,
+                cliente: document.getElementById('cliente').value,
+                endereco: document.getElementById('endereco').value,
+                numero: document.getElementById('numero').value,
+                complemento: document.getElementById('complemento').value,
+                bairro: document.getElementById('bairro').value,
+                periodo: document.getElementById('periodo').value,
+                observacoes: document.getElementById('observacoes').value,
+                loginPPPoE: document.getElementById('login-pppoe').value,
+                senhaPPPoE: document.getElementById('senha-pppoe').value,
+                nomeWifi: document.getElementById('nome-wifi').value,
+                senhaWifi: document.getElementById('senha-wifi').value,
+                roteador: document.getElementById('roteador').checked,
+                createdAt: firebase.database.ServerValue.TIMESTAMP,
+                createdBy: currentUser.email,
+                status: 'active'
+            };
 
-    // Validação básica
-    if (!formData.dataInput || !formData.cliente) {
-        showAlert('Preencha todos os campos obrigatórios!', 'danger');
-        return;
-    }
-
-    // Ajuste de data para armazenamento
-    const dataFirebase = adjustDate(formData.dataInput, 'store');
-
-    // Objeto para o Firebase
-    const agendamento = {
-        data: dataFirebase,
-        ...formData,
-        complemento: formData.complemento || '',
-        observacoes: formData.observacoes || '',
-        createdAt: firebase.database.ServerValue.TIMESTAMP,
-        createdBy: currentUser.email,
-        status: 'active'
-    };
-
-    // Remove campos vazios
-    delete agendamento.dataInput;
-
-    // Cria ou atualiza
-    if (editingAgendamentoId) {
-        database.ref('agendamentos/' + editingAgendamentoId).update(agendamento)
-            .then(() => {
-                showAlert('Agendamento atualizado!', 'success');
-                cancelEdit();
-            });
-    } else {
-        database.ref('agendamentos').push(agendamento)
-            .then(() => {
-                showAlert('Agendamento criado!', 'success');
-                resetForm();
-            });
-    }
-}
-        // Cria um novo agendamento no Firebase
-        function createAgendamento(agendamento) {
-            // Verifica se é um agendamento extra que precisa de autorização
-            if (currentExtraAgendamento) {
-                agendamento.status = 'pending';
-                database.ref('extraRequests').push(agendamento);
-                showAlert('Solicitação de agendamento extra enviada para o supervisor.', 'success');
-                currentExtraAgendamento = null;
-                resetForm();
+            // Validação básica
+            if (!formData.data || !formData.cliente) {
+                showAlert('Preencha todos os campos obrigatórios!', 'danger');
                 return;
             }
-            
-            // Adiciona ao banco de dados
-            database.ref('agendamentos').push(agendamento)
-                .then(() => {
-                    showAlert('Agendamento criado com sucesso!', 'success');
-                    resetForm();
-                })
-                .catch(error => {
-                    showAlert('Erro ao criar agendamento: ' + error.message, 'danger');
-                });
-        }
 
-        // Atualiza um agendamento existente
-        function updateAgendamento(id, agendamento) {
-            // Verifica se o usuário tem permissão para editar
-            database.ref('agendamentos/' + id).once('value')
-                .then(snapshot => {
-                    const agendamentoOriginal = snapshot.val();
-                    
-                    // Verifica se o usuário atual é o criador ou supervisor/admin
-                    if (agendamentoOriginal.createdBy === currentUser.email || isSupervisorOrAdmin(currentUser)) {
-                        // Se tiver permissão, atualiza
-                        database.ref('agendamentos/' + id).update(agendamento)
-                            .then(() => {
-                                showAlert('Agendamento atualizado com sucesso!', 'success');
-                                cancelEdit();
-                            })
-                            .catch(error => {
-                                showAlert('Erro ao atualizar agendamento: ' + error.message, 'danger');
-                            });
-                    } else {
-                        showAlert('Você não tem permissão para editar este agendamento.', 'danger');
-                    }
-                });
+            // Cria ou atualiza
+            if (editingAgendamentoId) {
+                database.ref('agendamentos/' + editingAgendamentoId).update(formData)
+                    .then(() => {
+                        showAlert('Agendamento atualizado com sucesso!', 'success');
+                        cancelEdit();
+                    })
+                    .catch(error => {
+                        showAlert('Erro ao atualizar agendamento: ' + error.message, 'danger');
+                    });
+            } else {
+                database.ref('agendamentos').push(formData)
+                    .then(() => {
+                        showAlert('Agendamento criado com sucesso!', 'success');
+                        resetForm();
+                    })
+                    .catch(error => {
+                        showAlert('Erro ao criar agendamento: ' + error.message, 'danger');
+                    });
+            }
         }
 
         // Carrega agendamentos do Firebase
         function loadAgendamentos() {
-    database.ref('agendamentos').on('value', snapshot => {
-        const agendamentos = [];
-        snapshot.forEach(childSnapshot => {
-            const agendamento = childSnapshot.val();
-            // Ajusta a data para exibição na listagem completa
-            agendamento.data = adjustDate(agendamento.data, 'display');
-            agendamentos.push({
-                id: childSnapshot.key,
-                ...agendamento
+            database.ref('agendamentos').on('value', snapshot => {
+                const agendamentos = [];
+                snapshot.forEach(childSnapshot => {
+                    const agendamento = childSnapshot.val();
+                    agendamentos.push({
+                        id: childSnapshot.key,
+                        ...agendamento
+                    });
+                });
+                renderAgendamentos(agendamentos);
             });
-        });
-        renderAgendamentos(agendamentos);
-    });
-}
-
-        // nova função auxiliar
-        function adjustDate(dateString, direction) {
-    const date = new Date(dateString);
-    if (direction === 'store') {
-        date.setDate(date.getDate() + 1); // +1 para armazenar
-    } else if (direction === 'display') {
-        date.setDate(date.getDate() - 1); // -1 para exibir
-    }
-    return date.toISOString().split('T')[0];
-}
+        }
         
         // Filtra agendamentos por data
         function filterAgendamentosByDate() {
-    const dateInput = document.getElementById('filter-date').value;
-    const container = document.getElementById('agendamentos-container');
-    
-    if (!dateInput) {
-        loadAgendamentos();
-        return;
-    }
-
-    // Formata a data para exibição ANTES de buscar no Firebase
-    const dataObj = new Date(dateInput);
-    dataObj.setDate(dataObj.getDate() + 1);        
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const dataFormatada = dataObj.toLocaleDateString('pt-BR', options);
-    
-    // Busca no Firebase com a data ajustada (+1 dia)
-    const filterDate = adjustDate(dateInput, 'store');
-    
-    database.ref('agendamentos').orderByChild('data').equalTo(filterDate).once('value')
-        .then(snapshot => {
-            container.innerHTML = '';
+            const dateInput = document.getElementById('filter-date').value;
+            const container = document.getElementById('agendamentos-container');
             
-            if (!snapshot.exists()) {
+            if (!dateInput) {
+                loadAgendamentos();
+                return;
+            }
+
+            database.ref('agendamentos').orderByChild('data').equalTo(dateInput).once('value')
+                .then(snapshot => {
+                    container.innerHTML = '';
+                    
+                    if (!snapshot.exists()) {
+                        container.innerHTML = '<p class="text-muted">Nenhum agendamento encontrado.</p>';
+                        return;
+                    }
+
+                    // Formata data para exibição
+                    const dataObj = new Date(dateInput);
+                    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                    const dataFormatada = dataObj.toLocaleDateString('pt-BR', options);
+                    
+                    // Cria cabeçalho com a data
+                    const dateHeader = document.createElement('div');
+                    dateHeader.className = 'd-flex justify-content-between align-items-center mb-3';
+                    dateHeader.innerHTML = `
+                        <h5>${dataFormatada}</h5>
+                        <span class="agendamento-count">
+                            ${snapshot.numChildren()} agendamento(s)
+                        </span>
+                    `;
+                    container.appendChild(dateHeader);
+
+                    // Renderiza os agendamentos
+                    snapshot.forEach(childSnapshot => {
+                        const agendamento = childSnapshot.val();
+                        const card = createAgendamentoCard(agendamento, childSnapshot.key);
+                        container.appendChild(card);
+                    });
+                });
+        }
+
+        // Cria um card de agendamento
+        function createAgendamentoCard(agendamento, id) {
+            const card = document.createElement('div');
+            const periodoClass = agendamento.periodo.toLowerCase().replace(' ', '-');
+            
+            card.className = `card agendamento-card mb-2 ${periodoClass}`;
+            card.innerHTML = `
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title">${agendamento.cliente}</h6>
+                            <p class="card-text mb-1">
+                                <small>${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
+                            </p>
+                            <p class="card-text mb-1"><small>${agendamento.bairro}</small></p>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-primary">${agendamento.periodo}</span>
+                            ${agendamento.roteador ? '<span class="badge badge-roteador ms-1">Roteador OK</span>' : ''}
+                        </div>
+                    </div>
+                    ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
+                    <div class="d-flex justify-content-between mt-2">
+                        <small class="text-muted">Agendado por: ${agendamento.createdBy}</small>
+                        <div>
+                            <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${id}"></i>
+                            ${isSupervisorOrAdmin(currentUser) || agendamento.createdBy === currentUser.email ? `
+                                <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${id}"></i>
+                                <i class="bi bi-trash delete-btn" title="Excluir" data-id="${id}"></i>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Adiciona listeners aos botões
+            card.querySelector('.copy-btn').addEventListener('click', copyAgendamentoToClipboard);
+            if (card.querySelector('.edit-btn')) {
+                card.querySelector('.edit-btn').addEventListener('click', editAgendamento);
+            }
+            if (card.querySelector('.delete-btn')) {
+                card.querySelector('.delete-btn').addEventListener('click', deleteAgendamento);
+            }
+            
+            return card;
+        }
+
+        // Renderiza a lista de agendamentos
+        function renderAgendamentos(agendamentos) {
+            const container = document.getElementById('agendamentos-container');
+            container.innerHTML = '';
+
+            if (agendamentos.length === 0) {
                 container.innerHTML = '<p class="text-muted">Nenhum agendamento encontrado.</p>';
                 return;
             }
 
-            // Cria cabeçalho com a data ORIGINAL do filtro
-            const dateHeader = document.createElement('div');
-            dateHeader.className = 'd-flex justify-content-between align-items-center mb-3';
-            dateHeader.innerHTML = `
-                <h5>${dataFormatada}</h5>
-                <span class="agendamento-count">
-                    ${snapshot.numChildren()} agendamento(s)
-                </span>
-            `;
-            container.appendChild(dateHeader);
+            // Agrupa por data
+            const agendamentosPorData = agendamentos.reduce((acc, agendamento) => {
+                if (!acc[agendamento.data]) {
+                    acc[agendamento.data] = [];
+                }
+                acc[agendamento.data].push(agendamento);
+                return acc;
+            }, {});
 
-            // Renderiza os agendamentos
-            snapshot.forEach(childSnapshot => {
-                const agendamento = childSnapshot.val();
-                const card = document.createElement('div');
-                card.className = `card agendamento-card mb-2 ${agendamento.periodo.toLowerCase()}`;
-                card.innerHTML = `
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="card-title">${agendamento.cliente}</h6>
-                                <p class="card-text mb-1">
-                                    <small>${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
-                                </p>
-                                <p class="card-text mb-1"><small>${agendamento.bairro}</small></p>
-                            </div>
-                            <div class="text-end">
-                                <span class="badge bg-primary">${agendamento.periodo}</span>
-                                ${agendamento.roteador ? '<span class="badge badge-roteador ms-1">Roteador OK</span>' : ''}
-                            </div>
-                        </div>
-                        ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
-                        <div class="d-flex justify-content-between mt-2">
-                            <small class="text-muted">Agendado por: ${agendamento.createdBy}</small>
-                            <div>
-                                <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${childSnapshot.key}"></i>
-                                ${isSupervisorOrAdmin(currentUser) || agendamento.createdBy === currentUser.email ? `
-                                    <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${childSnapshot.key}"></i>
-                                    <i class="bi bi-trash delete-btn" title="Excluir" data-id="${childSnapshot.key}"></i>
-                                ` : ''}
-                            </div>
-                        </div>
-                    </div>
+            // Ordena as datas
+            const sortedDates = Object.keys(agendamentosPorData).sort();
+
+            sortedDates.forEach(data => {
+                const agendamentosDoDia = agendamentosPorData[data];
+                
+                // Cabeçalho com data formatada
+                const dateHeader = document.createElement('div');
+                dateHeader.className = 'd-flex justify-content-between align-items-center mb-3';
+                
+                const dataObj = new Date(data);
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const dataFormatada = dataObj.toLocaleDateString('pt-BR', options);
+                
+                dateHeader.innerHTML = `
+                    <h5>${dataFormatada}</h5>
+                    <span class="agendamento-count ${agendamentosDoDia.length > 3 ? 'warning-count' : ''}">
+                        ${agendamentosDoDia.length} agendamento(s)
+                    </span>
                 `;
-                container.appendChild(card);
-            });
+                container.appendChild(dateHeader);
 
-            // Adiciona listeners
-            document.querySelectorAll('.copy-btn').forEach(btn => {
-                btn.addEventListener('click', copyAgendamentoToClipboard);
+                // Renderiza cada agendamento
+                agendamentosDoDia.forEach(agendamento => {
+                    const card = createAgendamentoCard(agendamento, agendamento.id);
+                    container.appendChild(card);
+                });
             });
-            
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', editAgendamento);
-            });
-            
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', deleteAgendamento);
-            });
-        });
-}
-        // Renderiza a lista de agendamentos
-        function renderAgendamentos(agendamentos) {
-    const container = document.getElementById('agendamentos-container');
-    container.innerHTML = '';
-
-    if (agendamentos.length === 0) {
-        container.innerHTML = '<p class="text-muted">Nenhum agendamento encontrado.</p>';
-        return;
-    }
-
-    // Agrupa por data (com tratamento diferenciado para listagem completa vs filtrada)
-    const agendamentosPorData = agendamentos.reduce((acc, agendamento) => {
-        // Verifica se veio de um filtro
-        const filterDate = document.getElementById('filter-date').value;
-        
-        // Se estiver filtrado, usa a data do filtro, senão ajusta a data do Firebase
-        const dataExibicao = filterDate ? filterDate : adjustDate(agendamento.data, 'display');
-        
-        if (!acc[dataExibicao]) {
-            acc[dataExibicao] = [];
         }
-        acc[dataExibicao].push(agendamento);
-        return acc;
-    }, {});
 
-    // Ordena as datas
-    const sortedDates = Object.keys(agendamentosPorData).sort();
-
-    sortedDates.forEach(dataExibicao => {
-        const agendamentosDoDia = agendamentosPorData[dataExibicao];
-        
-        // Cabeçalho com data formatada
-        const dateHeader = document.createElement('div');
-        dateHeader.className = 'd-flex justify-content-between align-items-center mb-3';
-        
-        const dataObj = new Date(dataExibicao);
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const dataFormatada = dataObj.toLocaleDateString('pt-BR', options);
-        
-        dateHeader.innerHTML = `
-            <h5>${dataFormatada}</h5>
-            <span class="agendamento-count ${agendamentosDoDia.length > 3 ? 'warning-count' : ''}">
-                ${agendamentosDoDia.length} agendamento(s)
-            </span>
-        `;
-        container.appendChild(dateHeader);
-
-        // Renderiza cada agendamento (mantém o mesmo código)
-        agendamentosDoDia.forEach(agendamento => {
-            const card = document.createElement('div');
-            card.className = `card agendamento-card mb-2 ${agendamento.periodo.toLowerCase()}`;
-            card.innerHTML = `
-                <div class="card-body">
-                    <!-- ... (mantém o mesmo conteúdo do card) ... -->
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    });
-
-    // Listeners dos botões (mantém o mesmo código)
-    document.querySelectorAll('.copy-btn, .edit-btn, .delete-btn').forEach(btn => {
-        btn.addEventListener('click', e => {
-            if (e.target.classList.contains('copy-btn')) copyAgendamentoToClipboard(e);
-            if (e.target.classList.contains('edit-btn')) editAgendamento(e);
-            if (e.target.classList.contains('delete-btn')) deleteAgendamento(e);
-        });
-    });
-}
         // Copia agendamento para clipboard no formato para Excel
         function copyAgendamentoToClipboard(e) {
             const agendamentoId = e.target.getAttribute('data-id');
@@ -714,10 +641,10 @@
                         agendamento.cliente,
                         agendamento.endereco,
                         agendamento.numero,
-                        agendamento.complemento,
+                        agendamento.complemento || '',
                         agendamento.bairro,
                         agendamento.periodo,
-                        agendamento.observacoes,
+                        agendamento.observacoes || '',
                         agendamento.loginPPPoE || '',
                         agendamento.senhaPPPoE || '',
                         agendamento.nomeWifi || '',
@@ -733,47 +660,45 @@
 
         // Preenche formulário para edição
         function editAgendamento(e) {
-    const agendamentoId = e.target.getAttribute('data-id');
-    
-    database.ref('agendamentos/' + agendamentoId).once('value')
-        .then(snapshot => {
-            if (!snapshot.exists()) {
-                showAlert('Agendamento não encontrado!', 'danger');
-                return;
-            }
-
-            const agendamento = snapshot.val();
+            const agendamentoId = e.target.getAttribute('data-id');
             
-            // Ajuste de data para exibição
-            const dataDisplay = adjustDate(agendamento.data, 'display');
+            database.ref('agendamentos/' + agendamentoId).once('value')
+                .then(snapshot => {
+                    if (!snapshot.exists()) {
+                        showAlert('Agendamento não encontrado!', 'danger');
+                        return;
+                    }
 
-            // Preenche formulário
-            document.getElementById('data').value = dataDisplay;
-            document.getElementById('cliente').value = agendamento.cliente;
-            document.getElementById('endereco').value = agendamento.endereco;
-            document.getElementById('numero').value = agendamento.numero;
-            document.getElementById('complemento').value = agendamento.complemento || '';
-            document.getElementById('bairro').value = agendamento.bairro;
-            document.getElementById('periodo').value = agendamento.periodo;
-            document.getElementById('observacoes').value = agendamento.observacoes || '';
-            document.getElementById('login-pppoe').value = agendamento.loginPPPoE || '';
-            document.getElementById('senha-pppoe').value = agendamento.senhaPPPoE || '';
-            document.getElementById('nome-wifi').value = agendamento.nomeWifi || '';
-            document.getElementById('senha-wifi').value = agendamento.senhaWifi || '';
-            document.getElementById('roteador').checked = agendamento.roteador || false;
+                    const agendamento = snapshot.val();
+                    
+                    // Preenche formulário
+                    document.getElementById('data').value = agendamento.data;
+                    document.getElementById('cliente').value = agendamento.cliente;
+                    document.getElementById('endereco').value = agendamento.endereco;
+                    document.getElementById('numero').value = agendamento.numero;
+                    document.getElementById('complemento').value = agendamento.complemento || '';
+                    document.getElementById('bairro').value = agendamento.bairro;
+                    document.getElementById('periodo').value = agendamento.periodo;
+                    document.getElementById('observacoes').value = agendamento.observacoes || '';
+                    document.getElementById('login-pppoe').value = agendamento.loginPPPoE || '';
+                    document.getElementById('senha-pppoe').value = agendamento.senhaPPPoE || '';
+                    document.getElementById('nome-wifi').value = agendamento.nomeWifi || '';
+                    document.getElementById('senha-wifi').value = agendamento.senhaWifi || '';
+                    document.getElementById('roteador').checked = agendamento.roteador || false;
 
-            // Ativa modo edição
-            editingAgendamentoId = agendamentoId;
-            document.getElementById('submit-btn').textContent = 'Atualizar';
-            document.getElementById('cancel-edit-btn').classList.remove('d-none');
-            
-            // Rola para o formulário
-            document.getElementById('agendamento-form').scrollIntoView({ behavior: 'smooth' });
-        })
-        .catch(error => {
-            showAlert('Erro ao carregar agendamento: ' + error.message, 'danger');
-        });
-}
+                    // Ativa modo edição
+                    editingAgendamentoId = agendamentoId;
+                    document.getElementById('submit-btn').textContent = 'Atualizar';
+                    document.getElementById('cancel-edit-btn').classList.remove('d-none');
+                    
+                    // Rola para o formulário
+                    document.getElementById('agendamento-form').scrollIntoView({ behavior: 'smooth' });
+                })
+                .catch(error => {
+                    showAlert('Erro ao carregar agendamento: ' + error.message, 'danger');
+                });
+        }
+
         // Cancela a edição
         function cancelEdit() {
             resetForm();
@@ -806,8 +731,7 @@
         // Verifica limite de agendamentos por dia
         function checkAgendamentoLimit() {
             const dateInput = document.getElementById('data');
-            const dateValue = new Date(dateInput.value);
-            const date = new Date(dateValue.getTime() + Math.abs(dateValue.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+            const date = dateInput.value;
             
             if (!date) return;
             
@@ -869,8 +793,6 @@
             const modal = bootstrap.Modal.getInstance(document.getElementById('supervisorModal'));
             modal.hide();
             
-            // Aqui você pode implementar a lógica para notificar o atendente
-            // ou criar diretamente o agendamento como autorizado
             showAlert('Agendamento extra autorizado com sucesso!', 'success');
             currentExtraAgendamento = null;
         }
@@ -950,10 +872,11 @@
 
         // Mostra alerta
         function showAlert(message, type) {
+            // Remove alertas existentes
+            document.querySelectorAll('.alert-fixed').forEach(alert => alert.remove());
+            
             const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show fixed-top mx-auto mt-3`;
-            alert.style.maxWidth = '500px';
-            alert.style.zIndex = '1100';
+            alert.className = `alert alert-${type} alert-dismissible fade show alert-fixed`;
             alert.role = 'alert';
             alert.innerHTML = `
                 ${message}
@@ -971,14 +894,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
