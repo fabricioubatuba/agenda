@@ -404,47 +404,46 @@
 
         // Manipula o envio do formulário
         function handleFormSubmit(e) {
-            e.preventDefault();
-            
-            const dataInput = document.getElementById('data');
-            // Corrige o problema da data (ajusta para o fuso horário local)
-            const dataInput = document.getElementById('data');
-            const dataValue = new Date(dataInput.value);
-            // Adiciona um dia para compensar o fuso horário
-            dataValue.setDate(dataValue.getDate() + 1);
-            const data = dataValue.toISOString().split('T')[0];
-            
-            const cliente = document.getElementById('cliente').value;
-            const endereco = document.getElementById('endereco').value;
-            const numero = document.getElementById('numero').value;
-            const complemento = document.getElementById('complemento').value;
-            const bairro = document.getElementById('bairro').value;
-            const periodo = document.getElementById('periodo').value;
-            const observacoes = document.getElementById('observacoes').value;
-            const loginPPPoE = document.getElementById('login-pppoe').value;
-            const senhaPPPoE = document.getElementById('senha-pppoe').value;
-            const nomeWifi = document.getElementById('nome-wifi').value;
-            const senhaWifi = document.getElementById('senha-wifi').value;
-            const roteador = document.getElementById('roteador').checked;
-            
-            const agendamento = {
-                data,
-                cliente,
-                endereco,
-                numero,
-                complemento: complemento || '',
-                bairro,
-                periodo,
-                observacoes: observacoes || '',
-                loginPPPoE,
-                senhaPPPoE,
-                nomeWifi,
-                senhaWifi,
-                roteador,
-                createdAt: firebase.database.ServerValue.TIMESTAMP,
-                createdBy: currentUser.email,
-                status: 'pending' // pending, authorized, rejected (para agendamentos extras)
-            };
+    e.preventDefault();
+    
+    // Corrige o problema da data (ajusta para o fuso horário local)
+    const dataInput = document.getElementById('data');
+    const dataValue = new Date(dataInput.value);
+    // Adiciona um dia para compensar o fuso horário
+    dataValue.setDate(dataValue.getDate() + 1);
+    const data = dataValue.toISOString().split('T')[0];
+    
+    const cliente = document.getElementById('cliente').value;
+    const endereco = document.getElementById('endereco').value;
+    const numero = document.getElementById('numero').value;
+    const complemento = document.getElementById('complemento').value;
+    const bairro = document.getElementById('bairro').value;
+    const periodo = document.getElementById('periodo').value;
+    const observacoes = document.getElementById('observacoes').value;
+    const loginPPPoE = document.getElementById('login-pppoe').value;
+    const senhaPPPoE = document.getElementById('senha-pppoe').value;
+    const nomeWifi = document.getElementById('nome-wifi').value;
+    const senhaWifi = document.getElementById('senha-wifi').value;
+    const roteador = document.getElementById('roteador').checked;
+    
+    const agendamento = {
+        data,
+        cliente,
+        endereco,
+        numero,
+        complemento: complemento || '',
+        bairro,
+        periodo,
+        observacoes: observacoes || '',
+        loginPPPoE,
+        senhaPPPoE,
+        nomeWifi,
+        senhaWifi,
+        roteador,
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        createdBy: currentUser.email,
+        status: 'pending'
+    };
             
             if (editingAgendamentoId) {
                 // Atualiza agendamento existente
@@ -890,4 +889,5 @@
     </script>
 </body>
 </html>
+
 
