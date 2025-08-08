@@ -552,7 +552,10 @@
         return;
     }
 
-    // Ajusta a data para busca
+    // Armazena a data original do filtro em um atributo
+    const filterDisplay = dateInput;
+    
+    // Ajusta para busca no Firebase
     const filterDate = adjustDate(dateInput, 'store');
 
     database.ref('agendamentos').orderByChild('data').equalTo(filterDate).once('value')
@@ -561,8 +564,8 @@
             
             snapshot.forEach(child => {
                 const agendamento = child.val();
-                // Ajusta a data para exibição
-                agendamento.data = adjustDate(agendamento.data, 'display');
+                // Mantém a data original do filtro para exibição
+                agendamento.data = filterDisplay;
                 results.push({
                     id: child.key,
                     ...agendamento
@@ -570,9 +573,6 @@
             });
 
             renderAgendamentos(results);
-        })
-        .catch(error => {
-            showAlert('Erro ao filtrar: ' + error.message, 'danger');
         });
 }
         // Renderiza a lista de agendamentos
@@ -587,10 +587,12 @@
 
     // Agrupa por data de exibição
     const agendamentosPorData = agendamentos.reduce((acc, agendamento) => {
-        if (!acc[agendamento.data]) {
-            acc[agendamento.data] = [];
+        // Usa a data original do filtro (não ajustada)
+        const dataFiltro = document.getElementById('filter-date').value || agendamento.data;
+        if (!acc[dataFiltro]) {
+            acc[dataFiltro] = [];
         }
-        acc[agendamento.data].push(agendamento);
+        acc[dataFiltro].push(agendamento);
         return acc;
     }, {});
 
@@ -604,7 +606,11 @@
         const dateHeader = document.createElement('div');
         dateHeader.className = 'd-flex justify-content-between align-items-center mb-3';
         
+        // Usa a data do filtro diretamente
         const dataObj = new Date(dataExibicao);
+        // Garante que não há ajuste de fuso horário
+        dataObj.setMinutes(dataObj.getMinutes() + dataObj.getTimezoneOffset());
+        
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const dataFormatada = dataObj.toLocaleDateString('pt-BR', options);
         
@@ -652,10 +658,19 @@
         });
     });
 
-    // Adiciona listeners para os botões
-    addActionButtonListeners();
+    // Adiciona listeners diretamente
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', copyAgendamentoToClipboard);
+    });
+    
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', editAgendamento);
+    });
+    
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', deleteAgendamento);
+    });
 }
-
         // Copia agendamento para clipboard no formato para Excel
         function copyAgendamentoToClipboard(e) {
             const agendamentoId = e.target.getAttribute('data-id');
@@ -924,6 +939,7 @@
     </script>
 </body>
 </html>
+
 
 
 
