@@ -38,6 +38,10 @@
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
         }
 
+        .inicial {
+            border-left-color: #78a1ad;
+        }
+        
         .manha {
             border-left-color: #ffc107;
         }
@@ -46,6 +50,10 @@
             border-left-color: #fd7e14;
         }
 
+        .horário comercial {
+            border-left-color: #fdf914;
+        }
+        
         .encaixe {
             border-left-color: #6f42c1;
         }
@@ -158,8 +166,10 @@
                                 <label for="periodo" class="form-label">Período da Instalação</label>
                                 <select class="form-select" id="periodo" required>
                                     <option value="">Selecione...</option>
+                                    <option value="Inicial">Inicial</option>
                                     <option value="Manhã">Manhã</option>
                                     <option value="Tarde">Tarde</option>
+                                    <option value="Horário Comercial">Horário Comercial</option>
                                     <option value="Encaixe">Encaixe</option>
                                 </select>
                             </div>
@@ -575,7 +585,7 @@
                 
                 // Ordena agendamentos por período (manhã > tarde > encaixe)
                 dateAgendamentos.sort((a, b) => {
-                    const order = { 'Manhã': 1, 'Tarde': 2, 'Encaixe': 3 };
+                    const order = { 'Inicial':1, 'Manhã': 2, 'Tarde': 3, 'Horário Comercial': 4,'Encaixe': 3 };
                     return order[a.periodo] - order[b.periodo];
                 });
                 
@@ -889,5 +899,6 @@
     </script>
 </body>
 </html>
+
 
 
