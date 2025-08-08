@@ -418,10 +418,8 @@
                         return;
                     }
 
-                    // Formata data para exibição
-                    const dataObj = new Date(dateInput);
-                    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                    const dataFormatada = dataObj.toLocaleDateString('pt-BR', options);
+                    // Formata data corretamente
+                    const dataFormatada = formatDateCorrectly(dateInput);
                     
                     // Cria cabeçalho com a data
                     const dateHeader = document.createElement('div');
@@ -509,13 +507,11 @@
             sortedDates.forEach(data => {
                 const agendamentosDoDia = agendamentosPorData[data];
                 
-                // Cabeçalho com data formatada
+                // Cabeçalho com data formatada corretamente
                 const dateHeader = document.createElement('div');
                 dateHeader.className = 'd-flex justify-content-between align-items-center mb-3';
                 
-                const dataObj = new Date(data);
-                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                const dataFormatada = dataObj.toLocaleDateString('pt-BR', options);
+                const dataFormatada = formatDateCorrectly(data);
                 
                 dateHeader.innerHTML = `
                     <h5>${dataFormatada}</h5>
@@ -531,6 +527,24 @@
                     container.appendChild(card);
                 });
             });
+        }
+
+        // Formata data corretamente (compensando fuso horário)
+        function formatDateCorrectly(dateString) {
+            // Cria a data no fuso horário local
+            const date = new Date(dateString);
+            
+            // Opções de formatação
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                timeZone: 'UTC' // Força usar UTC para evitar problemas de fuso
+            };
+            
+            // Retorna a data formatada corretamente
+            return date.toLocaleDateString('pt-BR', options);
         }
 
         // Copia agendamento para clipboard no formato para Excel
@@ -682,7 +696,7 @@
                     const dayElement = document.createElement('div');
                     dayElement.className = 'blocked-day';
                     dayElement.innerHTML = `
-                        <span>${formatDate(date)} ${reason ? ' - ' + reason : ''}</span>
+                        <span>${formatDateCorrectly(date)} ${reason ? ' - ' + reason : ''}</span>
                         <i class="bi bi-x-lg delete-blocked-day" data-date="${date}"></i>
                     `;
                     container.appendChild(dayElement);
@@ -719,7 +733,7 @@
         // Exclui um dia bloqueado
         function deleteBlockedDay(e) {
             const date = e.target.getAttribute('data-date');
-            if (!confirm(`Desbloquear o dia ${formatDate(date)}?`)) return;
+            if (!confirm(`Desbloquear o dia ${formatDateCorrectly(date)}?`)) return;
             
             database.ref('blockedDays/' + date).remove()
                 .then(() => showAlert('Dia desbloqueado com sucesso!', 'success'))
@@ -730,13 +744,6 @@
         function resetForm() {
             document.getElementById('agendamento-form').reset();
             document.getElementById('data-info').textContent = '';
-        }
-
-        // Formata data para exibição
-        function formatDate(dateString) {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const date = new Date(dateString);
-            return date.toLocaleDateString('pt-BR', options);
         }
 
         // Mostra alerta
