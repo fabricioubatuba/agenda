@@ -577,39 +577,46 @@
 }
         // Renderiza a lista de agendamentos
         function renderAgendamentos(agendamentos) {
-            const container = document.getElementById('agendamentos-container');
-            container.innerHTML = '';
-            
-            if (agendamentos.length === 0) {
-                container.innerHTML = '<p class="text-muted">Nenhum agendamento encontrado.</p>';
-                return;
-            }
-            
-            // Agrupa por data
-            const agendamentosPorData = agendamentos.reduce((acc, agendamento) => {
-                if (!acc[agendamento.data]) {
-                    acc[agendamento.data] = [];
-                }
-                acc[agendamento.data].push(agendamento);
-                return acc;
-            }, {});
-            
-            // Ordena datas
-            const sortedDates = Object.keys(agendamentosPorData).sort();
-            
-            // Cria cards para cada data
-            sortedDates.forEach(date => {
-                const dateAgendamentos = agendamentosPorData[date];
-                
-                const dateHeader = document.createElement('div');
-                dateHeader.className = 'd-flex justify-content-between align-items-center mb-3';
-                dateHeader.innerHTML = `
-                    <h5>${formatDate(date)}</h5>
-                    <span class="agendamento-count ${dateAgendamentos.length > 3 ? 'warning-count' : ''}">
-                        ${dateAgendamentos.length} agendamento(s)
-                    </span>
-                `;
-                container.appendChild(dateHeader);
+    const container = document.getElementById('agendamentos-container');
+    container.innerHTML = '';
+
+    if (agendamentos.length === 0) {
+        container.innerHTML = '<p class="text-muted">Nenhum agendamento encontrado.</p>';
+        return;
+    }
+
+    // Agrupa por data de exibição (já ajustada)
+    const agendamentosPorData = agendamentos.reduce((acc, agendamento) => {
+        const dataExibicao = agendamento.data; // Já vem ajustada do filtro
+        if (!acc[dataExibicao]) {
+            acc[dataExibicao] = [];
+        }
+        acc[dataExibicao].push(agendamento);
+        return acc;
+    }, {});
+
+    // Ordena as datas
+    const sortedDates = Object.keys(agendamentosPorData).sort();
+
+    sortedDates.forEach(dataExibicao => {
+        const agendamentosDoDia = agendamentosPorData[dataExibicao];
+        
+        // Cabeçalho com a data de exibição (formato longo)
+        const dateHeader = document.createElement('div');
+        dateHeader.className = 'd-flex justify-content-between align-items-center mb-3';
+        
+        // Formata a data para exibição (ex: "sábado, 9 de agosto de 2025")
+        const dataObj = new Date(dataExibicao);
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const dataFormatada = dataObj.toLocaleDateString('pt-BR', options);
+        
+        dateHeader.innerHTML = `
+            <h5>${dataFormatada}</h5>
+            <span class="agendamento-count ${agendamentosDoDia.length > 3 ? 'warning-count' : ''}">
+                ${agendamentosDoDia.length} agendamento(s)
+            </span>
+        `;
+        container.appendChild(dateHeader);
                 
                 // Ordena agendamentos por período (manhã > tarde > encaixe)
                 dateAgendamentos.sort((a, b) => {
@@ -935,6 +942,7 @@
     </script>
 </body>
 </html>
+
 
 
 
