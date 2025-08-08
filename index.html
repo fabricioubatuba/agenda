@@ -12,52 +12,41 @@
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
         .logo {
             height: 50px;
             margin-right: 15px;
         }
-
         .card {
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
         }
-
         .card-header {
             font-weight: bold;
         }
-
         .agendamento-card {
             border-left: 4px solid #0d6efd;
             margin-bottom: 10px;
             transition: all 0.3s;
         }
-
         .agendamento-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
         }
-
         .inicial {
             border-left-color: #78a1ad;
         }
-        
         .manha {
             border-left-color: #ffc107;
         }
-
         .tarde {
             border-left-color: #fd7e14;
         }
-
         .horário-comercial {
             border-left-color: #fdf914;
         }
-        
         .encaixe {
             border-left-color: #6f42c1;
         }
-
         .blocked-day {
             background-color: #ffe8e8;
             border-left: 4px solid #dc3545;
@@ -68,54 +57,44 @@
             justify-content: space-between;
             align-items: center;
         }
-
         #user-info {
             font-size: 0.9rem;
             color: #6c757d;
         }
-
         .badge-roteador {
             background-color: #198754;
         }
-
         .badge-periodo {
             background-color: #0dcaf0;
             color: #000;
         }
-
         .copy-btn {
             cursor: pointer;
             transition: all 0.2s;
         }
-
         .copy-btn:hover {
             transform: scale(1.1);
         }
-
         .agendamento-count {
             font-size: 0.8rem;
             color: #6c757d;
             margin-top: 5px;
         }
-
         .warning-count {
             color: #dc3545;
             font-weight: bold;
         }
-
         .header-container {
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 20px;
         }
-
         .header-title {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-
         .alert-fixed {
             position: fixed;
             top: 20px;
@@ -220,7 +199,7 @@
                     </div>
                     <div class="card-body">
                         <div id="blocked-days-container"></div>
-                        <button id="add-blocked-day" class="btn btn-sm btn-outline-warning mt-2 d-none">+ Adicionar Dia Bloqueado</button>
+                        <button id="add-blocked-day" class="btn btn-sm btn-outline-warning mt-2">+ Adicionar Dia Bloqueado</button>
                     </div>
                 </div>
             </div>
@@ -262,27 +241,6 @@
         </div>
     </div>
 
-    <!-- Modal para supervisor autorizar extra -->
-    <div class="modal fade" id="supervisorModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Autorizar Agendamento Extra</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Deseja autorizar este agendamento extra?</p>
-                    <p><strong>Data:</strong> <span id="modal-data"></span></p>
-                    <p><strong>Cliente:</strong> <span id="modal-cliente"></span></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Recusar</button>
-                    <button type="button" class="btn btn-success" id="authorize-extra">Autorizar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
@@ -304,12 +262,6 @@
         const database = firebase.database();
         const auth = firebase.auth();
 
-        // Configura o persistence para evitar erro de sessionStorage
-        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-            .catch((error) => {
-                console.error("Erro ao configurar persistence:", error);
-            });
-
         // Variáveis globais
         let currentUser = null;
         let editingAgendamentoId = null;
@@ -317,16 +269,16 @@
 
         // Inicialização quando o DOM estiver pronto
         document.addEventListener('DOMContentLoaded', function() {
+            // Configura data mínima para hoje
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('data').min = today;
+            document.getElementById('filter-date').min = today;
+            
             // Inicializa autenticação
             initAuth();
             
             // Configura listeners
             setupEventListeners();
-            
-            // Configura data mínima para hoje
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('data').min = today;
-            document.getElementById('filter-date').min = today;
         });
 
         // Configura a autenticação
@@ -339,69 +291,23 @@
                     loadBlockedDays();
                 } else {
                     // Tenta fazer login automaticamente
-                    auth.signInWithEmailAndPassword('atendente@sejafibra.net', 'senha')
+                    auth.signInAnonymously()
                         .catch(error => {
                             console.error("Erro de autenticação:", error);
-                            showLoginScreen();
+                            showAlert('Erro ao conectar com o servidor', 'danger');
                         });
                 }
-            });
-        }
-
-        function showLoginScreen() {
-            document.body.innerHTML = `
-                <div class="container mt-5">
-                    <div class="row justify-content-center">
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-header bg-primary text-white">
-                                    <h5 class="card-title mb-0">Login - Seja Fibra</h5>
-                                </div>
-                                <div class="card-body">
-                                    <form id="login-form">
-                                        <div class="mb-3">
-                                            <label for="login-email" class="form-label">E-mail</label>
-                                            <input type="email" class="form-control" id="login-email" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="login-password" class="form-label">Senha</label>
-                                            <input type="password" class="form-control" id="login-password" required>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary w-100">Entrar</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('login-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
-
-                auth.signInWithEmailAndPassword(email, password)
-                    .catch(error => {
-                        alert('Erro ao fazer login: ' + error.message);
-                    });
             });
         }
 
         // Atualiza a UI baseado no usuário logado
         function updateUIForUser(user) {
             const userInfo = document.getElementById('user-info');
-            userInfo.textContent = `Logado como: ${user.email}`;
-            
-            // Mostra funcionalidades extras para supervisor/admin
-            if (isSupervisorOrAdmin(user)) {
-                document.getElementById('add-blocked-day').classList.remove('d-none');
+            if (user.isAnonymous) {
+                userInfo.textContent = "Logado como: Visitante";
+            } else {
+                userInfo.textContent = `Logado como: ${user.email || 'Usuário'}`;
             }
-        }
-
-        // Verifica se o usuário é supervisor ou admin
-        function isSupervisorOrAdmin(user) {
-            return user && ['supervisor@sejafibra.net', 'bioranss@sejafibra.net'].includes(user.email);
         }
 
         // Configura os event listeners
@@ -419,9 +325,8 @@
             // Botão para adicionar dia bloqueado
             document.getElementById('add-blocked-day').addEventListener('click', addBlockedDay);
             
-            // Modais
+            // Modal
             document.getElementById('confirm-extra').addEventListener('click', requestExtraAuthorization);
-            document.getElementById('authorize-extra').addEventListener('click', authorizeExtraAgendamento);
         }
 
         function handleFormSubmit(e) {
@@ -443,9 +348,13 @@
                 senhaWifi: document.getElementById('senha-wifi').value,
                 roteador: document.getElementById('roteador').checked,
                 createdAt: firebase.database.ServerValue.TIMESTAMP,
-                createdBy: currentUser.email,
                 status: 'active'
             };
+
+            // Adiciona email do usuário se não for anônimo
+            if (currentUser && !currentUser.isAnonymous) {
+                formData.createdBy = currentUser.email;
+            }
 
             // Validação básica
             if (!formData.data || !formData.cliente) {
@@ -557,13 +466,11 @@
                     </div>
                     ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
                     <div class="d-flex justify-content-between mt-2">
-                        <small class="text-muted">Agendado por: ${agendamento.createdBy}</small>
+                        <small class="text-muted">${agendamento.createdBy ? 'Agendado por: ' + agendamento.createdBy : ''}</small>
                         <div>
                             <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${id}"></i>
-                            ${isSupervisorOrAdmin(currentUser) || agendamento.createdBy === currentUser.email ? `
-                                <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${id}"></i>
-                                <i class="bi bi-trash delete-btn" title="Excluir" data-id="${id}"></i>
-                            ` : ''}
+                            <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${id}"></i>
+                            <i class="bi bi-trash delete-btn" title="Excluir" data-id="${id}"></i>
                         </div>
                     </div>
                 </div>
@@ -571,12 +478,8 @@
             
             // Adiciona listeners aos botões
             card.querySelector('.copy-btn').addEventListener('click', copyAgendamentoToClipboard);
-            if (card.querySelector('.edit-btn')) {
-                card.querySelector('.edit-btn').addEventListener('click', editAgendamento);
-            }
-            if (card.querySelector('.delete-btn')) {
-                card.querySelector('.delete-btn').addEventListener('click', deleteAgendamento);
-            }
+            card.querySelector('.edit-btn').addEventListener('click', editAgendamento);
+            card.querySelector('.delete-btn').addEventListener('click', deleteAgendamento);
             
             return card;
         }
@@ -713,19 +616,9 @@
             
             const agendamentoId = e.target.getAttribute('data-id');
             
-            // Verifica permissões antes de excluir
-            database.ref('agendamentos/' + agendamentoId).once('value')
-                .then(snapshot => {
-                    const agendamento = snapshot.val();
-                    
-                    if (agendamento.createdBy === currentUser.email || isSupervisorOrAdmin(currentUser)) {
-                        database.ref('agendamentos/' + agendamentoId).remove()
-                            .then(() => showAlert('Agendamento excluído com sucesso!', 'success'))
-                            .catch(error => showAlert('Erro ao excluir agendamento: ' + error.message, 'danger'));
-                    } else {
-                        showAlert('Você não tem permissão para excluir este agendamento.', 'danger');
-                    }
-                });
+            database.ref('agendamentos/' + agendamentoId).remove()
+                .then(() => showAlert('Agendamento excluído com sucesso!', 'success'))
+                .catch(error => showAlert('Erro ao excluir agendamento: ' + error.message, 'danger'));
         }
 
         // Verifica limite de agendamentos por dia
@@ -751,16 +644,13 @@
                         infoElement.className = 'form-text text-warning';
                         submitBtn.disabled = false;
                         
-                        // Se for atendente, mostra modal para solicitar autorização
-                        if (!isSupervisorOrAdmin(currentUser)) {
-                            currentExtraAgendamento = {
-                                data: date,
-                                currentCount: count
-                            };
-                            
-                            const modal = new bootstrap.Modal(document.getElementById('extraModal'));
-                            modal.show();
-                        }
+                        currentExtraAgendamento = {
+                            data: date,
+                            currentCount: count
+                        };
+                        
+                        const modal = new bootstrap.Modal(document.getElementById('extraModal'));
+                        modal.show();
                     } else {
                         infoElement.textContent = `Este dia possui ${count} agendamento(s).`;
                         infoElement.className = 'form-text text-muted';
@@ -775,32 +665,12 @@
             const modal = bootstrap.Modal.getInstance(document.getElementById('extraModal'));
             modal.hide();
             
-            // Preenche modal do supervisor
-            document.getElementById('modal-data').textContent = formatDate(currentExtraAgendamento.data);
-            document.getElementById('modal-cliente').textContent = document.getElementById('cliente').value;
-            
-            // Mostra modal de confirmação para supervisor
-            if (isSupervisorOrAdmin(currentUser)) {
-                const supervisorModal = new bootstrap.Modal(document.getElementById('supervisorModal'));
-                supervisorModal.show();
-            } else {
-                showAlert('Solicitação enviada ao supervisor. Aguarde autorização.', 'info');
-            }
-        }
-
-        // Autoriza agendamento extra (para supervisor)
-        function authorizeExtraAgendamento() {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('supervisorModal'));
-            modal.hide();
-            
-            showAlert('Agendamento extra autorizado com sucesso!', 'success');
+            showAlert('Agendamento extra criado com sucesso!', 'success');
             currentExtraAgendamento = null;
         }
 
         // Carrega dias bloqueados
         function loadBlockedDays() {
-            if (!isSupervisorOrAdmin(currentUser)) return;
-            
             database.ref('blockedDays').on('value', snapshot => {
                 const container = document.getElementById('blocked-days-container');
                 container.innerHTML = '';
@@ -840,7 +710,6 @@
             
             database.ref('blockedDays/' + date).set({
                 reason: reason || '',
-                blockedBy: currentUser.email,
                 blockedAt: firebase.database.ServerValue.TIMESTAMP
             })
             .then(() => showAlert('Dia bloqueado com sucesso!', 'success'))
