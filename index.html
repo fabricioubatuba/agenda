@@ -412,17 +412,11 @@
             document.getElementById('authorize-extra').addEventListener('click', authorizeExtraAgendamento);
         }
 
-        // Manipula o envio do formulário
         function handleFormSubmit(e) {
     e.preventDefault();
     
-    // Corrige o problema da data (ajusta para o fuso horário local)
-    const dataInput = document.getElementById('data');
-    const dataValue = new Date(dataInput.value);
-    // Adiciona um dia para compensar o fuso horário
-    dataValue.setDate(dataValue.getDate() + 1);
-    const data = dataValue.toISOString().split('T')[0];
-    
+    // 1. Captura dos dados do formulário
+    const dataInput = document.getElementById('data').value;
     const cliente = document.getElementById('cliente').value;
     const endereco = document.getElementById('endereco').value;
     const numero = document.getElementById('numero').value;
@@ -435,9 +429,15 @@
     const nomeWifi = document.getElementById('nome-wifi').value;
     const senhaWifi = document.getElementById('senha-wifi').value;
     const roteador = document.getElementById('roteador').checked;
-    
+
+    // 2. Ajuste de data (+1 dia para compensar UTC)
+    const dataValue = new Date(dataInput);
+    dataValue.setDate(dataValue.getDate() + 1);
+    const dataFirebase = dataValue.toISOString().split('T')[0];
+
+    // 3. Montagem do objeto para o Firebase
     const agendamento = {
-        data,
+        data: dataFirebase, // Usa a data ajustada
         cliente,
         endereco,
         numero,
@@ -454,16 +454,14 @@
         createdBy: currentUser.email,
         status: 'pending'
     };
-            
-            if (editingAgendamentoId) {
-                // Atualiza agendamento existente
-                updateAgendamento(editingAgendamentoId, agendamento);
-            } else {
-                // Cria novo agendamento
-                createAgendamento(agendamento);
-            }
-        }
 
+    // 4. Lógica de criação/atualização
+    if (editingAgendamentoId) {
+        updateAgendamento(editingAgendamentoId, agendamento);
+    } else {
+        createAgendamento(agendamento);
+    }
+}
         // Cria um novo agendamento no Firebase
         function createAgendamento(agendamento) {
             // Verifica se é um agendamento extra que precisa de autorização
@@ -526,27 +524,38 @@
             });
         }
 
+        // nova função auxiliar
+        function adjustDateForTimezone(dateString, operation) {
+    const date = new Date(dateString);
+    if (operation === '+') date.setDate(date.getDate() + 1); 
+    if (operation === '-') date.setDate(date.getDate() - 1);
+    return date.toISOString().split('T')[0];
+}
+        
         // Filtra agendamentos por data
         function filterAgendamentosByDate() {
-            const date = document.getElementById('filter-date').value;
-            if (!date) {
-                loadAgendamentos();
-                return;
-            }
-            
-            database.ref('agendamentos').orderByChild('data').equalTo(date).once('value')
-                .then(snapshot => {
-                    const filteredAgendamentos = [];
-                    snapshot.forEach(childSnapshot => {
-                        filteredAgendamentos.push({
-                            id: childSnapshot.key,
-                            ...childSnapshot.val()
-                        });
-                    });
-                    renderAgendamentos(filteredAgendamentos);
+    const dateInput = document.getElementById('filter-date').value;
+    if (!dateInput) {
+        loadAgendamentos();
+        return;
+    }
+    
+    const filterDate = adjustDateForTimezone(dateInput, '+'); // +1 para buscar
+    
+    database.ref('agendamentos').orderByChild('data').equalTo(filterDate).once('value')
+        .then(snapshot => {
+            const filteredAgendamentos = [];
+            snapshot.forEach(childSnapshot => {
+                const agendamento = childSnapshot.val();
+                agendamento.data = adjustDateForTimezone(agendamento.data, '-'); // -1 para exibir
+                filteredAgendamentos.push({
+                    id: childSnapshot.key,
+                    ...agendamento
                 });
-        }
-
+            });
+            renderAgendamentos(filteredAgendamentos);
+        });
+}
         // Renderiza a lista de agendamentos
         function renderAgendamentos(agendamentos) {
             const container = document.getElementById('agendamentos-container');
@@ -669,39 +678,42 @@
 
         // Preenche formulário para edição
         function editAgendamento(e) {
-            const agendamentoId = e.target.getAttribute('data-id');
-            database.ref('agendamentos/' + agendamentoId).once('value')
-                .then(snapshot => {
-                    const agendamento = snapshot.val();
-                    
-                    // Corrige a exibição da data no formulário de edição
-                    const dataInput = document.getElementById('data');
-                    const dataValue = new Date(agendamento.data);
-                    dataValue.setDate(dataValue.getDate() - 1); // Subtrai um dia para compensar o fuso
-                    dataInput.value = dataValue.toISOString().split('T')[0];
-                    
-                    document.getElementById('cliente').value = agendamento.cliente;
-                    document.getElementById('endereco').value = agendamento.endereco;
-                    document.getElementById('numero').value = agendamento.numero;
-                    document.getElementById('complemento').value = agendamento.complemento;
-                    document.getElementById('bairro').value = agendamento.bairro;
-                    document.getElementById('periodo').value = agendamento.periodo;
-                    document.getElementById('observacoes').value = agendamento.observacoes;
-                    document.getElementById('login-pppoe').value = agendamento.loginPPPoE || '';
-                    document.getElementById('senha-pppoe').value = agendamento.senhaPPPoE || '';
-                    document.getElementById('nome-wifi').value = agendamento.nomeWifi || '';
-                    document.getElementById('senha-wifi').value = agendamento.senhaWifi || '';
-                    document.getElementById('roteador').checked = agendamento.roteador;
-                    
-                    editingAgendamentoId = agendamentoId;
-                    document.getElementById('submit-btn').textContent = 'Atualizar Agendamento';
-                    document.getElementById('cancel-edit-btn').classList.remove('d-none');
-                    
-                    // Rola para o formulário
-                    document.getElementById('agendamento-form').scrollIntoView({ behavior: 'smooth' });
-                });
-        }
+    const agendamentoId = e.target.getAttribute('data-id');
+    
+    database.ref('agendamentos/' + agendamentoId).once('value')
+        .then(snapshot => {
+            const agendamento = snapshot.val();
 
+            // 1. Ajuste de data (-1 dia para exibição correta)
+            const dataFirebase = agendamento.data;
+            const dataValue = new Date(dataFirebase);
+            dataValue.setDate(dataValue.getDate() - 1);
+            const dataExibicao = dataValue.toISOString().split('T')[0];
+
+            // 2. Preenchimento do formulário
+            document.getElementById('data').value = dataExibicao;
+            document.getElementById('cliente').value = agendamento.cliente;
+            document.getElementById('endereco').value = agendamento.endereco;
+            document.getElementById('numero').value = agendamento.numero;
+            document.getElementById('complemento').value = agendamento.complemento;
+            document.getElementById('bairro').value = agendamento.bairro;
+            document.getElementById('periodo').value = agendamento.periodo;
+            document.getElementById('observacoes').value = agendamento.observacoes;
+            document.getElementById('login-pppoe').value = agendamento.loginPPPoE || '';
+            document.getElementById('senha-pppoe').value = agendamento.senhaPPPoE || '';
+            document.getElementById('nome-wifi').value = agendamento.nomeWifi || '';
+            document.getElementById('senha-wifi').value = agendamento.senhaWifi || '';
+            document.getElementById('roteador').checked = agendamento.roteador;
+
+            // 3. Configuração do modo edição
+            editingAgendamentoId = agendamentoId;
+            document.getElementById('submit-btn').textContent = 'Atualizar Agendamento';
+            document.getElementById('cancel-edit-btn').classList.remove('d-none');
+
+            // 4. Rolagem para o formulário
+            document.getElementById('agendamento-form').scrollIntoView({ behavior: 'smooth' });
+        });
+}
         // Cancela a edição
         function cancelEdit() {
             resetForm();
@@ -899,6 +911,7 @@
     </script>
 </body>
 </html>
+
 
 
 
