@@ -548,33 +548,89 @@
         // Filtra agendamentos por data
         function filterAgendamentosByDate() {
     const dateInput = document.getElementById('filter-date').value;
+    const container = document.getElementById('agendamentos-container');
     
     if (!dateInput) {
         loadAgendamentos();
         return;
     }
 
-    // Armazena a data original do filtro em um atributo
-    const filterDisplay = dateInput;
+    // Formata a data para exibição ANTES de buscar no Firebase
+    const dataObj = new Date(dateInput);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dataFormatada = dataObj.toLocaleDateString('pt-BR', options);
     
-    // Ajusta para busca no Firebase
+    // Busca no Firebase com a data ajustada (+1 dia)
     const filterDate = adjustDate(dateInput, 'store');
-
+    
     database.ref('agendamentos').orderByChild('data').equalTo(filterDate).once('value')
         .then(snapshot => {
-            const results = [];
+            container.innerHTML = '';
             
-            snapshot.forEach(child => {
-                const agendamento = child.val();
-                // Mantém a data original do filtro para exibição
-                agendamento.data = filterDisplay;
-                results.push({
-                    id: child.key,
-                    ...agendamento
-                });
+            if (!snapshot.exists()) {
+                container.innerHTML = '<p class="text-muted">Nenhum agendamento encontrado.</p>';
+                return;
+            }
+
+            // Cria cabeçalho com a data ORIGINAL do filtro
+            const dateHeader = document.createElement('div');
+            dateHeader.className = 'd-flex justify-content-between align-items-center mb-3';
+            dateHeader.innerHTML = `
+                <h5>${dataFormatada}</h5>
+                <span class="agendamento-count">
+                    ${snapshot.numChildren()} agendamento(s)
+                </span>
+            `;
+            container.appendChild(dateHeader);
+
+            // Renderiza os agendamentos
+            snapshot.forEach(childSnapshot => {
+                const agendamento = childSnapshot.val();
+                const card = document.createElement('div');
+                card.className = `card agendamento-card mb-2 ${agendamento.periodo.toLowerCase()}`;
+                card.innerHTML = `
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-title">${agendamento.cliente}</h6>
+                                <p class="card-text mb-1">
+                                    <small>${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
+                                </p>
+                                <p class="card-text mb-1"><small>${agendamento.bairro}</small></p>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-primary">${agendamento.periodo}</span>
+                                ${agendamento.roteador ? '<span class="badge badge-roteador ms-1">Roteador OK</span>' : ''}
+                            </div>
+                        </div>
+                        ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
+                        <div class="d-flex justify-content-between mt-2">
+                            <small class="text-muted">Agendado por: ${agendamento.createdBy}</small>
+                            <div>
+                                <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${childSnapshot.key}"></i>
+                                ${isSupervisorOrAdmin(currentUser) || agendamento.createdBy === currentUser.email ? `
+                                    <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${childSnapshot.key}"></i>
+                                    <i class="bi bi-trash delete-btn" title="Excluir" data-id="${childSnapshot.key}"></i>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
             });
 
-            renderAgendamentos(results);
+            // Adiciona listeners
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', copyAgendamentoToClipboard);
+            });
+            
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', editAgendamento);
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', deleteAgendamento);
+            });
         });
 }
         // Renderiza a lista de agendamentos
@@ -914,6 +970,7 @@
     </script>
 </body>
 </html>
+
 
 
 
