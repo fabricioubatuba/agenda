@@ -408,8 +408,11 @@
             
             const dataInput = document.getElementById('data');
             // Corrige o problema da data (ajusta para o fuso horário local)
+            const dataInput = document.getElementById('data');
             const dataValue = new Date(dataInput.value);
-            const data = new Date(dataValue.getTime() + Math.abs(dataValue.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+            // Adiciona um dia para compensar o fuso horário
+            dataValue.setDate(dataValue.getDate() + 1);
+            const data = dataValue.toISOString().split('T')[0];
             
             const cliente = document.getElementById('cliente').value;
             const endereco = document.getElementById('endereco').value;
@@ -664,7 +667,9 @@
                     
                     // Corrige a exibição da data no formulário de edição
                     const dataInput = document.getElementById('data');
-                    dataInput.value = agendamento.data;
+                    const dataValue = new Date(agendamento.data);
+                    dataValue.setDate(dataValue.getDate() - 1); // Subtrai um dia para compensar o fuso
+                    dataInput.value = dataValue.toISOString().split('T')[0];
                     
                     document.getElementById('cliente').value = agendamento.cliente;
                     document.getElementById('endereco').value = agendamento.endereco;
@@ -885,3 +890,4 @@
     </script>
 </body>
 </html>
+
