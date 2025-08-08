@@ -47,6 +47,9 @@
         .encaixe {
             border-left-color: #6f42c1;
         }
+        .reserva {
+            border-left-color: #6c757d;
+        }
         .blocked-day {
             background-color: #ffe8e8;
             border-left: 4px solid #dc3545;
@@ -67,6 +70,10 @@
         .badge-periodo {
             background-color: #0dcaf0;
             color: #000;
+        }
+        .badge-reserva {
+            background-color: #6c757d;
+            color: white;
         }
         .copy-btn {
             cursor: pointer;
@@ -104,6 +111,19 @@
             max-width: 500px;
             width: 90%;
         }
+        .form-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .form-section-title {
+            font-size: 1.1rem;
+            color: #495057;
+            margin-bottom: 0.8rem;
+        }
+        .nav-tabs .nav-link {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -120,76 +140,117 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="card-title mb-0">Novo Agendamento</h5>
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="agendamento-tab" data-bs-toggle="tab" href="#agendamento-form-content">Agendamento</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="reserva-tab" data-bs-toggle="tab" href="#reserva-form-content">Reserva</a>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="card-body">
-                        <form id="agendamento-form">
-                            <div class="mb-3">
-                                <label for="data" class="form-label">Data do Agendamento</label>
-                                <input type="date" class="form-control" id="data" required>
-                                <div id="data-info" class="form-text"></div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="cliente" class="form-label">Nome do Cliente</label>
-                                <input type="text" class="form-control" id="cliente" required>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-8">
-                                    <label for="endereco" class="form-label">Endereço</label>
-                                    <input type="text" class="form-control" id="endereco" required>
+                    <div class="card-body tab-content">
+                        <div class="tab-pane fade show active" id="agendamento-form-content">
+                            <form id="agendamento-form">
+                                <div class="mb-3">
+                                    <label for="data" class="form-label">Data do Agendamento</label>
+                                    <input type="date" class="form-control" id="data" required>
+                                    <div id="data-info" class="form-text"></div>
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="numero" class="form-label">Número</label>
-                                    <input type="text" class="form-control" id="numero" required>
+                                <div class="form-section">
+                                    <div class="form-section-title">Informações do Cliente</div>
+                                    <div class="mb-3">
+                                        <label for="cliente" class="form-label">Nome do Cliente</label>
+                                        <input type="text" class="form-control" id="cliente" required>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-8">
+                                            <label for="endereco" class="form-label">Endereço</label>
+                                            <input type="text" class="form-control" id="endereco" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="numero" class="form-label">Número</label>
+                                            <input type="text" class="form-control" id="numero" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="complemento" class="form-label">Complemento (opcional)</label>
+                                        <input type="text" class="form-control" id="complemento">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="bairro" class="form-label">Bairro</label>
+                                        <input type="text" class="form-control" id="bairro" required>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="complemento" class="form-label">Complemento (opcional)</label>
-                                <input type="text" class="form-control" id="complemento">
-                            </div>
-                            <div class="mb-3">
-                                <label for="bairro" class="form-label">Bairro</label>
-                                <input type="text" class="form-control" id="bairro" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="periodo" class="form-label">Período da Instalação</label>
-                                <select class="form-select" id="periodo" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="Inicial">Inicial</option>
-                                    <option value="Manhã">Manhã</option>
-                                    <option value="Tarde">Tarde</option>
-                                    <option value="Horário Comercial">Horário Comercial</option>
-                                    <option value="Encaixe">Encaixe</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="observacoes" class="form-label">Observações (opcional)</label>
-                                <textarea class="form-control" id="observacoes" rows="2"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="login-pppoe" class="form-label">Login PPPoE</label>
-                                <input type="text" class="form-control" id="login-pppoe">
-                            </div>
-                            <div class="mb-3">
-                                <label for="senha-pppoe" class="form-label">Senha PPPoE</label>
-                                <input type="password" class="form-control" id="senha-pppoe">
-                            </div>
-                            <div class="mb-3">
-                                <label for="nome-wifi" class="form-label">Nome do Wi-Fi</label>
-                                <input type="text" class="form-control" id="nome-wifi">
-                            </div>
-                            <div class="mb-3">
-                                <label for="senha-wifi" class="form-label">Senha do Wi-Fi</label>
-                                <input type="password" class="form-control" id="senha-wifi">
-                            </div>
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="roteador">
-                                <label class="form-check-label" for="roteador">Roteador OK</label>
-                            </div>
-                            <input type="hidden" id="agendamento-id">
-                            <button type="submit" class="btn btn-primary w-100" id="submit-btn">Agendar</button>
-                            <button type="button" class="btn btn-secondary w-100 mt-2 d-none" id="cancel-edit-btn">Cancelar Edição</button>
-                        </form>
+                                <div class="form-section">
+                                    <div class="form-section-title">Detalhes da Instalação</div>
+                                    <div class="mb-3">
+                                        <label for="periodo" class="form-label">Período da Instalação</label>
+                                        <select class="form-select" id="periodo" required>
+                                            <option value="">Selecione...</option>
+                                            <option value="Inicial">Inicial</option>
+                                            <option value="Manhã">Manhã</option>
+                                            <option value="Tarde">Tarde</option>
+                                            <option value="Horário Comercial">Horário Comercial</option>
+                                            <option value="Encaixe">Encaixe</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="observacoes" class="form-label">Observações (opcional)</label>
+                                        <textarea class="form-control" id="observacoes" rows="2"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-section">
+                                    <div class="form-section-title">Configurações de Rede</div>
+                                    <div class="mb-3">
+                                        <label for="login-pppoe" class="form-label">Login PPPoE</label>
+                                        <input type="text" class="form-control" id="login-pppoe">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="senha-pppoe" class="form-label">Senha PPPoE</label>
+                                        <input type="password" class="form-control" id="senha-pppoe">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="nome-wifi" class="form-label">Nome do Wi-Fi</label>
+                                        <input type="text" class="form-control" id="nome-wifi">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="senha-wifi" class="form-label">Senha do Wi-Fi</label>
+                                        <input type="password" class="form-control" id="senha-wifi">
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="roteador">
+                                        <label class="form-check-label" for="roteador">Roteador OK</label>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="agendamento-id">
+                                <button type="submit" class="btn btn-primary w-100" id="submit-btn">Agendar</button>
+                                <button type="button" class="btn btn-secondary w-100 mt-2 d-none" id="cancel-edit-btn">Cancelar Edição</button>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="reserva-form-content">
+                            <form id="reserva-form">
+                                <div class="mb-3">
+                                    <label for="reserva-data" class="form-label">Data da Reserva</label>
+                                    <input type="date" class="form-control" id="reserva-data" required>
+                                    <div id="reserva-data-info" class="form-text"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reserva-cliente" class="form-label">Nome para Reserva</label>
+                                    <input type="text" class="form-control" id="reserva-cliente" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reserva-periodo" class="form-label">Período Desejado</label>
+                                    <select class="form-select" id="reserva-periodo" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Manhã">Manhã</option>
+                                        <option value="Tarde">Tarde</option>
+                                        <option value="Horário Comercial">Horário Comercial</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-outline-primary w-100" id="submit-reserva-btn">Reservar</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
@@ -230,8 +291,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Este dia já possui 3 agendamentos. Deseja solicitar autorização para um agendamento extra?</p>
-                    <p class="text-muted">Máximo de 2 agendamentos extras por dia (total de 5).</p>
+                    <p id="modal-message">Este dia já possui 3 agendamentos. Deseja solicitar autorização para um agendamento extra?</p>
+                    <p class="text-muted" id="modal-limite">Máximo de 2 agendamentos extras por dia (total de 5).</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -273,6 +334,7 @@
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('data').min = today;
             document.getElementById('filter-date').min = today;
+            document.getElementById('reserva-data').min = today;
             
             // Inicializa autenticação
             initAuth();
@@ -316,11 +378,15 @@
             document.getElementById('agendamento-form').addEventListener('submit', handleFormSubmit);
             document.getElementById('cancel-edit-btn').addEventListener('click', cancelEdit);
             
+            // Formulário de reserva
+            document.getElementById('reserva-form').addEventListener('submit', handleReservaSubmit);
+            
             // Filtro de data
             document.getElementById('filter-date').addEventListener('change', filterAgendamentosByDate);
             
             // Data do agendamento - verifica limite
             document.getElementById('data').addEventListener('change', checkAgendamentoLimit);
+            document.getElementById('reserva-data').addEventListener('change', checkReservaLimit);
             
             // Botão para adicionar dia bloqueado
             document.getElementById('add-blocked-day').addEventListener('click', addBlockedDay);
@@ -348,7 +414,8 @@
                 senhaWifi: document.getElementById('senha-wifi').value,
                 roteador: document.getElementById('roteador').checked,
                 createdAt: firebase.database.ServerValue.TIMESTAMP,
-                status: 'active'
+                status: 'active',
+                tipo: 'agendamento'
             };
 
             // Adiciona email do usuário se não for anônimo
@@ -382,6 +449,39 @@
                         showAlert('Erro ao criar agendamento: ' + error.message, 'danger');
                     });
             }
+        }
+
+        function handleReservaSubmit(e) {
+            e.preventDefault();
+            
+            const reservaData = {
+                data: document.getElementById('reserva-data').value,
+                cliente: document.getElementById('reserva-cliente').value,
+                periodo: document.getElementById('reserva-periodo').value,
+                createdAt: firebase.database.ServerValue.TIMESTAMP,
+                status: 'active',
+                tipo: 'reserva'
+            };
+
+            // Adiciona email do usuário se não for anônimo
+            if (currentUser && !currentUser.isAnonymous) {
+                reservaData.createdBy = currentUser.email;
+            }
+
+            // Validação básica
+            if (!reservaData.data || !reservaData.cliente) {
+                showAlert('Preencha todos os campos obrigatórios!', 'danger');
+                return;
+            }
+
+            database.ref('agendamentos').push(reservaData)
+                .then(() => {
+                    showAlert('Reserva realizada com sucesso!', 'success');
+                    document.getElementById('reserva-form').reset();
+                })
+                .catch(error => {
+                    showAlert('Erro ao criar reserva: ' + error.message, 'danger');
+                });
         }
 
         // Carrega agendamentos do Firebase
@@ -444,7 +544,18 @@
         // Cria um card de agendamento
         function createAgendamentoCard(agendamento, id) {
             const card = document.createElement('div');
-            const periodoClass = agendamento.periodo.toLowerCase().replace(' ', '-');
+            let periodoClass = '';
+            let badgeExtra = '';
+            
+            if (agendamento.tipo === 'reserva') {
+                periodoClass = 'reserva';
+                badgeExtra = '<span class="badge badge-reserva ms-1">Reserva</span>';
+            } else {
+                periodoClass = agendamento.periodo.toLowerCase().replace(' ', '-');
+                if (agendamento.roteador) {
+                    badgeExtra = '<span class="badge badge-roteador ms-1">Roteador OK</span>';
+                }
+            }
             
             card.className = `card agendamento-card mb-2 ${periodoClass}`;
             card.innerHTML = `
@@ -452,14 +563,16 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <h6 class="card-title">${agendamento.cliente}</h6>
-                            <p class="card-text mb-1">
-                                <small>${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
-                            </p>
-                            <p class="card-text mb-1"><small>${agendamento.bairro}</small></p>
+                            ${agendamento.tipo === 'agendamento' ? `
+                                <p class="card-text mb-1">
+                                    <small>${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
+                                </p>
+                                <p class="card-text mb-1"><small>${agendamento.bairro}</small></p>
+                            ` : ''}
                         </div>
                         <div class="text-end">
                             <span class="badge bg-primary">${agendamento.periodo}</span>
-                            ${agendamento.roteador ? '<span class="badge badge-roteador ms-1">Roteador OK</span>' : ''}
+                            ${badgeExtra}
                         </div>
                     </div>
                     ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
@@ -547,92 +660,28 @@
             return date.toLocaleDateString('pt-BR', options);
         }
 
-        // Copia agendamento para clipboard no formato para Excel
-        function copyAgendamentoToClipboard(e) {
-            const agendamentoId = e.target.getAttribute('data-id');
-            database.ref('agendamentos/' + agendamentoId).once('value')
-                .then(snapshot => {
-                    const agendamento = snapshot.val();
-                    const textToCopy = [
-                        agendamento.data,
-                        agendamento.cliente,
-                        agendamento.endereco,
-                        agendamento.numero,
-                        agendamento.complemento || '',
-                        agendamento.bairro,
-                        agendamento.periodo,
-                        agendamento.observacoes || '',
-                        agendamento.loginPPPoE || '',
-                        agendamento.senhaPPPoE || '',
-                        agendamento.nomeWifi || '',
-                        agendamento.senhaWifi || '',
-                        agendamento.roteador ? 'Sim' : 'Não'
-                    ].join('\t'); // Tab como separador para Excel
-                    
-                    navigator.clipboard.writeText(textToCopy)
-                        .then(() => showAlert('Dados copiados para a área de transferência!', 'success'))
-                        .catch(() => showAlert('Erro ao copiar dados.', 'danger'));
-                });
+        // Função para verificar se é fim de semana
+        function isWeekend(dateString) {
+            const date = new Date(dateString);
+            const day = date.getDay(); // 0 = Domingo, 6 = Sábado
+            return day === 0 || day === 6;
         }
 
-        // Preenche formulário para edição
-        function editAgendamento(e) {
-            const agendamentoId = e.target.getAttribute('data-id');
-            
-            database.ref('agendamentos/' + agendamentoId).once('value')
-                .then(snapshot => {
-                    if (!snapshot.exists()) {
-                        showAlert('Agendamento não encontrado!', 'danger');
-                        return;
-                    }
-
-                    const agendamento = snapshot.val();
-                    
-                    // Preenche formulário
-                    document.getElementById('data').value = agendamento.data;
-                    document.getElementById('cliente').value = agendamento.cliente;
-                    document.getElementById('endereco').value = agendamento.endereco;
-                    document.getElementById('numero').value = agendamento.numero;
-                    document.getElementById('complemento').value = agendamento.complemento || '';
-                    document.getElementById('bairro').value = agendamento.bairro;
-                    document.getElementById('periodo').value = agendamento.periodo;
-                    document.getElementById('observacoes').value = agendamento.observacoes || '';
-                    document.getElementById('login-pppoe').value = agendamento.loginPPPoE || '';
-                    document.getElementById('senha-pppoe').value = agendamento.senhaPPPoE || '';
-                    document.getElementById('nome-wifi').value = agendamento.nomeWifi || '';
-                    document.getElementById('senha-wifi').value = agendamento.senhaWifi || '';
-                    document.getElementById('roteador').checked = agendamento.roteador || false;
-
-                    // Ativa modo edição
-                    editingAgendamentoId = agendamentoId;
-                    document.getElementById('submit-btn').textContent = 'Atualizar';
-                    document.getElementById('cancel-edit-btn').classList.remove('d-none');
-                    
-                    // Rola para o formulário
-                    document.getElementById('agendamento-form').scrollIntoView({ behavior: 'smooth' });
-                })
-                .catch(error => {
-                    showAlert('Erro ao carregar agendamento: ' + error.message, 'danger');
-                });
+        // Função para verificar se é sábado
+        function isSaturday(dateString) {
+            const date = new Date(dateString);
+            return date.getDay() === 6;
         }
 
-        // Cancela a edição
-        function cancelEdit() {
-            resetForm();
-            editingAgendamentoId = null;
-            document.getElementById('submit-btn').textContent = 'Agendar';
-            document.getElementById('cancel-edit-btn').classList.add('d-none');
+        // Função para verificar se é domingo
+        function isSunday(dateString) {
+            const date = new Date(dateString);
+            return date.getDay() === 0;
         }
 
-        // Exclui um agendamento
-        function deleteAgendamento(e) {
-            if (!confirm('Tem certeza que deseja excluir este agendamento?')) return;
-            
-            const agendamentoId = e.target.getAttribute('data-id');
-            
-            database.ref('agendamentos/' + agendamentoId).remove()
-                .then(() => showAlert('Agendamento excluído com sucesso!', 'success'))
-                .catch(error => showAlert('Erro ao excluir agendamento: ' + error.message, 'danger'));
+        // Função para verificar se é dia útil (segunda a sexta)
+        function isWeekday(dateString) {
+            return !isWeekend(dateString);
         }
 
         // Verifica limite de agendamentos por dia
@@ -642,36 +691,159 @@
             
             if (!date) return;
             
-            database.ref('agendamentos').orderByChild('data').equalTo(date).once('value')
-                .then(snapshot => {
-                    const count = snapshot.numChildren();
-                    const infoElement = document.getElementById('data-info');
-                    const submitBtn = document.getElementById('submit-btn');
-                    
-                    if (count >= 5) {
-                        infoElement.textContent = 'Este dia já atingiu o limite máximo de 5 agendamentos. Não é possível agendar mais.';
-                        infoElement.className = 'form-text text-danger';
-                        submitBtn.disabled = true;
-                        return;
-                    } else if (count >= 3) {
-                        infoElement.textContent = 'Este dia já possui 3 agendamentos. Agendamentos extras requerem autorização.';
-                        infoElement.className = 'form-text text-warning';
-                        submitBtn.disabled = false;
+            // Verifica se é domingo
+            if (isSunday(date)) {
+                document.getElementById('data-info').textContent = 'Não é possível agendar aos domingos.';
+                document.getElementById('data-info').className = 'form-text text-danger';
+                document.getElementById('submit-btn').disabled = true;
+                return;
+            }
+            
+            // Verifica se o dia está bloqueado
+            database.ref('blockedDays/' + date).once('value').then(snapshot => {
+                if (snapshot.exists()) {
+                    const reason = snapshot.val().reason || '';
+                    document.getElementById('data-info').textContent = `Dia bloqueado para agendamentos. ${reason}`;
+                    document.getElementById('data-info').className = 'form-text text-danger';
+                    document.getElementById('submit-btn').disabled = true;
+                    return;
+                }
+                
+                // Se não for domingo e não estiver bloqueado, verifica os agendamentos
+                database.ref('agendamentos').orderByChild('data').equalTo(date).once('value')
+                    .then(snapshot => {
+                        const count = snapshot.numChildren();
+                        const infoElement = document.getElementById('data-info');
+                        const submitBtn = document.getElementById('submit-btn');
                         
-                        currentExtraAgendamento = {
-                            data: date,
-                            currentCount: count
-                        };
+                        // Define os limites baseados no dia da semana
+                        let limiteAviso = 3;
+                        let limiteMaximo = 5;
                         
-                        const modal = new bootstrap.Modal(document.getElementById('extraModal'));
-                        modal.show();
-                    } else {
-                        infoElement.textContent = `Este dia possui ${count} agendamento(s).`;
-                        infoElement.className = 'form-text text-muted';
-                        submitBtn.disabled = false;
-                        currentExtraAgendamento = null;
-                    }
-                });
+                        if (isSaturday(date)) {
+                            limiteAviso = 1;
+                            limiteMaximo = 3;
+                        }
+                        
+                        if (count >= limiteMaximo) {
+                            infoElement.textContent = `Este dia já atingiu o limite máximo de ${limiteMaximo} agendamentos. Não é possível agendar mais.`;
+                            infoElement.className = 'form-text text-danger';
+                            submitBtn.disabled = true;
+                            return;
+                        } else if (count >= limiteAviso) {
+                            infoElement.textContent = `Este dia já possui ${count} agendamento(s). Agendamentos extras requerem autorização.`;
+                            infoElement.className = 'form-text text-warning';
+                            submitBtn.disabled = false;
+                            
+                            currentExtraAgendamento = {
+                                data: date,
+                                currentCount: count,
+                                isSaturday: isSaturday(date)
+                            };
+                            
+                            // Atualiza mensagem do modal
+                            const modalMessage = document.getElementById('modal-message');
+                            const modalLimite = document.getElementById('modal-limite');
+                            
+                            if (isSaturday(date)) {
+                                modalMessage.textContent = 'Este sábado já possui 1 agendamento. Deseja solicitar autorização para um agendamento extra?';
+                                modalLimite.textContent = 'Máximo de 2 agendamentos extras por sábado (total de 3).';
+                            } else {
+                                modalMessage.textContent = 'Este dia já possui 3 agendamentos. Deseja solicitar autorização para um agendamento extra?';
+                                modalLimite.textContent = 'Máximo de 2 agendamentos extras por dia (total de 5).';
+                            }
+                            
+                            const modal = new bootstrap.Modal(document.getElementById('extraModal'));
+                            modal.show();
+                        } else {
+                            infoElement.textContent = `Este dia possui ${count} agendamento(s).`;
+                            infoElement.className = 'form-text text-muted';
+                            submitBtn.disabled = false;
+                            currentExtraAgendamento = null;
+                        }
+                    });
+            });
+        }
+
+        // Verifica limite de reservas por dia
+        function checkReservaLimit() {
+            const dateInput = document.getElementById('reserva-data');
+            const date = dateInput.value;
+            
+            if (!date) return;
+            
+            // Verifica se é domingo
+            if (isSunday(date)) {
+                document.getElementById('reserva-data-info').textContent = 'Não é possível reservar aos domingos.';
+                document.getElementById('reserva-data-info').className = 'form-text text-danger';
+                document.getElementById('submit-reserva-btn').disabled = true;
+                return;
+            }
+            
+            // Verifica se o dia está bloqueado
+            database.ref('blockedDays/' + date).once('value').then(snapshot => {
+                if (snapshot.exists()) {
+                    const reason = snapshot.val().reason || '';
+                    document.getElementById('reserva-data-info').textContent = `Dia bloqueado para reservas. ${reason}`;
+                    document.getElementById('reserva-data-info').className = 'form-text text-danger';
+                    document.getElementById('submit-reserva-btn').disabled = true;
+                    return;
+                }
+                
+                // Se não for domingo e não estiver bloqueado, verifica os agendamentos
+                database.ref('agendamentos').orderByChild('data').equalTo(date).once('value')
+                    .then(snapshot => {
+                        const count = snapshot.numChildren();
+                        const infoElement = document.getElementById('reserva-data-info');
+                        const submitBtn = document.getElementById('submit-reserva-btn');
+                        
+                        // Define os limites baseados no dia da semana
+                        let limiteAviso = 3;
+                        let limiteMaximo = 5;
+                        
+                        if (isSaturday(date)) {
+                            limiteAviso = 1;
+                            limiteMaximo = 3;
+                        }
+                        
+                        if (count >= limiteMaximo) {
+                            infoElement.textContent = `Este dia já atingiu o limite máximo de ${limiteMaximo} agendamentos. Não é possível reservar mais.`;
+                            infoElement.className = 'form-text text-danger';
+                            submitBtn.disabled = true;
+                            return;
+                        } else if (count >= limiteAviso) {
+                            infoElement.textContent = `Este dia já possui ${count} agendamento(s). Reservas extras requerem autorização.`;
+                            infoElement.className = 'form-text text-warning';
+                            submitBtn.disabled = false;
+                            
+                            currentExtraAgendamento = {
+                                data: date,
+                                currentCount: count,
+                                isSaturday: isSaturday(date)
+                            };
+                            
+                            // Atualiza mensagem do modal
+                            const modalMessage = document.getElementById('modal-message');
+                            const modalLimite = document.getElementById('modal-limite');
+                            
+                            if (isSaturday(date)) {
+                                modalMessage.textContent = 'Este sábado já possui 1 agendamento. Deseja solicitar autorização para uma reserva extra?';
+                                modalLimite.textContent = 'Máximo de 2 reservas extras por sábado (total de 3).';
+                            } else {
+                                modalMessage.textContent = 'Este dia já possui 3 agendamentos. Deseja solicitar autorização para uma reserva extra?';
+                                modalLimite.textContent = 'Máximo de 2 reservas extras por dia (total de 5).';
+                            }
+                            
+                            const modal = new bootstrap.Modal(document.getElementById('extraModal'));
+                            modal.show();
+                        } else {
+                            infoElement.textContent = `Este dia possui ${count} agendamento(s).`;
+                            infoElement.className = 'form-text text-muted';
+                            submitBtn.disabled = false;
+                            currentExtraAgendamento = null;
+                        }
+                    });
+            });
         }
 
         // Solicita autorização para agendamento extra
@@ -679,7 +851,15 @@
             const modal = bootstrap.Modal.getInstance(document.getElementById('extraModal'));
             modal.hide();
             
-            showAlert('Agendamento extra criado com sucesso!', 'success');
+            if (currentExtraAgendamento) {
+                const limiteMaximo = currentExtraAgendamento.isSaturday ? 3 : 5;
+                const message = currentExtraAgendamento.isSaturday ? 
+                    'Este sábado já possui 1 agendamento. Máximo de 3 agendamentos permitidos.' :
+                    'Este dia já possui 3 agendamentos. Máximo de 5 agendamentos permitidos.';
+                
+                showAlert(message, 'info');
+            }
+            
             currentExtraAgendamento = null;
         }
 
@@ -738,6 +918,104 @@
             database.ref('blockedDays/' + date).remove()
                 .then(() => showAlert('Dia desbloqueado com sucesso!', 'success'))
                 .catch(error => showAlert('Erro ao desbloquear dia: ' + error.message, 'danger'));
+        }
+
+        // Copia agendamento para clipboard no formato para Excel
+        function copyAgendamentoToClipboard(e) {
+            const agendamentoId = e.target.getAttribute('data-id');
+            database.ref('agendamentos/' + agendamentoId).once('value')
+                .then(snapshot => {
+                    const agendamento = snapshot.val();
+                    const textToCopy = [
+                        agendamento.data,
+                        agendamento.cliente,
+                        agendamento.tipo === 'agendamento' ? agendamento.endereco : 'RESERVA',
+                        agendamento.tipo === 'agendamento' ? agendamento.numero : '',
+                        agendamento.tipo === 'agendamento' ? (agendamento.complemento || '') : '',
+                        agendamento.tipo === 'agendamento' ? agendamento.bairro : '',
+                        agendamento.periodo,
+                        agendamento.observacoes || '',
+                        agendamento.tipo === 'agendamento' ? (agendamento.loginPPPoE || '') : '',
+                        agendamento.tipo === 'agendamento' ? (agendamento.senhaPPPoE || '') : '',
+                        agendamento.tipo === 'agendamento' ? (agendamento.nomeWifi || '') : '',
+                        agendamento.tipo === 'agendamento' ? (agendamento.senhaWifi || '') : '',
+                        agendamento.tipo === 'agendamento' ? (agendamento.roteador ? 'Sim' : 'Não') : ''
+                    ].join('\t'); // Tab como separador para Excel
+                    
+                    navigator.clipboard.writeText(textToCopy)
+                        .then(() => showAlert('Dados copiados para a área de transferência!', 'success'))
+                        .catch(() => showAlert('Erro ao copiar dados.', 'danger'));
+                });
+        }
+
+        // Preenche formulário para edição
+        function editAgendamento(e) {
+            const agendamentoId = e.target.getAttribute('data-id');
+            
+            database.ref('agendamentos/' + agendamentoId).once('value')
+                .then(snapshot => {
+                    if (!snapshot.exists()) {
+                        showAlert('Agendamento não encontrado!', 'danger');
+                        return;
+                    }
+
+                    const agendamento = snapshot.val();
+                    
+                    // Verifica se é reserva ou agendamento completo
+                    if (agendamento.tipo === 'reserva') {
+                        // Preenche formulário de reserva
+                        document.getElementById('reserva-tab').click();
+                        document.getElementById('reserva-data').value = agendamento.data;
+                        document.getElementById('reserva-cliente').value = agendamento.cliente;
+                        document.getElementById('reserva-periodo').value = agendamento.periodo;
+                    } else {
+                        // Preenche formulário de agendamento completo
+                        document.getElementById('agendamento-tab').click();
+                        document.getElementById('data').value = agendamento.data;
+                        document.getElementById('cliente').value = agendamento.cliente;
+                        document.getElementById('endereco').value = agendamento.endereco;
+                        document.getElementById('numero').value = agendamento.numero;
+                        document.getElementById('complemento').value = agendamento.complemento || '';
+                        document.getElementById('bairro').value = agendamento.bairro;
+                        document.getElementById('periodo').value = agendamento.periodo;
+                        document.getElementById('observacoes').value = agendamento.observacoes || '';
+                        document.getElementById('login-pppoe').value = agendamento.loginPPPoE || '';
+                        document.getElementById('senha-pppoe').value = agendamento.senhaPPPoE || '';
+                        document.getElementById('nome-wifi').value = agendamento.nomeWifi || '';
+                        document.getElementById('senha-wifi').value = agendamento.senhaWifi || '';
+                        document.getElementById('roteador').checked = agendamento.roteador || false;
+                    }
+
+                    // Ativa modo edição
+                    editingAgendamentoId = agendamentoId;
+                    document.getElementById('submit-btn').textContent = 'Atualizar';
+                    document.getElementById('cancel-edit-btn').classList.remove('d-none');
+                    
+                    // Rola para o formulário
+                    document.getElementById('agendamento-form').scrollIntoView({ behavior: 'smooth' });
+                })
+                .catch(error => {
+                    showAlert('Erro ao carregar agendamento: ' + error.message, 'danger');
+                });
+        }
+
+        // Cancela a edição
+        function cancelEdit() {
+            resetForm();
+            editingAgendamentoId = null;
+            document.getElementById('submit-btn').textContent = 'Agendar';
+            document.getElementById('cancel-edit-btn').classList.add('d-none');
+        }
+
+        // Exclui um agendamento
+        function deleteAgendamento(e) {
+            if (!confirm('Tem certeza que deseja excluir este agendamento?')) return;
+            
+            const agendamentoId = e.target.getAttribute('data-id');
+            
+            database.ref('agendamentos/' + agendamentoId).remove()
+                .then(() => showAlert('Agendamento excluído com sucesso!', 'success'))
+                .catch(error => showAlert('Erro ao excluir agendamento: ' + error.message, 'danger'));
         }
 
         // Reseta o formulário
