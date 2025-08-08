@@ -585,13 +585,12 @@
         return;
     }
 
-    // Agrupa por data de exibição (já ajustada)
+    // Agrupa por data de exibição
     const agendamentosPorData = agendamentos.reduce((acc, agendamento) => {
-        const dataExibicao = agendamento.data; // Já vem ajustada do filtro
-        if (!acc[dataExibicao]) {
-            acc[dataExibicao] = [];
+        if (!acc[agendamento.data]) {
+            acc[agendamento.data] = [];
         }
-        acc[dataExibicao].push(agendamento);
+        acc[agendamento.data].push(agendamento);
         return acc;
     }, {});
 
@@ -601,11 +600,10 @@
     sortedDates.forEach(dataExibicao => {
         const agendamentosDoDia = agendamentosPorData[dataExibicao];
         
-        // Cabeçalho com a data de exibição (formato longo)
+        // Cabeçalho com data formatada
         const dateHeader = document.createElement('div');
         dateHeader.className = 'd-flex justify-content-between align-items-center mb-3';
         
-        // Formata a data para exibição (ex: "sábado, 9 de agosto de 2025")
         const dataObj = new Date(dataExibicao);
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const dataFormatada = dataObj.toLocaleDateString('pt-BR', options);
@@ -617,62 +615,46 @@
             </span>
         `;
         container.appendChild(dateHeader);
-                
-                // Ordena agendamentos por período (manhã > tarde > encaixe)
-                dateAgendamentos.sort((a, b) => {
-                    const order = { 'Inicial':1, 'Manhã': 2, 'Tarde': 3, 'Horário Comercial': 4,'Encaixe': 3 };
-                    return order[a.periodo] - order[b.periodo];
-                });
-                
-                // Cria cards para cada agendamento
-                dateAgendamentos.forEach(agendamento => {
-                    const card = document.createElement('div');
-                    card.className = `card agendamento-card mb-2 ${agendamento.periodo.toLowerCase()}`;
-                    card.innerHTML = `
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="card-title">${agendamento.cliente}</h6>
-                                    <p class="card-text mb-1">
-                                        <small>${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
-                                    </p>
-                                    <p class="card-text mb-1"><small>${agendamento.bairro}</small></p>
-                                </div>
-                                <div class="text-end">
-                                    <span class="badge bg-primary">${agendamento.periodo}</span>
-                                    ${agendamento.roteador ? '<span class="badge badge-roteador ms-1">Roteador OK</span>' : ''}
-                                </div>
-                            </div>
-                            ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
-                            <div class="d-flex justify-content-between mt-2">
-                                <small class="text-muted">Agendado por: ${agendamento.createdBy}</small>
-                                <div>
-                                    <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${agendamento.id}"></i>
-                                    ${isSupervisorOrAdmin(currentUser) || agendamento.createdBy === currentUser.email ? `
-                                        <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${agendamento.id}"></i>
-                                        <i class="bi bi-trash delete-btn" title="Excluir" data-id="${agendamento.id}"></i>
-                                    ` : ''}
-                                </div>
-                            </div>
+
+        // Renderiza cada agendamento
+        agendamentosDoDia.forEach(agendamento => {
+            const card = document.createElement('div');
+            card.className = `card agendamento-card mb-2 ${agendamento.periodo.toLowerCase()}`;
+            card.innerHTML = `
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title">${agendamento.cliente}</h6>
+                            <p class="card-text mb-1">
+                                <small>${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
+                            </p>
+                            <p class="card-text mb-1"><small>${agendamento.bairro}</small></p>
                         </div>
-                    `;
-                    container.appendChild(card);
-                });
-            });
-            
-            // Adiciona listeners para os botões de ação
-            document.querySelectorAll('.copy-btn').forEach(btn => {
-                btn.addEventListener('click', copyAgendamentoToClipboard);
-            });
-            
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', editAgendamento);
-            });
-            
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', deleteAgendamento);
-            });
-        }
+                        <div class="text-end">
+                            <span class="badge bg-primary">${agendamento.periodo}</span>
+                            ${agendamento.roteador ? '<span class="badge badge-roteador ms-1">Roteador OK</span>' : ''}
+                        </div>
+                    </div>
+                    ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
+                    <div class="d-flex justify-content-between mt-2">
+                        <small class="text-muted">Agendado por: ${agendamento.createdBy}</small>
+                        <div>
+                            <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${agendamento.id}"></i>
+                            ${isSupervisorOrAdmin(currentUser) || agendamento.createdBy === currentUser.email ? `
+                                <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${agendamento.id}"></i>
+                                <i class="bi bi-trash delete-btn" title="Excluir" data-id="${agendamento.id}"></i>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    });
+
+    // Adiciona listeners para os botões
+    addActionButtonListeners();
+}
 
         // Copia agendamento para clipboard no formato para Excel
         function copyAgendamentoToClipboard(e) {
@@ -942,6 +924,7 @@
     </script>
 </body>
 </html>
+
 
 
 
