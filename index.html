@@ -124,6 +124,9 @@
         .nav-tabs .nav-link {
             cursor: pointer;
         }
+        .tab-content > .tab-pane {
+            padding: 15px;
+        }
     </style>
 </head>
 <body>
@@ -140,116 +143,118 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-header bg-primary text-white">
-                        <ul class="nav nav-tabs card-header-tabs">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="agendamento-tab" data-bs-toggle="tab" href="#agendamento-form-content">Agendamento</a>
+                        <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="agendamento-tab" data-bs-toggle="tab" data-bs-target="#agendamento-tab-pane" type="button" role="tab" aria-controls="agendamento-tab-pane" aria-selected="true">Agendamento</button>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="reserva-tab" data-bs-toggle="tab" href="#reserva-form-content">Reserva</a>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="reserva-tab" data-bs-toggle="tab" data-bs-target="#reserva-tab-pane" type="button" role="tab" aria-controls="reserva-tab-pane" aria-selected="false">Reserva</button>
                             </li>
                         </ul>
                     </div>
-                    <div class="card-body tab-content">
-                        <div class="tab-pane fade show active" id="agendamento-form-content">
-                            <form id="agendamento-form">
-                                <div class="mb-3">
-                                    <label for="data" class="form-label">Data do Agendamento</label>
-                                    <input type="date" class="form-control" id="data" required>
-                                    <div id="data-info" class="form-text"></div>
-                                </div>
-                                <div class="form-section">
-                                    <div class="form-section-title">Informações do Cliente</div>
+                    <div class="card-body">
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="agendamento-tab-pane" role="tabpanel" aria-labelledby="agendamento-tab" tabindex="0">
+                                <form id="agendamento-form">
                                     <div class="mb-3">
-                                        <label for="cliente" class="form-label">Nome do Cliente</label>
-                                        <input type="text" class="form-control" id="cliente" required>
+                                        <label for="data" class="form-label">Data do Agendamento</label>
+                                        <input type="date" class="form-control" id="data" required>
+                                        <div id="data-info" class="form-text"></div>
                                     </div>
-                                    <div class="row mb-3">
-                                        <div class="col-md-8">
-                                            <label for="endereco" class="form-label">Endereço</label>
-                                            <input type="text" class="form-control" id="endereco" required>
+                                    <div class="form-section">
+                                        <div class="form-section-title">Informações do Cliente</div>
+                                        <div class="mb-3">
+                                            <label for="cliente" class="form-label">Nome do Cliente</label>
+                                            <input type="text" class="form-control" id="cliente" required>
                                         </div>
-                                        <div class="col-md-4">
-                                            <label for="numero" class="form-label">Número</label>
-                                            <input type="text" class="form-control" id="numero" required>
+                                        <div class="row mb-3">
+                                            <div class="col-md-8">
+                                                <label for="endereco" class="form-label">Endereço</label>
+                                                <input type="text" class="form-control" id="endereco" required>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="numero" class="form-label">Número</label>
+                                                <input type="text" class="form-control" id="numero" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="complemento" class="form-label">Complemento (opcional)</label>
+                                            <input type="text" class="form-control" id="complemento">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bairro" class="form-label">Bairro</label>
+                                            <input type="text" class="form-control" id="bairro" required>
                                         </div>
                                     </div>
+                                    <div class="form-section">
+                                        <div class="form-section-title">Detalhes da Instalação</div>
+                                        <div class="mb-3">
+                                            <label for="periodo" class="form-label">Período da Instalação</label>
+                                            <select class="form-select" id="periodo" required>
+                                                <option value="">Selecione...</option>
+                                                <option value="Inicial">Inicial</option>
+                                                <option value="Manhã">Manhã</option>
+                                                <option value="Tarde">Tarde</option>
+                                                <option value="Horário Comercial">Horário Comercial</option>
+                                                <option value="Encaixe">Encaixe</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="observacoes" class="form-label">Observações (opcional)</label>
+                                            <textarea class="form-control" id="observacoes" rows="2"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-section">
+                                        <div class="form-section-title">Configurações de Rede</div>
+                                        <div class="mb-3">
+                                            <label for="login-pppoe" class="form-label">Login PPPoE</label>
+                                            <input type="text" class="form-control" id="login-pppoe">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="senha-pppoe" class="form-label">Senha PPPoE</label>
+                                            <input type="password" class="form-control" id="senha-pppoe">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="nome-wifi" class="form-label">Nome do Wi-Fi</label>
+                                            <input type="text" class="form-control" id="nome-wifi">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="senha-wifi" class="form-label">Senha do Wi-Fi</label>
+                                            <input type="password" class="form-control" id="senha-wifi">
+                                        </div>
+                                        <div class="mb-3 form-check">
+                                            <input type="checkbox" class="form-check-input" id="roteador">
+                                            <label class="form-check-label" for="roteador">Roteador OK</label>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="agendamento-id">
+                                    <button type="submit" class="btn btn-primary w-100" id="submit-btn">Agendar</button>
+                                    <button type="button" class="btn btn-secondary w-100 mt-2 d-none" id="cancel-edit-btn">Cancelar Edição</button>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="reserva-tab-pane" role="tabpanel" aria-labelledby="reserva-tab" tabindex="0">
+                                <form id="reserva-form">
                                     <div class="mb-3">
-                                        <label for="complemento" class="form-label">Complemento (opcional)</label>
-                                        <input type="text" class="form-control" id="complemento">
+                                        <label for="reserva-data" class="form-label">Data da Reserva</label>
+                                        <input type="date" class="form-control" id="reserva-data" required>
+                                        <div id="reserva-data-info" class="form-text"></div>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="bairro" class="form-label">Bairro</label>
-                                        <input type="text" class="form-control" id="bairro" required>
+                                        <label for="reserva-cliente" class="form-label">Nome para Reserva</label>
+                                        <input type="text" class="form-control" id="reserva-cliente" required>
                                     </div>
-                                </div>
-                                <div class="form-section">
-                                    <div class="form-section-title">Detalhes da Instalação</div>
                                     <div class="mb-3">
-                                        <label for="periodo" class="form-label">Período da Instalação</label>
-                                        <select class="form-select" id="periodo" required>
+                                        <label for="reserva-periodo" class="form-label">Período Desejado</label>
+                                        <select class="form-select" id="reserva-periodo" required>
                                             <option value="">Selecione...</option>
-                                            <option value="Inicial">Inicial</option>
                                             <option value="Manhã">Manhã</option>
                                             <option value="Tarde">Tarde</option>
                                             <option value="Horário Comercial">Horário Comercial</option>
-                                            <option value="Encaixe">Encaixe</option>
                                         </select>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="observacoes" class="form-label">Observações (opcional)</label>
-                                        <textarea class="form-control" id="observacoes" rows="2"></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-section">
-                                    <div class="form-section-title">Configurações de Rede</div>
-                                    <div class="mb-3">
-                                        <label for="login-pppoe" class="form-label">Login PPPoE</label>
-                                        <input type="text" class="form-control" id="login-pppoe">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="senha-pppoe" class="form-label">Senha PPPoE</label>
-                                        <input type="password" class="form-control" id="senha-pppoe">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="nome-wifi" class="form-label">Nome do Wi-Fi</label>
-                                        <input type="text" class="form-control" id="nome-wifi">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="senha-wifi" class="form-label">Senha do Wi-Fi</label>
-                                        <input type="password" class="form-control" id="senha-wifi">
-                                    </div>
-                                    <div class="mb-3 form-check">
-                                        <input type="checkbox" class="form-check-input" id="roteador">
-                                        <label class="form-check-label" for="roteador">Roteador OK</label>
-                                    </div>
-                                </div>
-                                <input type="hidden" id="agendamento-id">
-                                <button type="submit" class="btn btn-primary w-100" id="submit-btn">Agendar</button>
-                                <button type="button" class="btn btn-secondary w-100 mt-2 d-none" id="cancel-edit-btn">Cancelar Edição</button>
-                            </form>
-                        </div>
-                        <div class="tab-pane fade" id="reserva-form-content">
-                            <form id="reserva-form">
-                                <div class="mb-3">
-                                    <label for="reserva-data" class="form-label">Data da Reserva</label>
-                                    <input type="date" class="form-control" id="reserva-data" required>
-                                    <div id="reserva-data-info" class="form-text"></div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="reserva-cliente" class="form-label">Nome para Reserva</label>
-                                    <input type="text" class="form-control" id="reserva-cliente" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="reserva-periodo" class="form-label">Período Desejado</label>
-                                    <select class="form-select" id="reserva-periodo" required>
-                                        <option value="">Selecione...</option>
-                                        <option value="Manhã">Manhã</option>
-                                        <option value="Tarde">Tarde</option>
-                                        <option value="Horário Comercial">Horário Comercial</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-outline-primary w-100" id="submit-reserva-btn">Reservar</button>
-                            </form>
+                                    <button type="submit" class="btn btn-outline-primary w-100" id="submit-reserva-btn">Reservar</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
