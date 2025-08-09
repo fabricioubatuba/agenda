@@ -127,6 +127,22 @@
         .tab-content > .tab-pane {
             padding: 15px;
         }
+        /* CORES PERSONALIZADAS DAS ABAS */
+        .nav-tabs .nav-link:not(.active) {  /* Apenas quando NÃO está selecionado */
+            color: white !important;         /* Texto branco */
+            opacity: 0.8;                   /* Leve transparência */
+        }
+
+        .nav-tabs .nav-link.active {        /* Quando SELECIONADO */
+            color: black !important;        /* Texto preto (como já está) */
+            background-color: #ffc107;      /* Fundo amarelo (mantém o atual) */
+        }
+
+        /* Efeito ao passar o mouse */
+        .nav-tabs .nav-link:hover {
+            color: white !important;
+            opacity: 1;                    /* Remove transparência no hover */
+        }
     </style>
 </head>
 <body>
@@ -1053,4 +1069,5 @@
     </script>
 </body>
 </html>
+
 
