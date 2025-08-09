@@ -143,17 +143,30 @@
             color: white !important;
             opacity: 1;                    /* Remove transparência no hover */
         }
+        /* Ajuste para a nova estrutura do cabeçalho */
+.header-container {
+    display: flex;
+    flex-direction: column;  /* Empilha os itens verticalmente */
+    align-items: center;     /* Centraliza horizontalmente */
+}
+
+.logo {
+    height: 50px; 
+    margin-right: 0;         /* Remove a margem lateral anterior */
+    margin-bottom: 15px;     /* Espaço entre a logo e o título */
+}
     </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <div class="header-container">
-            <img src="https://sejafibra.net/wp-content/uploads/2023/06/logonovofibra.png" alt="Seja Fibra" class="logo">
-            <div class="header-title">
-                <h1>Agendamento de Instalações</h1>
-                <div id="user-info" class="text-end mb-3"></div>
-            </div>
-        </div>
+    <div class="header-container text-center"> <!-- Adicionei text-center -->
+    <div class="mb-3"> <!-- Container da logo (nova div) -->
+        <img src="https://sejafibra.net/wp-content/uploads/2023/06/logonovofibra.png" alt="Seja Fibra" class="logo">
+    </div>
+    <div class="header-title">
+        <h1>Agendamento de Instalações</h1>
+        <div id="user-info" class="text-end mb-3"></div>
+    </div>
+</div>
 
         <div class="row">
             <div class="col-md-4">
@@ -1069,5 +1082,6 @@
     </script>
 </body>
 </html>
+
 
 
