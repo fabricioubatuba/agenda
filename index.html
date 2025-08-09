@@ -186,19 +186,49 @@
     <div class="container mt-4">
         <!-- CABEÇALHO COM LOGO ACIMA -->
         <div class="header-container text-center">
-            <div class="mb-3">
-                <img src="https://sejafibra.net/wp-content/uploads/2023/06/logonovofibra.png" alt="Seja Fibra" class="logo">
-            </div>
-            <div class="header-title">
-                <h1>Agenda de Instalações</h1>
-                <div id="user-info" class="text-end mb-3"></div>
-                <!-- Botão de Logout (inicialmente escondido) -->
+    <div class="mb-3">
+        <img src="https://sejafibra.net/wp-content/uploads/2023/06/logonovofibra.png" alt="Seja Fibra" class="logo">
+    </div>
+    <div class="header-title">
+        <h1>Agenda de Instalações</h1>
+        <div class="d-flex align-items-center justify-content-center gap-3">
+            <div id="user-info" class="mb-3"></div>
+            <!-- Botão de Login (visível quando não logado) -->
+            <button id="login-btn" class="btn btn-sm btn-success d-none">
+                <i class="bi bi-box-arrow-in-right"></i> Login
+            </button>
+            <!-- Botão de Logout (visível quando logado) -->
             <button id="logout-btn" class="btn btn-sm btn-outline-danger d-none">
                 <i class="bi bi-box-arrow-right"></i> Sair
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- Adicione este modal no final do body (antes dos scripts) -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Acesso Restrito</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="login-form">
+                    <div class="mb-3">
+                        <label for="login-email" class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="login-email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="login-password" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="login-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                </form>
             </div>
         </div>
-
+    </div>
+</div>
         <!-- CONTEÚDO PRINCIPAL (FORMULÁRIOS + AGENDAMENTOS) -->
         <div class="row main-content-row">
             <div class="col-md-11">
@@ -417,37 +447,57 @@
 
         // Configura a autenticação
         function initAuth() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    currentUser = user;
-                    updateUIForUser(user);
-                    loadAgendamentos();
-                    loadBlockedDays();
-                } else {
-                    // Tenta fazer login automaticamente
-                    auth.signInAnonymously()
-                        .catch(error => {
-                            console.error("Erro de autenticação:", error);
-                            showAlert('Erro ao conectar com o servidor', 'danger');
-                        });
-                }
-            });
+    auth.onAuthStateChanged(user => {
+        if (user && user.emailVerified) {
+            currentUser = user;
+            updateUIForUser(user);
+            loadAgendamentos();
+            loadBlockedDays();
+        } else {
+            updateUIForUser(null);
+            showAlert('Acesso restrito. Faça login para continuar.', 'warning');
         }
+    });
+}
 
         // Atualiza a UI baseado no usuário logado
         function updateUIForUser(user) {
     const userInfo = document.getElementById('user-info');
+    const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
     
-    if (user.isAnonymous) {
-        userInfo.textContent = "Logado como: Visitante";
+    if (!user) {
+        userInfo.innerHTML = '<span class="text-danger">Acesso não autenticado</span>';
+        loginBtn.classList.remove('d-none');
         logoutBtn.classList.add('d-none');
-    } else {
-        userInfo.textContent = `Logado como: ${user.email || 'Usuário'}`;
-        logoutBtn.classList.remove('d-none');
+        disableAppFunctions();
+        return;
     }
+    
+    if (!checkAuthorization(user.email)) {
+        userInfo.innerHTML = '<span class="text-danger">Usuário não autorizado</span>';
+        loginBtn.classList.add('d-none');
+        logoutBtn.classList.remove('d-none');
+        disableAppFunctions();
+        auth.signOut();
+        return;
+    }
+    
+    userInfo.textContent = `Logado como: ${user.email}`;
+    loginBtn.classList.add('d-none');
+    logoutBtn.classList.remove('d-none');
+    enableAppFunctions();
 }
-        
+        // Funções para controlar o acesso
+function disableAppFunctions() {
+    document.querySelectorAll('#agendamento-form input, #agendamento-form select, #agendamento-form button, #reserva-form input, #reserva-form select, #reserva-form button, .edit-btn, .delete-btn, #add-blocked-day')
+        .forEach(el => el.disabled = true);
+}
+
+function enableAppFunctions() {
+    document.querySelectorAll('#agendamento-form input, #agendamento-form select, #agendamento-form button, #reserva-form input, #reserva-form select, #reserva-form button, .edit-btn, .delete-btn, #add-blocked-day')
+        .forEach(el => el.disabled = false);
+}
 
         // Configura os event listeners
         function setupEventListeners() {
@@ -471,9 +521,32 @@
             // Modal
             document.getElementById('confirm-extra').addEventListener('click', requestExtraAuthorization);
 
-            // Novo listener para o botão de logout
-    document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            // Login
+    document.getElementById('login-btn').addEventListener('click', () => {
+        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+        loginModal.show();
+    });
+    
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        handleLogin(email, password);
+    });
+    
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        if (confirm('Deseja realmente sair do sistema?')) {
+            auth.signOut()
+                .then(() => window.location.reload())
+                .catch(error => {
+                    console.error("Erro no logout:", error);
+                    showAlert('Erro ao fazer logout', 'danger');
+                });
         }
+    });
+}
+        
         function handleLogout() {
     auth.signOut()
         .then(() => {
@@ -937,6 +1010,36 @@
             });
         }
 
+        // Lista de e-mails autorizados
+const AUTHORIZED_EMAILS = [
+    'atendente@sejafibra.net',
+    'supervisor@sejafibra.net',
+    'bioranns@gmail.com'
+];
+
+// Função para verificar acesso
+function checkAuthorization(email) {
+    return AUTHORIZED_EMAILS.includes(email.toLowerCase());
+}
+
+// Novo: Função de login
+function handleLogin(email, password) {
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            if (!checkAuthorization(userCredential.user.email)) {
+                auth.signOut();
+                throw new Error('Acesso não autorizado');
+            }
+            showAlert('Login realizado com sucesso!', 'success');
+            $('#loginModal').modal('hide');
+        })
+        .catch(error => {
+            console.error("Erro no login:", error);
+            showAlert(error.message.includes('auth/') 
+                ? 'E-mail ou senha incorretos' 
+                : error.message, 'danger');
+        });
+}
         // Solicita autorização para agendamento extra
         function requestExtraAuthorization() {
             const modal = bootstrap.Modal.getInstance(document.getElementById('extraModal'));
@@ -1139,6 +1242,7 @@
     </script>
 </body>
 </html>
+
 
 
 
