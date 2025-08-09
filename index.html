@@ -616,33 +616,33 @@
             
             card.className = `card agendamento-card mb-2 ${periodoClass}`;
             card.innerHTML = `
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="card-title">${agendamento.cliente}</h6>
-                            ${agendamento.tipo === 'agendamento' ? `
-                                <p class="card-text mb-1">
-                                    <small>${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
-                                </p>
-                                <p class="card-text mb-1"><small>${agendamento.bairro}</small></p>
-                            ` : ''}
-                        </div>
-                        <div class="text-end">
-                            <span class="badge bg-primary">${agendamento.periodo}</span>
-                            ${badgeExtra}
-                        </div>
-                    </div>
-                    ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
-                    <div class="d-flex justify-content-between mt-2">
-                        <small class="text-muted">${agendamento.createdBy ? 'Agendado por: ' + agendamento.createdBy : ''}</small>
-                        <div>
-                            <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${id}"></i>
-                            <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${id}"></i>
-                            <i class="bi bi-trash delete-btn" title="Excluir" data-id="${id}"></i>
-                        </div>
-                    </div>
-                </div>
-            `;
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h6 class="card-title">${agendamento.cliente}</h6>
+                ${agendamento.tipo === 'agendamento' ? `
+                    <p class="card-text mb-1">
+                        <small><strong>Endereço:</strong> ${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
+                    </p>
+                    <p class="card-text mb-1"><small><strong>Bairro:</strong> ${agendamento.bairro}</small></p>
+                ` : ''}
+            </div>
+            <div class="text-end">
+                <span class="badge bg-primary">${agendamento.periodo}</span>
+                ${badgeExtra}
+            </div>
+        </div>
+        ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
+        <div class="d-flex justify-content-between mt-2">
+            <small class="text-muted">${agendamento.createdBy ? 'Agendado por: ' + agendamento.createdBy : ''}</small>
+            <div>
+                <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${id}"></i>
+                <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${id}"></i>
+                <i class="bi bi-trash delete-btn" title="Excluir" data-id="${id}"></i>
+            </div>
+        </div>
+    </div>
+`;
             
             // Adiciona listeners aos botões
             card.querySelector('.copy-btn').addEventListener('click', copyAgendamentoToClipboard);
@@ -1105,6 +1105,7 @@
     </script>
 </body>
 </html>
+
 
 
 
