@@ -8,11 +8,22 @@
     <link rel="icon" href="https://raw.githubusercontent.com/fabricioubatuba/agenda/refs/heads/main/faviconsf.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         body {
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+        /* Estilo do botão de logout */
+#logout-btn {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Espaçamento entre user-info e botão */
+.gap-3 {
+    gap: 1rem !important;
+}
         .logo {
             height: 50px;
             margin-bottom: 15px;
@@ -181,6 +192,10 @@
             <div class="header-title">
                 <h1>Agenda de Instalações</h1>
                 <div id="user-info" class="text-end mb-3"></div>
+                <!-- Botão de Logout (inicialmente escondido) -->
+            <button id="logout-btn" class="btn btn-sm btn-outline-danger d-none">
+                <i class="bi bi-box-arrow-right"></i> Sair
+            </button>
             </div>
         </div>
 
@@ -421,13 +436,18 @@
 
         // Atualiza a UI baseado no usuário logado
         function updateUIForUser(user) {
-            const userInfo = document.getElementById('user-info');
-            if (user.isAnonymous) {
-                userInfo.textContent = "Logado como: Visitante";
-            } else {
-                userInfo.textContent = `Logado como: ${user.email || 'Usuário'}`;
-            }
-        }
+    const userInfo = document.getElementById('user-info');
+    const logoutBtn = document.getElementById('logout-btn');
+    
+    if (user.isAnonymous) {
+        userInfo.textContent = "Logado como: Visitante";
+        logoutBtn.classList.add('d-none');
+    } else {
+        userInfo.textContent = `Logado como: ${user.email || 'Usuário'}`;
+        logoutBtn.classList.remove('d-none');
+    }
+}
+        
 
         // Configura os event listeners
         function setupEventListeners() {
@@ -450,7 +470,21 @@
             
             // Modal
             document.getElementById('confirm-extra').addEventListener('click', requestExtraAuthorization);
+
+            // Novo listener para o botão de logout
+    document.getElementById('logout-btn').addEventListener('click', handleLogout);
         }
+        function handleLogout() {
+    auth.signOut()
+        .then(() => {
+            showAlert('Logout realizado com sucesso!', 'success');
+            // Faz login anônimo automaticamente após logout
+            auth.signInAnonymously();
+        })
+        .catch(error => {
+            showAlert('Erro ao fazer logout: ' + error.message, 'danger');
+        });
+}
 
         function handleFormSubmit(e) {
             e.preventDefault();
@@ -1105,6 +1139,7 @@
     </script>
 </body>
 </html>
+
 
 
 
