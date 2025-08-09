@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -8,61 +7,99 @@
     <link rel="icon" href="https://raw.githubusercontent.com/fabricioubatuba/agenda/refs/heads/main/faviconsf.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         body {
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+        
+        /* Estilo da tela de login */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+        
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        
+        .login-logo {
+            height: 80px;
+            margin-bottom: 20px;
+        }
+        
+        /* Estilo do conteúdo principal (oculto inicialmente) */
+        .main-content {
+            display: none;
+        }
+        
         /* Estilo do botão de logout */
-#logout-btn {
-    font-size: 0.8rem;
-    padding: 0.25rem 0.5rem;
-}
-
-/* Espaçamento entre user-info e botão */
-.gap-3 {
-    gap: 1rem !important;
-}
+        #logout-btn {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        /* Espaçamento entre user-info e botão */
+        .gap-3 {
+            gap: 1rem !important;
+        }
+        
         .logo {
             height: 50px;
             margin-bottom: 15px;
         }
+        
         .card {
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
             width: 100%;
         }
+        
         .card-header {
             font-weight: bold;
         }
+        
         .agendamento-card {
             border-left: 4px solid #0d6efd;
             margin-bottom: 10px;
             transition: all 0.3s;
         }
+        
         .agendamento-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
         }
+        
         .inicial {
             border-left-color: #78a1ad;
         }
+        
         .manha {
             border-left-color: #ffc107;
         }
+        
         .tarde {
             border-left-color: #fd7e14;
         }
+        
         .horário-comercial {
             border-left-color: #fdf914;
         }
+        
         .encaixe {
             border-left-color: #6f42c1;
         }
+        
         .reserva {
             border-left-color: #6c757d;
         }
+        
         .blocked-day {
             background-color: #ffe8e8;
             border-left: 4px solid #dc3545;
@@ -73,48 +110,59 @@
             justify-content: space-between;
             align-items: center;
         }
+        
         #user-info {
             font-size: 0.9rem;
             color: #6c757d;
         }
+        
         .badge-roteador {
             background-color: #198754;
         }
+        
         .badge-periodo {
             background-color: #0dcaf0;
             color: #000;
         }
+        
         .badge-reserva {
             background-color: #6c757d;
             color: white;
         }
+        
         .copy-btn {
             cursor: pointer;
             transition: all 0.2s;
         }
+        
         .copy-btn:hover {
             transform: scale(1.1);
         }
+        
         .agendamento-count {
             font-size: 0.8rem;
             color: #6c757d;
             margin-top: 5px;
         }
+        
         .warning-count {
             color: #dc3545;
             font-weight: bold;
         }
+        
         .header-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-bottom: 20px;
         }
+        
         .header-title {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+        
         .alert-fixed {
             position: fixed;
             top: 20px;
@@ -124,19 +172,23 @@
             max-width: 500px;
             width: 90%;
         }
+        
         .form-section {
             margin-bottom: 1.5rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid #dee2e6;
         }
+        
         .form-section-title {
             font-size: 1.1rem;
             color: #495057;
             margin-bottom: 0.8rem;
         }
+        
         .nav-tabs .nav-link {
             cursor: pointer;
         }
+        
         .tab-content > .tab-pane {
             padding: 15px;
         }
@@ -146,10 +198,12 @@
             color: white !important;
             opacity: 0.8;
         }
+        
         .nav-tabs .nav-link.active {
             color: black !important;
             background-color: #ffc107;
         }
+        
         .nav-tabs .nav-link:hover {
             color: white !important;
             opacity: 1;
@@ -160,19 +214,23 @@
             max-width: 1200px;
             padding: 0 15px;
         }
+        
         .main-content-row {
             justify-content: center;
         }
+        
         .form-column {
             flex: 0 0 auto;
             width: 45%;
             max-width: 45%;
         }
+        
         .agendamentos-column {
             flex: 0 0 auto;
             width: 50%;
             max-width: 50%;
         }
+        
         @media (max-width: 992px) {
             .form-column,
             .agendamentos-column {
@@ -183,37 +241,12 @@
     </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <!-- CABEÇALHO COM LOGO ACIMA -->
-        <div class="header-container text-center">
-    <div class="mb-3">
-        <img src="https://sejafibra.net/wp-content/uploads/2023/06/logonovofibra.png" alt="Seja Fibra" class="logo">
-    </div>
-    <div class="header-title">
-        <h1>Agenda de Instalações</h1>
-        <div class="d-flex align-items-center justify-content-center gap-3">
-            <div id="user-info" class="mb-3"></div>
-            <!-- Botão de Login (visível quando não logado) -->
-            <button id="login-btn" class="btn btn-sm btn-success d-none">
-                <i class="bi bi-box-arrow-in-right"></i> Login
-            </button>
-            <!-- Botão de Logout (visível quando logado) -->
-            <button id="logout-btn" class="btn btn-sm btn-outline-danger d-none">
-                <i class="bi bi-box-arrow-right"></i> Sair
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Adicione este modal no final do body (antes dos scripts) -->
-<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Acesso Restrito</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
+    <!-- Tela de Login (visível inicialmente) -->
+    <div class="login-container" id="login-screen">
+        <div class="login-card card">
+            <div class="card-body text-center">
+                <img src="https://sejafibra.net/wp-content/uploads/2023/06/logonovofibra.png" alt="Seja Fibra" class="login-logo">
+                <h3 class="mb-4">Agenda de Instalações</h3>
                 <form id="login-form">
                     <div class="mb-3">
                         <label for="login-email" class="form-label">E-mail</label>
@@ -228,154 +261,175 @@
             </div>
         </div>
     </div>
-</div>
-        <!-- CONTEÚDO PRINCIPAL (FORMULÁRIOS + AGENDAMENTOS) -->
-        <div class="row main-content-row">
-            <div class="col-md-11">
-                <div class="row">
-                    <!-- COLUNA ESQUERDA (FORMULÁRIOS) -->
-                    <div class="col-md-5 form-column">
-                        <div class="card">
-                            <div class="card-header bg-primary text-white">
-                                <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="agendamento-tab" data-bs-toggle="tab" data-bs-target="#agendamento-tab-pane" type="button" role="tab" aria-controls="agendamento-tab-pane" aria-selected="true">Agendamento</button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="reserva-tab" data-bs-toggle="tab" data-bs-target="#reserva-tab-pane" type="button" role="tab" aria-controls="reserva-tab-pane" aria-selected="false">Reserva</button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="card-body">
-                                <div class="tab-content" id="myTabContent">
-                                    <div class="tab-pane fade show active" id="agendamento-tab-pane" role="tabpanel" aria-labelledby="agendamento-tab" tabindex="0">
-                                        <form id="agendamento-form">
-                                            <div class="mb-3">
-                                                <label for="data" class="form-label">Data do Agendamento</label>
-                                                <input type="date" class="form-control" id="data" required>
-                                                <div id="data-info" class="form-text"></div>
-                                            </div>
-                                            <div class="form-section">
-                                                <div class="form-section-title">Informações do Cliente</div>
+
+    <!-- Conteúdo Principal (oculto inicialmente) -->
+    <div class="main-content" id="main-content">
+        <div class="container mt-4">
+            <!-- CABEÇALHO COM LOGO ACIMA -->
+            <div class="header-container text-center">
+                <div class="mb-3">
+                    <img src="https://sejafibra.net/wp-content/uploads/2023/06/logonovofibra.png" alt="Seja Fibra" class="logo">
+                </div>
+                <div class="header-title">
+                    <h1>Agenda de Instalações</h1>
+                    <div class="d-flex align-items-center justify-content-center gap-3">
+                        <div id="user-info" class="mb-3"></div>
+                        <!-- Botão de Logout (visível quando logado) -->
+                        <button id="logout-btn" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-box-arrow-right"></i> Sair
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTEÚDO PRINCIPAL (FORMULÁRIOS + AGENDAMENTOS) -->
+            <div class="row main-content-row">
+                <div class="col-md-11">
+                    <div class="row">
+                        <!-- COLUNA ESQUERDA (FORMULÁRIOS) -->
+                        <div class="col-md-5 form-column">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="agendamento-tab" data-bs-toggle="tab" data-bs-target="#agendamento-tab-pane" type="button" role="tab" aria-controls="agendamento-tab-pane" aria-selected="true">Agendamento</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="reserva-tab" data-bs-toggle="tab" data-bs-target="#reserva-tab-pane" type="button" role="tab" aria-controls="reserva-tab-pane" aria-selected="false">Reserva</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="card-body">
+                                    <div class="tab-content" id="myTabContent">
+                                        <div class="tab-pane fade show active" id="agendamento-tab-pane" role="tabpanel" aria-labelledby="agendamento-tab" tabindex="0">
+                                            <form id="agendamento-form">
                                                 <div class="mb-3">
-                                                    <label for="cliente" class="form-label">Nome do Cliente</label>
-                                                    <input type="text" class="form-control" id="cliente" required>
+                                                    <label for="data" class="form-label">Data do Agendamento</label>
+                                                    <input type="date" class="form-control" id="data" required>
+                                                    <div id="data-info" class="form-text"></div>
                                                 </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-8">
-                                                        <label for="endereco" class="form-label">Endereço</label>
-                                                        <input type="text" class="form-control" id="endereco" required>
+                                                <div class="form-section">
+                                                    <div class="form-section-title">Informações do Cliente</div>
+                                                    <div class="mb-3">
+                                                        <label for="cliente" class="form-label">Nome do Cliente</label>
+                                                        <input type="text" class="form-control" id="cliente" required>
                                                     </div>
-                                                    <div class="col-md-4">
-                                                        <label for="numero" class="form-label">Número</label>
-                                                        <input type="text" class="form-control" id="numero" required>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-8">
+                                                            <label for="endereco" class="form-label">Endereço</label>
+                                                            <input type="text" class="form-control" id="endereco" required>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label for="numero" class="form-label">Número</label>
+                                                            <input type="text" class="form-control" id="numero" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="complemento" class="form-label">Complemento (opcional)</label>
+                                                        <input type="text" class="form-control" id="complemento">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="bairro" class="form-label">Bairro</label>
+                                                        <input type="text" class="form-control" id="bairro" required>
                                                     </div>
                                                 </div>
+                                                <div class="form-section">
+                                                    <div class="form-section-title">Detalhes da Instalação</div>
+                                                    <div class="mb-3">
+                                                        <label for="periodo" class="form-label">Período da Instalação</label>
+                                                        <select class="form-select" id="periodo" required>
+                                                            <option value="">Selecione...</option>
+                                                            <option value="Inicial">Inicial</option>
+                                                            <option value="Manhã">Manhã</option>
+                                                            <option value="Tarde">Tarde</option>
+                                                            <option value="Horário Comercial">Horário Comercial</option>
+                                                            <option value="Encaixe">Encaixe</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="observacoes" class="form-label">Observações (opcional)</label>
+                                                        <textarea class="form-control" id="observacoes" rows="2"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="form-section">
+                                                    <div class="form-section-title">Configurações de Rede</div>
+                                                    <div class="mb-3">
+                                                        <label for="login-pppoe" class="form-label">Login PPPoE</label>
+                                                        <input type="text" class="form-control" id="login-pppoe">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="senha-pppoe" class="form-label">Senha PPPoE</label>
+                                                        <input type="password" class="form-control" id="senha-pppoe">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="nome-wifi" class="form-label">Nome do Wi-Fi</label>
+                                                        <input type="text" class="form-control" id="nome-wifi">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="senha-wifi" class="form-label">Senha do Wi-Fi</label>
+                                                        <input type="password" class="form-control" id="senha-wifi">
+                                                    </div>
+                                                    <div class="mb-3 form-check">
+                                                        <input type="checkbox" class="form-check-input" id="roteador">
+                                                        <label class="form-check-label" for="roteador">Roteador OK</label>
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" id="agendamento-id">
+                                                <button type="submit" class="btn btn-primary w-100" id="submit-btn">Agendar</button>
+                                                <button type="button" class="btn btn-secondary w-100 mt-2 d-none" id="cancel-edit-btn">Cancelar Edição</button>
+                                            </form>
+                                        </div>
+                                        <div class="tab-pane fade" id="reserva-tab-pane" role="tabpanel" aria-labelledby="reserva-tab" tabindex="0">
+                                            <form id="reserva-form">
                                                 <div class="mb-3">
-                                                    <label for="complemento" class="form-label">Complemento (opcional)</label>
-                                                    <input type="text" class="form-control" id="complemento">
+                                                    <label for="reserva-data" class="form-label">Data da Reserva</label>
+                                                    <input type="date" class="form-control" id="reserva-data" required>
+                                                    <div id="reserva-data-info" class="form-text"></div>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="bairro" class="form-label">Bairro</label>
-                                                    <input type="text" class="form-control" id="bairro" required>
+                                                    <label for="reserva-cliente" class="form-label">Nome para Reserva</label>
+                                                    <input type="text" class="form-control" id="reserva-cliente" required>
                                                 </div>
-                                            </div>
-                                            <div class="form-section">
-                                                <div class="form-section-title">Detalhes da Instalação</div>
                                                 <div class="mb-3">
-                                                    <label for="periodo" class="form-label">Período da Instalação</label>
-                                                    <select class="form-select" id="periodo" required>
+                                                    <label for="reserva-periodo" class="form-label">Período Desejado</label>
+                                                    <select class="form-select" id="reserva-periodo" required>
                                                         <option value="">Selecione...</option>
-                                                        <option value="Inicial">Inicial</option>
                                                         <option value="Manhã">Manhã</option>
                                                         <option value="Tarde">Tarde</option>
                                                         <option value="Horário Comercial">Horário Comercial</option>
-                                                        <option value="Encaixe">Encaixe</option>
                                                     </select>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label for="observacoes" class="form-label">Observações (opcional)</label>
-                                                    <textarea class="form-control" id="observacoes" rows="2"></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="form-section">
-                                                <div class="form-section-title">Configurações de Rede</div>
-                                                <div class="mb-3">
-                                                    <label for="login-pppoe" class="form-label">Login PPPoE</label>
-                                                    <input type="text" class="form-control" id="login-pppoe">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="senha-pppoe" class="form-label">Senha PPPoE</label>
-                                                    <input type="password" class="form-control" id="senha-pppoe">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="nome-wifi" class="form-label">Nome do Wi-Fi</label>
-                                                    <input type="text" class="form-control" id="nome-wifi">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="senha-wifi" class="form-label">Senha do Wi-Fi</label>
-                                                    <input type="password" class="form-control" id="senha-wifi">
-                                                </div>
-                                                <div class="mb-3 form-check">
-                                                    <input type="checkbox" class="form-check-input" id="roteador">
-                                                    <label class="form-check-label" for="roteador">Roteador OK</label>
-                                                </div>
-                                            </div>
-                                            <input type="hidden" id="agendamento-id">
-                                            <button type="submit" class="btn btn-primary w-100" id="submit-btn">Agendar</button>
-                                            <button type="button" class="btn btn-secondary w-100 mt-2 d-none" id="cancel-edit-btn">Cancelar Edição</button>
-                                        </form>
+                                                <button type="submit" class="btn btn-outline-primary w-100" id="submit-reserva-btn">Reservar</button>
+                                            </form>
+                                        </div>
                                     </div>
-                                    <div class="tab-pane fade" id="reserva-tab-pane" role="tabpanel" aria-labelledby="reserva-tab" tabindex="0">
-                                        <form id="reserva-form">
-                                            <div class="mb-3">
-                                                <label for="reserva-data" class="form-label">Data da Reserva</label>
-                                                <input type="date" class="form-control" id="reserva-data" required>
-                                                <div id="reserva-data-info" class="form-text"></div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="reserva-cliente" class="form-label">Nome para Reserva</label>
-                                                <input type="text" class="form-control" id="reserva-cliente" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="reserva-periodo" class="form-label">Período Desejado</label>
-                                                <select class="form-select" id="reserva-periodo" required>
-                                                    <option value="">Selecione...</option>
-                                                    <option value="Manhã">Manhã</option>
-                                                    <option value="Tarde">Tarde</option>
-                                                    <option value="Horário Comercial">Horário Comercial</option>
-                                                </select>
-                                            </div>
-                                            <button type="submit" class="btn btn-outline-primary w-100" id="submit-reserva-btn">Reservar</button>
-                                        </form>
-                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card mt-4">
+                                <div class="card-header bg-warning text-dark">
+                                    <h5 class="card-title mb-0">Dias Bloqueados</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="blocked-days-container"></div>
+                                    <button id="add-blocked-day" class="btn btn-sm btn-outline-warning mt-2">+ Adicionar Dia Bloqueado</button>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="card mt-4">
-                            <div class="card-header bg-warning text-dark">
-                                <h5 class="card-title mb-0">Dias Bloqueados</h5>
-                            </div>
-                            <div class="card-body">
-                                <div id="blocked-days-container"></div>
-                                <button id="add-blocked-day" class="btn btn-sm btn-outline-warning mt-2">+ Adicionar Dia Bloqueado</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- COLUNA DIREITA (AGENDAMENTOS) -->
-                    <div class="col-md-6 agendamentos-column">
-                        <div class="card">
-                            <div class="card-header bg-success text-white">
-                                <h5 class="card-title mb-0">Agendamentos</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <label for="filter-date" class="form-label">Filtrar por Data:</label>
-                                    <input type="date" class="form-control" id="filter-date">
+                        <!-- COLUNA DIREITA (AGENDAMENTOS) -->
+                        <div class="col-md-6 agendamentos-column">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="card-title mb-0">Agendamentos</h5>
                                 </div>
-                                <div id="agendamentos-container"></div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="filter-date" class="form-label">Filtrar por Data:</label>
+                                        <input type="date" class="form-control" id="filter-date">
+                                    </div>
+                                    <div id="agendamentos-container"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -430,6 +484,18 @@
         let editingAgendamentoId = null;
         let currentExtraAgendamento = null;
 
+        // Lista de e-mails autorizados
+        const AUTHORIZED_EMAILS = [
+            'atendente@sejafibra.net',
+            'supervisor@sejafibra.net',
+            'bioranns@gmail.com'
+        ];
+
+        // Função para verificar acesso
+        function checkAuthorization(email) {
+            return AUTHORIZED_EMAILS.includes(email.toLowerCase());
+        }
+
         // Inicialização quando o DOM estiver pronto
         document.addEventListener('DOMContentLoaded', function() {
             // Configura data mínima para hoje
@@ -438,69 +504,59 @@
             document.getElementById('filter-date').min = today;
             document.getElementById('reserva-data').min = today;
             
-            // Inicializa autenticação
-            initAuth();
-            
             // Configura listeners
             setupEventListeners();
+            
+            // Verifica estado de autenticação
+            auth.onAuthStateChanged(user => {
+                if (user && user.email && checkAuthorization(user.email)) {
+                    // Usuário autenticado e autorizado
+                    currentUser = user;
+                    showMainContent();
+                    loadAgendamentos();
+                    loadBlockedDays();
+                } else {
+                    // Usuário não autenticado ou não autorizado
+                    currentUser = null;
+                    showLoginScreen();
+                    if (user) {
+                        auth.signOut(); // Desconecta usuário não autorizado
+                    }
+                }
+            });
         });
 
-        // Configura a autenticação
-        function initAuth() {
-    auth.onAuthStateChanged(user => {
-        if (user && user.emailVerified) {
-            currentUser = user;
-            updateUIForUser(user);
-            loadAgendamentos();
-            loadBlockedDays();
-        } else {
-            updateUIForUser(null);
-            showAlert('Acesso restrito. Faça login para continuar.', 'warning');
+        // Mostra a tela de login e esconde o conteúdo principal
+        function showLoginScreen() {
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('main-content').style.display = 'none';
         }
-    });
-}
 
-        // Atualiza a UI baseado no usuário logado
-        function updateUIForUser(user) {
-    const userInfo = document.getElementById('user-info');
-    const loginBtn = document.getElementById('login-btn');
-    const logoutBtn = document.getElementById('logout-btn');
-    
-    if (!user) {
-        userInfo.innerHTML = '<span class="text-danger">Acesso não autenticado</span>';
-        loginBtn.classList.remove('d-none');
-        logoutBtn.classList.add('d-none');
-        disableAppFunctions();
-        return;
-    }
-    
-    if (!checkAuthorization(user.email)) {
-        userInfo.innerHTML = '<span class="text-danger">Usuário não autorizado</span>';
-        loginBtn.classList.add('d-none');
-        logoutBtn.classList.remove('d-none');
-        disableAppFunctions();
-        auth.signOut();
-        return;
-    }
-    
-    userInfo.textContent = `Logado como: ${user.email}`;
-    loginBtn.classList.add('d-none');
-    logoutBtn.classList.remove('d-none');
-    enableAppFunctions();
-}
-        // Funções para controlar o acesso
-function disableAppFunctions() {
-    document.querySelectorAll('#agendamento-form input, #agendamento-form select, #agendamento-form button, #reserva-form input, #reserva-form select, #reserva-form button, .edit-btn, .delete-btn, #add-blocked-day')
-        .forEach(el => el.disabled = true);
-}
+        // Mostra o conteúdo principal e esconde a tela de login
+        function showMainContent() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            updateUserInfo();
+        }
 
-function enableAppFunctions() {
-    document.querySelectorAll('#agendamento-form input, #agendamento-form select, #agendamento-form button, #reserva-form input, #reserva-form select, #reserva-form button, .edit-btn, .delete-btn, #add-blocked-day')
-        .forEach(el => el.disabled = false);
-}
+        // Atualiza as informações do usuário na UI
+        function updateUserInfo() {
+            const userInfo = document.getElementById('user-info');
+            if (currentUser) {
+                userInfo.textContent = `Logado como: ${currentUser.email}`;
+            } else {
+                userInfo.textContent = '';
+            }
+        }
 
         // Configura os event listeners
         function setupEventListeners() {
+            // Formulário de login
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            
+            // Logout
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            
             // Formulário de agendamento
             document.getElementById('agendamento-form').addEventListener('submit', handleFormSubmit);
             document.getElementById('cancel-edit-btn').addEventListener('click', cancelEdit);
@@ -520,47 +576,81 @@ function enableAppFunctions() {
             
             // Modal
             document.getElementById('confirm-extra').addEventListener('click', requestExtraAuthorization);
-
-            // Login
-    document.getElementById('login-btn').addEventListener('click', () => {
-        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-        loginModal.show();
-    });
-    
-    document.getElementById('login-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        handleLogin(email, password);
-    });
-    
-    // Logout
-    document.getElementById('logout-btn').addEventListener('click', () => {
-        if (confirm('Deseja realmente sair do sistema?')) {
-            auth.signOut()
-                .then(() => window.location.reload())
+        }
+                // Função para lidar com o login
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Validação básica
+            if (!email || !password) {
+                showAlert('Por favor, preencha todos os campos.', 'danger');
+                return;
+            }
+            
+            // Verifica se o email está autorizado antes mesmo de tentar login
+            if (!checkAuthorization(email)) {
+                showAlert('Acesso não autorizado. Utilize um e-mail válido.', 'danger');
+                return;
+            }
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Verifica novamente a autorização após o login
+                    if (!checkAuthorization(userCredential.user.email)) {
+                        auth.signOut();
+                        throw new Error('Acesso não autorizado');
+                    }
+                    
+                    showAlert('Login realizado com sucesso!', 'success');
+                    currentUser = userCredential.user;
+                    showMainContent();
+                    loadAgendamentos();
+                    loadBlockedDays();
+                })
                 .catch(error => {
-                    console.error("Erro no logout:", error);
-                    showAlert('Erro ao fazer logout', 'danger');
+                    console.error("Erro no login:", error);
+                    let errorMessage = 'Erro ao fazer login';
+                    
+                    if (error.code === 'auth/wrong-password') {
+                        errorMessage = 'Senha incorreta';
+                    } else if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'Usuário não encontrado';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'E-mail inválido';
+                    } else if (error.message.includes('não autorizado')) {
+                        errorMessage = 'Acesso não autorizado';
+                    }
+                    
+                    showAlert(errorMessage, 'danger');
                 });
         }
-    });
-}
-        
-        function handleLogout() {
-    auth.signOut()
-        .then(() => {
-            showAlert('Logout realizado com sucesso!', 'success');
-            // Faz login anônimo automaticamente após logout
-            auth.signInAnonymously();
-        })
-        .catch(error => {
-            showAlert('Erro ao fazer logout: ' + error.message, 'danger');
-        });
-}
 
+        // Função para lidar com o logout
+        function handleLogout() {
+            if (confirm('Deseja realmente sair do sistema?')) {
+                auth.signOut()
+                    .then(() => {
+                        showLoginScreen();
+                        showAlert('Logout realizado com sucesso!', 'success');
+                    })
+                    .catch(error => {
+                        console.error("Erro no logout:", error);
+                        showAlert('Erro ao fazer logout', 'danger');
+                    });
+            }
+        }
+
+        // Função para lidar com o envio do formulário de agendamento
         function handleFormSubmit(e) {
             e.preventDefault();
+            
+            if (!currentUser) {
+                showAlert('Você precisa estar logado para fazer agendamentos.', 'danger');
+                return;
+            }
             
             // Captura dos dados
             const formData = {
@@ -579,13 +669,9 @@ function enableAppFunctions() {
                 roteador: document.getElementById('roteador').checked,
                 createdAt: firebase.database.ServerValue.TIMESTAMP,
                 status: 'active',
-                tipo: 'agendamento'
+                tipo: 'agendamento',
+                createdBy: currentUser.email
             };
-
-            // Adiciona email do usuário se não for anônimo
-            if (currentUser && !currentUser.isAnonymous) {
-                formData.createdBy = currentUser.email;
-            }
 
             // Validação básica
             if (!formData.data || !formData.cliente) {
@@ -615,8 +701,14 @@ function enableAppFunctions() {
             }
         }
 
+        // Função para lidar com o envio do formulário de reserva
         function handleReservaSubmit(e) {
             e.preventDefault();
+            
+            if (!currentUser) {
+                showAlert('Você precisa estar logado para fazer reservas.', 'danger');
+                return;
+            }
             
             const reservaData = {
                 data: document.getElementById('reserva-data').value,
@@ -624,13 +716,9 @@ function enableAppFunctions() {
                 periodo: document.getElementById('reserva-periodo').value,
                 createdAt: firebase.database.ServerValue.TIMESTAMP,
                 status: 'active',
-                tipo: 'reserva'
+                tipo: 'reserva',
+                createdBy: currentUser.email
             };
-
-            // Adiciona email do usuário se não for anônimo
-            if (currentUser && !currentUser.isAnonymous) {
-                reservaData.createdBy = currentUser.email;
-            }
 
             // Validação básica
             if (!reservaData.data || !reservaData.cliente) {
@@ -650,7 +738,7 @@ function enableAppFunctions() {
 
         // Carrega agendamentos do Firebase
         function loadAgendamentos() {
-            database.ref('agendamentos').on('value', snapshot => {
+            database.ref('agendamentos').orderByChild('status').equalTo('active').on('value', snapshot => {
                 const agendamentos = [];
                 snapshot.forEach(childSnapshot => {
                     const agendamento = childSnapshot.val();
@@ -723,33 +811,33 @@ function enableAppFunctions() {
             
             card.className = `card agendamento-card mb-2 ${periodoClass}`;
             card.innerHTML = `
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-start">
-            <div>
-                <h6 class="card-title">${agendamento.cliente}</h6>
-                ${agendamento.tipo === 'agendamento' ? `
-                    <p class="card-text mb-1">
-                        <small><strong>Endereço:</strong> ${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
-                    </p>
-                    <p class="card-text mb-1"><small><strong>Bairro:</strong> ${agendamento.bairro}</small></p>
-                ` : ''}
-            </div>
-            <div class="text-end">
-                <span class="badge bg-primary">${agendamento.periodo}</span>
-                ${badgeExtra}
-            </div>
-        </div>
-        ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
-        <div class="d-flex justify-content-between mt-2">
-            <small class="text-muted">${agendamento.createdBy ? 'Agendado por: ' + agendamento.createdBy : ''}</small>
-            <div>
-                <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${id}"></i>
-                <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${id}"></i>
-                <i class="bi bi-trash delete-btn" title="Excluir" data-id="${id}"></i>
-            </div>
-        </div>
-    </div>
-`;
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title">${agendamento.cliente}</h6>
+                            ${agendamento.tipo === 'agendamento' ? `
+                                <p class="card-text mb-1">
+                                    <small><strong>Endereço:</strong> ${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
+                                </p>
+                                <p class="card-text mb-1"><small><strong>Bairro:</strong> ${agendamento.bairro}</small></p>
+                            ` : ''}
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-primary">${agendamento.periodo}</span>
+                            ${badgeExtra}
+                        </div>
+                    </div>
+                    ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
+                    <div class="d-flex justify-content-between mt-2">
+                        <small class="text-muted">${agendamento.createdBy ? 'Agendado por: ' + agendamento.createdBy : ''}</small>
+                        <div>
+                            <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${id}"></i>
+                            <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${id}"></i>
+                            <i class="bi bi-trash delete-btn" title="Excluir" data-id="${id}"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
             
             // Adiciona listeners aos botões
             card.querySelector('.copy-btn').addEventListener('click', copyAgendamentoToClipboard);
@@ -928,8 +1016,7 @@ function enableAppFunctions() {
                     });
             });
         }
-
-        // Verifica limite de reservas por dia
+                // Verifica limite de reservas por dia
         function checkReservaLimit() {
             const dateInput = document.getElementById('reserva-data');
             const date = dateInput.value;
@@ -1010,36 +1097,6 @@ function enableAppFunctions() {
             });
         }
 
-        // Lista de e-mails autorizados
-const AUTHORIZED_EMAILS = [
-    'atendente@sejafibra.net',
-    'supervisor@sejafibra.net',
-    'bioranns@gmail.com'
-];
-
-// Função para verificar acesso
-function checkAuthorization(email) {
-    return AUTHORIZED_EMAILS.includes(email.toLowerCase());
-}
-
-// Novo: Função de login
-function handleLogin(email, password) {
-    auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            if (!checkAuthorization(userCredential.user.email)) {
-                auth.signOut();
-                throw new Error('Acesso não autorizado');
-            }
-            showAlert('Login realizado com sucesso!', 'success');
-            $('#loginModal').modal('hide');
-        })
-        .catch(error => {
-            console.error("Erro no login:", error);
-            showAlert(error.message.includes('auth/') 
-                ? 'E-mail ou senha incorretos' 
-                : error.message, 'danger');
-        });
-}
         // Solicita autorização para agendamento extra
         function requestExtraAuthorization() {
             const modal = bootstrap.Modal.getInstance(document.getElementById('extraModal'));
@@ -1098,7 +1155,8 @@ function handleLogin(email, password) {
             
             database.ref('blockedDays/' + date).set({
                 reason: reason || '',
-                blockedAt: firebase.database.ServerValue.TIMESTAMP
+                blockedAt: firebase.database.ServerValue.TIMESTAMP,
+                blockedBy: currentUser.email
             })
             .then(() => showAlert('Dia bloqueado com sucesso!', 'success'))
             .catch(error => showAlert('Erro ao bloquear dia: ' + error.message, 'danger'));
@@ -1242,14 +1300,3 @@ function handleLogin(email, password) {
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
