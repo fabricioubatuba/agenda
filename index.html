@@ -567,7 +567,22 @@
             
             // Modal
             document.getElementById('confirm-extra').addEventListener('click', requestExtraAuthorization);
-        }
+
+            // Adicione este evento listener no setupEventListeners()
+document.getElementById('data').addEventListener('change', function(e) {
+    const dateInput = e.target;
+    let dateValue = dateInput.value;
+    
+    // Se o usuário digitou no formato DD/MM/YYYY, converte para YYYY-MM-DD
+    if (dateValue.includes('/')) {
+        const [day, month, year] = dateValue.split('/');
+        dateValue = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        dateInput.value = dateValue;
+    }
+    
+    // Chama a verificação de limite
+    checkAgendamentoLimit();
+});
         
         // Lista de e-mails autorizados
         const AUTHORIZED_EMAILS = [
@@ -873,60 +888,62 @@
 
         // Formata data corretamente (compensando fuso horário)
         function formatDateCorrectly(dateString) {
-            // Cria a data no fuso horário local
-            const date = new Date(dateString);
-            
-            // Opções de formatação
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                timeZone: 'UTC' // Força usar UTC para evitar problemas de fuso
-            };
-            
-            // Retorna a data formatada corretamente
-            return date.toLocaleDateString('pt-BR', options);
-        }
-
+    // Divide a string da data (formato YYYY-MM-DD)
+    const parts = dateString.split('-');
+    if (parts.length !== 3) return dateString; // Se não estiver no formato esperado, retorna original
+    
+    // Cria a data no UTC (sem considerar fuso horário local)
+    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    
+    // Opções de formatação
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        timeZone: 'UTC' // Mantém a formatação em UTC
+    };
+    
+    // Retorna a data formatada corretamente
+    return date.toLocaleDateString('pt-BR', options);
+}
         // Função para verificar se é fim de semana
         function isWeekend(dateString) {
-            const date = new Date(dateString);
-            const day = date.getDay(); // 0 = Domingo, 6 = Sábado
-            return day === 0 || day === 6;
-        }
+    const parts = dateString.split('-');
+    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    const day = date.getUTCDay(); // Usa getUTCDay() em vez de getDay()
+    return day === 0 || day === 6;
+}
 
-        // Função para verificar se é sábado
-        function isSaturday(dateString) {
-            const date = new Date(dateString);
-            return date.getDay() === 6;
-        }
+function isSaturday(dateString) {
+    const parts = dateString.split('-');
+    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    return date.getUTCDay() === 6;
+}
 
-        // Função para verificar se é domingo
-        function isSunday(dateString) {
-            const date = new Date(dateString);
-            return date.getDay() === 0;
-        }
+function isSunday(dateString) {
+    const parts = dateString.split('-');
+    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    return date.getUTCDay() === 0;
+}
 
-        // Função para verificar se é dia útil (segunda a sexta)
-        function isWeekday(dateString) {
-            return !isWeekend(dateString);
-        }
-
+function isWeekday(dateString) {
+    return !isWeekend(dateString);
+}
         // Verifica limite de agendamentos por dia
         function checkAgendamentoLimit() {
-            const dateInput = document.getElementById('data');
-            const date = dateInput.value;
-            
-            if (!date) return;
-            
-            // Verifica se é domingo
-            if (isSunday(date)) {
-                document.getElementById('data-info').textContent = 'Não é possível agendar aos domingos.';
-                document.getElementById('data-info').className = 'form-text text-danger';
-                document.getElementById('submit-btn').disabled = true;
-                return;
-            }
+    const dateInput = document.getElementById('data');
+    const date = dateInput.value;
+    
+    if (!date) return;
+    
+    // Verifica se é domingo (usando a nova função corrigida)
+    if (isSunday(date)) {
+        document.getElementById('data-info').textContent = 'Não é possível agendar aos domingos.';
+        document.getElementById('data-info').className = 'form-text text-danger';
+        document.getElementById('submit-btn').disabled = true;
+        return;
+    }
             
             // Verifica se o dia está bloqueado
             database.ref('blockedDays/' + date).once('value').then(snapshot => {
@@ -1277,3 +1294,4 @@
     </script>
 </body>
 </html>
+
