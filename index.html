@@ -753,15 +753,7 @@
         
         // Filtra agendamentos por data
         function filterAgendamentosByDate() {
-            const dateInputElement = document.getElementById('filter-date');
-let dateInput = dateInputElement.value;
-
-// Se o usuário digitou manualmente no formato DD/MM/YYYY, converte para YYYY-MM-DD
-if (dateInput.includes('/')) {
-    const [day, month, year] = dateInput.split('/');
-    dateInput = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    dateInputElement.value = dateInput; // Atualiza o campo para o formato correto
-} 
+            const dateInput = document.getElementById('filter-date').value;
             const container = document.getElementById('agendamentos-container');
             
             if (!dateInput) {
@@ -1308,4 +1300,5 @@ if (dateInput.includes('/')) {
     </script>
 </body>
 </html>
+
 
