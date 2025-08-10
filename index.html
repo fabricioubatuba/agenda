@@ -526,49 +526,39 @@
         // Configura os event listeners
         function setupEventListeners() {
             // Formulário de login
-            document.getElementById('login-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
-                handleLogin(email, password);
-            });
-            
-            // Botão de logout
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                if (confirm('Deseja realmente sair do sistema?')) {
-                    auth.signOut()
-                        .then(() => {
-                            showLoginScreen();
-                            showAlert('Logout realizado com sucesso!', 'success');
-                        })
-                        .catch(error => {
-                            console.error("Erro no logout:", error);
-                            showAlert('Erro ao fazer logout', 'danger');
-                        });
-                }
-            });
-            
-            // Formulário de agendamento
-            document.getElementById('agendamento-form').addEventListener('submit', handleFormSubmit);
-            document.getElementById('cancel-edit-btn').addEventListener('click', cancelEdit);
-            
-            // Formulário de reserva
-            document.getElementById('reserva-form').addEventListener('submit', handleReservaSubmit);
-            
-            // Filtro de data
-            document.getElementById('filter-date').addEventListener('change', filterAgendamentosByDate);
-            
-            // Data do agendamento - verifica limite
-            document.getElementById('data').addEventListener('change', checkAgendamentoLimit);
-            document.getElementById('reserva-data').addEventListener('change', checkReservaLimit);
-            
-            // Botão para adicionar dia bloqueado
-            document.getElementById('add-blocked-day').addEventListener('click', addBlockedDay);
-            
-            // Modal
-            document.getElementById('confirm-extra').addEventListener('click', requestExtraAuthorization);
-
-            // Adiciona o listener para o campo de data
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        handleLogin(email, password);
+    });
+    
+    // Botão de logout
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        if (confirm('Deseja realmente sair do sistema?')) {
+            auth.signOut()
+                .then(() => {
+                    showLoginScreen();
+                    showAlert('Logout realizado com sucesso!', 'success');
+                })
+                .catch(error => {
+                    console.error("Erro no logout:", error);
+                    showAlert('Erro ao fazer logout', 'danger');
+                });
+        }
+    });
+    
+    // Formulário de agendamento
+    document.getElementById('agendamento-form').addEventListener('submit', handleFormSubmit);
+    document.getElementById('cancel-edit-btn').addEventListener('click', cancelEdit);
+    
+    // Formulário de reserva
+    document.getElementById('reserva-form').addEventListener('submit', handleReservaSubmit);
+    
+    // Filtro de data
+    document.getElementById('filter-date').addEventListener('change', filterAgendamentosByDate);
+    
+    // Data do agendamento - verifica limite
     document.getElementById('data').addEventListener('change', function(e) {
         const dateInput = e.target;
         let dateValue = dateInput.value;
@@ -583,6 +573,16 @@
         // Chama a verificação de limite
         checkAgendamentoLimit();
     });
+    
+    document.getElementById('reserva-data').addEventListener('change', checkReservaLimit);
+    
+    // Botão para adicionar dia bloqueado
+    document.getElementById('add-blocked-day').addEventListener('click', addBlockedDay);
+    
+    // Modal
+    document.getElementById('confirm-extra').addEventListener('click', requestExtraAuthorization);
+} // <-- Esta chave fecha a função setupEventListeners()
+
         
         // Lista de e-mails autorizados
         const AUTHORIZED_EMAILS = [
@@ -1293,6 +1293,7 @@ function isWeekday(dateString) {
     </script>
 </body>
 </html>
+
 
 
 
