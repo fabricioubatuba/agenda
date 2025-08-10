@@ -1167,32 +1167,34 @@ function isWeekday(dateString) {
 
         // Copia agendamento para clipboard no formato para Excel
         function copyAgendamentoToClipboard(e) {
-            const agendamentoId = e.target.getAttribute('data-id');
-            database.ref('agendamentos/' + agendamentoId).once('value')
-                .then(snapshot => {
-                    const agendamento = snapshot.val();
-                    const textToCopy = [
-                        agendamento.data,
-                        agendamento.cliente,
-                        agendamento.tipo === 'agendamento' ? agendamento.endereco : 'RESERVA',
-                        agendamento.tipo === 'agendamento' ? agendamento.numero : '',
-                        agendamento.tipo === 'agendamento' ? (agendamento.complemento || '') : '',
-                        agendamento.tipo === 'agendamento' ? agendamento.bairro : '',
-                        agendamento.periodo,
-                        agendamento.observacoes || '',
-                        agendamento.tipo === 'agendamento' ? (agendamento.loginPPPoE || '') : '',
-                        agendamento.tipo === 'agendamento' ? (agendamento.senhaPPPoE || '') : '',
-                        agendamento.tipo === 'agendamento' ? (agendamento.nomeWifi || '') : '',
-                        agendamento.tipo === 'agendamento' ? (agendamento.senhaWifi || '') : '',
-                        agendamento.tipo === 'agendamento' ? (agendamento.roteador ? 'Sim' : 'Não') : ''
-                    ].join('\t'); // Tab como separador para Excel
-                    
-                    navigator.clipboard.writeText(textToCopy)
-                        .then(() => showAlert('Dados copiados para a área de transferência!', 'success'))
-                        .catch(() => showAlert('Erro ao copiar dados.', 'danger'));
-                });
-        }
-
+    const agendamentoId = e.target.getAttribute('data-id');
+    database.ref('agendamentos/' + agendamentoId).once('value')
+        .then(snapshot => {
+            const agendamento = snapshot.val();
+            
+            // Formata os dados conforme as colunas solicitadas
+            const textToCopy = [
+                agendamento.data,        // 1ª coluna: data do agendamento
+                '',                     // 2ª coluna: vazia
+                agendamento.cliente,     // 3ª coluna: nome do cliente
+                agendamento.tipo === 'agendamento' ? agendamento.endereco : 'RESERVA', // 4ª coluna: endereço
+                agendamento.tipo === 'agendamento' ? agendamento.numero : '',           // 5ª coluna: número
+                agendamento.tipo === 'agendamento' ? (agendamento.complemento || '') : '', // 6ª coluna: complemento
+                agendamento.tipo === 'agendamento' ? agendamento.bairro : '',          // 7ª coluna: bairro
+                agendamento.periodo,     // 8ª coluna: período
+                agendamento.observacoes || '', // 9ª coluna: observação
+                agendamento.tipo === 'agendamento' ? (agendamento.loginPPPoE || '') : '', // 10ª coluna: login pppoe
+                agendamento.tipo === 'agendamento' ? (agendamento.senhaPPPoE || '') : '', // 11ª coluna: senha pppoe
+                agendamento.tipo === 'agendamento' ? (agendamento.nomeWifi || '') : '', // 12ª coluna: nome do wifi
+                agendamento.tipo === 'agendamento' ? (agendamento.senhaWifi || '') : '', // 13ª coluna: senha do wifi
+                agendamento.tipo === 'agendamento' ? (agendamento.roteador ? 'Sim' : 'Não') : '' // 14ª coluna: roteador
+            ].join('\t'); // Tab como separador para Excel
+            
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => showAlert('Dados copiados para a área de transferência!', 'success'))
+                .catch(() => showAlert('Erro ao copiar dados.', 'danger'));
+        });
+}
         // Preenche formulário para edição
         function editAgendamento(e) {
             const agendamentoId = e.target.getAttribute('data-id');
@@ -1293,6 +1295,7 @@ function isWeekday(dateString) {
     </script>
 </body>
 </html>
+
 
 
 
