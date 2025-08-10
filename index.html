@@ -568,21 +568,21 @@
             // Modal
             document.getElementById('confirm-extra').addEventListener('click', requestExtraAuthorization);
 
-            // Adicione este evento listener no setupEventListeners()
-document.getElementById('data').addEventListener('change', function(e) {
-    const dateInput = e.target;
-    let dateValue = dateInput.value;
-    
-    // Se o usuário digitou no formato DD/MM/YYYY, converte para YYYY-MM-DD
-    if (dateValue.includes('/')) {
-        const [day, month, year] = dateValue.split('/');
-        dateValue = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-        dateInput.value = dateValue;
-    }
-    
-    // Chama a verificação de limite
-    checkAgendamentoLimit();
-});
+            // Adiciona o listener para o campo de data
+    document.getElementById('data').addEventListener('change', function(e) {
+        const dateInput = e.target;
+        let dateValue = dateInput.value;
+        
+        // Se o usuário digitou no formato DD/MM/YYYY, converte para YYYY-MM-DD
+        if (dateValue.includes('/')) {
+            const [day, month, year] = dateValue.split('/');
+            dateValue = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            dateInput.value = dateValue;
+        }
+        
+        // Chama a verificação de limite
+        checkAgendamentoLimit();
+    });
         
         // Lista de e-mails autorizados
         const AUTHORIZED_EMAILS = [
@@ -945,72 +945,71 @@ function isWeekday(dateString) {
         return;
     }
             
-            // Verifica se o dia está bloqueado
-            database.ref('blockedDays/' + date).once('value').then(snapshot => {
-                if (snapshot.exists()) {
-                    const reason = snapshot.val().reason || '';
-                    document.getElementById('data-info').textContent = `Dia bloqueado para agendamentos. ${reason}`;
-                    document.getElementById('data-info').className = 'form-text text-danger';
-                    document.getElementById('submit-btn').disabled = true;
-                    return;
+    // Verifica se o dia está bloqueado
+    database.ref('blockedDays/' + date).once('value').then(snapshot => {
+        if (snapshot.exists()) {
+            const reason = snapshot.val().reason || '';
+            document.getElementById('data-info').textContent = `Dia bloqueado para agendamentos. ${reason}`;
+            document.getElementById('data-info').className = 'form-text text-danger';
+            document.getElementById('submit-btn').disabled = true;
+            return;
+        }
+        
+        // Se não for domingo e não estiver bloqueado, verifica os agendamentos
+        database.ref('agendamentos').orderByChild('data').equalTo(date).once('value')
+            .then(snapshot => {
+                const count = snapshot.numChildren();
+                const infoElement = document.getElementById('data-info');
+                const submitBtn = document.getElementById('submit-btn');
+                
+                // Define os limites baseados no dia da semana
+                let limiteAviso = 3;
+                let limiteMaximo = 5;
+                
+                if (isSaturday(date)) {
+                    limiteAviso = 1;
+                    limiteMaximo = 3;
                 }
                 
-                // Se não for domingo e não estiver bloqueado, verifica os agendamentos
-                database.ref('agendamentos').orderByChild('data').equalTo(date).once('value')
-                    .then(snapshot => {
-                        const count = snapshot.numChildren();
-                        const infoElement = document.getElementById('data-info');
-                        const submitBtn = document.getElementById('submit-btn');
-                        
-                        // Define os limites baseados no dia da semana
-                        let limiteAviso = 3;
-                        let limiteMaximo = 5;
-                        
-                        if (isSaturday(date)) {
-                            limiteAviso = 1;
-                            limiteMaximo = 3;
-                        }
-                        
-                        if (count >= limiteMaximo) {
-                            infoElement.textContent = `Este dia já atingiu o limite máximo de ${limiteMaximo} agendamentos. Não é possível agendar mais.`;
-                            infoElement.className = 'form-text text-danger';
-                            submitBtn.disabled = true;
-                            return;
-                        } else if (count >= limiteAviso) {
-                            infoElement.textContent = `Este dia já possui ${count} agendamento(s). Agendamentos extras requerem autorização.`;
-                            infoElement.className = 'form-text text-warning';
-                            submitBtn.disabled = false;
-                            
-                            currentExtraAgendamento = {
-                                data: date,
-                                currentCount: count,
-                                isSaturday: isSaturday(date)
-                            };
-                            
-                            // Atualiza mensagem do modal
-                            const modalMessage = document.getElementById('modal-message');
-                            const modalLimite = document.getElementById('modal-limite');
-                            
-                            if (isSaturday(date)) {
-                                modalMessage.textContent = 'Este sábado já possui 1 agendamento. Deseja solicitar autorização para um agendamento extra?';
-                                modalLimite.textContent = 'Máximo de 2 agendamentos extras por sábado (total de 3).';
-                            } else {
-                                modalMessage.textContent = 'Este dia já possui 3 agendamentos. Deseja solicitar autorização para um agendamento extra?';
-                                modalLimite.textContent = 'Máximo de 2 agendamentos extras por dia (total de 5).';
-                            }
-                            
-                            const modal = new bootstrap.Modal(document.getElementById('extraModal'));
-                            modal.show();
-                        } else {
-                            infoElement.textContent = `Este dia possui ${count} agendamento(s).`;
-                            infoElement.className = 'form-text text-muted';
-                            submitBtn.disabled = false;
-                            currentExtraAgendamento = null;
-                        }
-                    });
+                if (count >= limiteMaximo) {
+                    infoElement.textContent = `Este dia já atingiu o limite máximo de ${limiteMaximo} agendamentos. Não é possível agendar mais.`;
+                    infoElement.className = 'form-text text-danger';
+                    submitBtn.disabled = true;
+                    return;
+                } else if (count >= limiteAviso) {
+                    infoElement.textContent = `Este dia já possui ${count} agendamento(s). Agendamentos extras requerem autorização.`;
+                    infoElement.className = 'form-text text-warning';
+                    submitBtn.disabled = false;
+                    
+                    currentExtraAgendamento = {
+                        data: date,
+                        currentCount: count,
+                        isSaturday: isSaturday(date)
+                    };
+                    
+                    // Atualiza mensagem do modal
+                    const modalMessage = document.getElementById('modal-message');
+                    const modalLimite = document.getElementById('modal-limite');
+                    
+                    if (isSaturday(date)) {
+                        modalMessage.textContent = 'Este sábado já possui 1 agendamento. Deseja solicitar autorização para um agendamento extra?';
+                        modalLimite.textContent = 'Máximo de 2 agendamentos extras por sábado (total de 3).';
+                    } else {
+                        modalMessage.textContent = 'Este dia já possui 3 agendamentos. Deseja solicitar autorização para um agendamento extra?';
+                        modalLimite.textContent = 'Máximo de 2 agendamentos extras por dia (total de 5).';
+                    }
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('extraModal'));
+                    modal.show();
+                } else {
+                    infoElement.textContent = `Este dia possui ${count} agendamento(s).`;
+                    infoElement.className = 'form-text text-muted';
+                    submitBtn.disabled = false;
+                    currentExtraAgendamento = null;
+                }
             });
-        }
-
+    });
+} // <-- Esta chave estava faltando
         // Verifica limite de reservas por dia
         function checkReservaLimit() {
             const dateInput = document.getElementById('reserva-data');
@@ -1294,5 +1293,6 @@ function isWeekday(dateString) {
     </script>
 </body>
 </html>
+
 
 
