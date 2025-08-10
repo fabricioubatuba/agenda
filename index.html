@@ -7,61 +7,99 @@
     <link rel="icon" href="https://raw.githubusercontent.com/fabricioubatuba/agenda/refs/heads/main/faviconsf.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         body {
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+        
+        /* Estilo da tela de login */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+        
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        
+        .login-logo {
+            height: 80px;
+            margin-bottom: 20px;
+        }
+        
+        /* Estilo do conteúdo principal (oculto inicialmente) */
+        .main-content {
+            display: none;
+        }
+        
         /* Estilo do botão de logout */
         #logout-btn {
             font-size: 0.8rem;
             padding: 0.25rem 0.5rem;
         }
-
+        
         /* Espaçamento entre user-info e botão */
         .gap-3 {
             gap: 1rem !important;
         }
+        
         .logo {
             height: 50px;
             margin-bottom: 15px;
         }
+        
         .card {
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
             width: 100%;
         }
+        
         .card-header {
             font-weight: bold;
         }
+        
         .agendamento-card {
             border-left: 4px solid #0d6efd;
             margin-bottom: 10px;
             transition: all 0.3s;
         }
+        
         .agendamento-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
         }
+        
         .inicial {
             border-left-color: #78a1ad;
         }
+        
         .manha {
             border-left-color: #ffc107;
         }
+        
         .tarde {
             border-left-color: #fd7e14;
         }
+        
         .horário-comercial {
             border-left-color: #fdf914;
         }
+        
         .encaixe {
             border-left-color: #6f42c1;
         }
+        
         .reserva {
             border-left-color: #6c757d;
         }
+        
         .blocked-day {
             background-color: #ffe8e8;
             border-left: 4px solid #dc3545;
@@ -72,48 +110,59 @@
             justify-content: space-between;
             align-items: center;
         }
+        
         #user-info {
             font-size: 0.9rem;
             color: #6c757d;
         }
+        
         .badge-roteador {
             background-color: #198754;
         }
+        
         .badge-periodo {
             background-color: #0dcaf0;
             color: #000;
         }
+        
         .badge-reserva {
             background-color: #6c757d;
             color: white;
         }
+        
         .copy-btn {
             cursor: pointer;
             transition: all 0.2s;
         }
+        
         .copy-btn:hover {
             transform: scale(1.1);
         }
+        
         .agendamento-count {
             font-size: 0.8rem;
             color: #6c757d;
             margin-top: 5px;
         }
+        
         .warning-count {
             color: #dc3545;
             font-weight: bold;
         }
+        
         .header-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-bottom: 20px;
         }
+        
         .header-title {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+        
         .alert-fixed {
             position: fixed;
             top: 20px;
@@ -123,19 +172,23 @@
             max-width: 500px;
             width: 90%;
         }
+        
         .form-section {
             margin-bottom: 1.5rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid #dee2e6;
         }
+        
         .form-section-title {
             font-size: 1.1rem;
             color: #495057;
             margin-bottom: 0.8rem;
         }
+        
         .nav-tabs .nav-link {
             cursor: pointer;
         }
+        
         .tab-content > .tab-pane {
             padding: 15px;
         }
@@ -145,10 +198,12 @@
             color: white !important;
             opacity: 0.8;
         }
+        
         .nav-tabs .nav-link.active {
             color: black !important;
             background-color: #ffc107;
         }
+        
         .nav-tabs .nav-link:hover {
             color: white !important;
             opacity: 1;
@@ -159,19 +214,23 @@
             max-width: 1200px;
             padding: 0 15px;
         }
+        
         .main-content-row {
             justify-content: center;
         }
+        
         .form-column {
             flex: 0 0 auto;
             width: 45%;
             max-width: 45%;
         }
+        
         .agendamentos-column {
             flex: 0 0 auto;
             width: 50%;
             max-width: 50%;
         }
+        
         @media (max-width: 992px) {
             .form-column,
             .agendamentos-column {
@@ -179,31 +238,14 @@
                 max-width: 100%;
             }
         }
-        /* Estilo para a tela de login */
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f8f9fa;
-        }
-        .login-card {
-            width: 100%;
-            max-width: 400px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .app-content {
-            display: none;
-        }
     </style>
 </head>
 <body>
-    <!-- Tela de Login -->
-    <div class="login-container" id="login-container">
-        <div class="card login-card">
+    <!-- Tela de Login (visível inicialmente) -->
+    <div class="login-container" id="login-screen">
+        <div class="login-card card">
             <div class="card-body text-center">
-                <img src="https://sejafibra.net/wp-content/uploads/2023/06/logonovofibra.png" alt="Seja Fibra" class="logo mb-4">
+                <img src="https://sejafibra.net/wp-content/uploads/2023/06/logonovofibra.png" alt="Seja Fibra" class="login-logo">
                 <h3 class="mb-4">Agenda de Instalações</h3>
                 <form id="login-form">
                     <div class="mb-3">
@@ -216,13 +258,12 @@
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Entrar</button>
                 </form>
-                <div id="login-error" class="text-danger mt-3" style="display: none;"></div>
             </div>
         </div>
     </div>
 
-    <!-- Conteúdo da Aplicação (inicialmente oculto) -->
-    <div class="app-content" id="app-content">
+    <!-- Conteúdo Principal (oculto inicialmente) -->
+    <div class="main-content" id="main-content">
         <div class="container mt-4">
             <!-- CABEÇALHO COM LOGO ACIMA -->
             <div class="header-container text-center">
@@ -443,6 +484,18 @@
         let editingAgendamentoId = null;
         let currentExtraAgendamento = null;
 
+        // Lista de e-mails autorizados
+        const AUTHORIZED_EMAILS = [
+            'atendente@sejafibra.net',
+            'supervisor@sejafibra.net',
+            'bioranss@gmail.com'
+        ];
+
+        // Função para verificar acesso
+        function checkAuthorization(email) {
+            return AUTHORIZED_EMAILS.includes(email.toLowerCase());
+        }
+
         // Inicialização quando o DOM estiver pronto
         document.addEventListener('DOMContentLoaded', function() {
             // Configura data mínima para hoje
@@ -451,102 +504,58 @@
             document.getElementById('filter-date').min = today;
             document.getElementById('reserva-data').min = today;
             
-            // Inicializa autenticação
-            initAuth();
-            
             // Configura listeners
             setupEventListeners();
-        });
-
-        // Configura a autenticação
-        function initAuth() {
+            
+            // Verifica estado de autenticação
             auth.onAuthStateChanged(user => {
-                if (user && user.emailVerified) {
-                    if (checkAuthorization(user.email)) {
-                        currentUser = user;
-                        showAppContent();
-                        updateUIForUser(user);
-                        loadAgendamentos();
-                        loadBlockedDays();
-                    } else {
-                        auth.signOut();
-                        showLoginError('Acesso não autorizado');
-                    }
+                if (user && user.email && checkAuthorization(user.email)) {
+                    // Usuário autenticado e autorizado
+                    currentUser = user;
+                    showMainContent();
+                    loadAgendamentos();
+                    loadBlockedDays();
                 } else {
+                    // Usuário não autenticado ou não autorizado
+                    currentUser = null;
                     showLoginScreen();
+                    if (user) {
+                        auth.signOut(); // Desconecta usuário não autorizado
+                    }
                 }
             });
-        }
+        });
 
-        // Mostra a tela de login
+        // Mostra a tela de login e esconde o conteúdo principal
         function showLoginScreen() {
-            document.getElementById('login-container').style.display = 'flex';
-            document.getElementById('app-content').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('main-content').style.display = 'none';
         }
 
-        // Mostra o conteúdo da aplicação
-        function showAppContent() {
-            document.getElementById('login-container').style.display = 'none';
-            document.getElementById('app-content').style.display = 'block';
+        // Mostra o conteúdo principal e esconde a tela de login
+        function showMainContent() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            updateUserInfo();
         }
 
-        // Mostra mensagem de erro no login
-        function showLoginError(message) {
-            const errorElement = document.getElementById('login-error');
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
-            setTimeout(() => {
-                errorElement.style.display = 'none';
-            }, 5000);
-        }
-
-        // Atualiza a UI baseado no usuário logado
-        function updateUIForUser(user) {
+        // Atualiza as informações do usuário na UI
+        function updateUserInfo() {
             const userInfo = document.getElementById('user-info');
-            
-            if (!user) {
-                userInfo.innerHTML = '<span class="text-danger">Acesso não autenticado</span>';
-                return;
+            if (currentUser) {
+                userInfo.textContent = `Logado como: ${currentUser.email}`;
+            } else {
+                userInfo.textContent = '';
             }
-            
-            userInfo.textContent = `Logado como: ${user.email}`;
-        }
-
-        // Funções para controlar o acesso
-        function disableAppFunctions() {
-            document.querySelectorAll('#agendamento-form input, #agendamento-form select, #agendamento-form button, #reserva-form input, #reserva-form select, #reserva-form button, .edit-btn, .delete-btn, #add-blocked-day')
-                .forEach(el => el.disabled = true);
-        }
-
-        function enableAppFunctions() {
-            document.querySelectorAll('#agendamento-form input, #agendamento-form select, #agendamento-form button, #reserva-form input, #reserva-form select, #reserva-form button, .edit-btn, .delete-btn, #add-blocked-day')
-                .forEach(el => el.disabled = false);
         }
 
         // Configura os event listeners
         function setupEventListeners() {
             // Formulário de login
-            document.getElementById('login-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
-                handleLogin(email, password);
-            });
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
             
-            // Botão de logout
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                if (confirm('Deseja realmente sair do sistema?')) {
-                    auth.signOut()
-                        .then(() => {
-                            showLoginScreen();
-                            showAlert('Logout realizado com sucesso!', 'success');
-                        })
-                        .catch(error => {
-                            console.error("Erro no logout:", error);
-                            showAlert('Erro ao fazer logout', 'danger');
-                        });
-                }
-            });
+            // Logout
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
             
             // Formulário de agendamento
             document.getElementById('agendamento-form').addEventListener('submit', handleFormSubmit);
@@ -568,55 +577,80 @@
             // Modal
             document.getElementById('confirm-extra').addEventListener('click', requestExtraAuthorization);
         }
-        
-        // Lista de e-mails autorizados
-        const AUTHORIZED_EMAILS = [
-            'atendente@sejafibra.net',
-            'supervisor@sejafibra.net',
-            'bioranss@gmail.com'
-        ];
-
-        // Função para verificar acesso
-        function checkAuthorization(email) {
-            return AUTHORIZED_EMAILS.includes(email.toLowerCase());
+                // Função para lidar com o login
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Validação básica
+            if (!email || !password) {
+                showAlert('Por favor, preencha todos os campos.', 'danger');
+                return;
+            }
+            
+            // Verifica se o email está autorizado antes mesmo de tentar login
+            if (!checkAuthorization(email)) {
+                showAlert('Acesso não autorizado. Utilize um e-mail válido.', 'danger');
+                return;
+            }
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Verifica novamente a autorização após o login
+                    if (!checkAuthorization(userCredential.user.email)) {
+                        auth.signOut();
+                        throw new Error('Acesso não autorizado');
+                    }
+                    
+                    showAlert('Login realizado com sucesso!', 'success');
+                    currentUser = userCredential.user;
+                    showMainContent();
+                    loadAgendamentos();
+                    loadBlockedDays();
+                })
+                .catch(error => {
+                    console.error("Erro no login:", error);
+                    let errorMessage = 'Erro ao fazer login';
+                    
+                    if (error.code === 'auth/wrong-password') {
+                        errorMessage = 'Senha incorreta';
+                    } else if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'Usuário não encontrado';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'E-mail inválido';
+                    } else if (error.message.includes('não autorizado')) {
+                        errorMessage = 'Acesso não autorizado';
+                    }
+                    
+                    showAlert(errorMessage, 'danger');
+                });
         }
 
-        // Função de login
-        function handleLogin(email, password) {
-    auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            if (!checkAuthorization(userCredential.user.email)) {
-                auth.signOut();
-                throw new Error('Acesso não autorizado');
+        // Função para lidar com o logout
+        function handleLogout() {
+            if (confirm('Deseja realmente sair do sistema?')) {
+                auth.signOut()
+                    .then(() => {
+                        showLoginScreen();
+                        showAlert('Logout realizado com sucesso!', 'success');
+                    })
+                    .catch(error => {
+                        console.error("Erro no logout:", error);
+                        showAlert('Erro ao fazer logout', 'danger');
+                    });
             }
-            showAlert('Login realizado com sucesso!', 'success');
-            
-            // Adicione estas linhas para mostrar o conteúdo do app
-            currentUser = userCredential.user;
-            showAppContent();
-            updateUIForUser(currentUser);
-            loadAgendamentos();
-            loadBlockedDays();
-        })
-        .catch(error => {
-            console.error("Erro no login:", error);
-            let errorMessage = 'Erro ao fazer login';
-            
-            if (error.code === 'auth/wrong-password') {
-                errorMessage = 'Senha incorreta';
-            } else if (error.code === 'auth/user-not-found') {
-                errorMessage = 'Usuário não encontrado';
-            } else if (error.code === 'auth/invalid-email') {
-                errorMessage = 'E-mail inválido';
-            } else if (error.message.includes('não autorizado')) {
-                errorMessage = 'Acesso não autorizado';
-            }
-            
-            showLoginError(errorMessage);
-        });
-}
+        }
+
+        // Função para lidar com o envio do formulário de agendamento
         function handleFormSubmit(e) {
             e.preventDefault();
+            
+            if (!currentUser) {
+                showAlert('Você precisa estar logado para fazer agendamentos.', 'danger');
+                return;
+            }
             
             // Captura dos dados
             const formData = {
@@ -635,13 +669,9 @@
                 roteador: document.getElementById('roteador').checked,
                 createdAt: firebase.database.ServerValue.TIMESTAMP,
                 status: 'active',
-                tipo: 'agendamento'
+                tipo: 'agendamento',
+                createdBy: currentUser.email
             };
-
-            // Adiciona email do usuário se não for anônimo
-            if (currentUser && !currentUser.isAnonymous) {
-                formData.createdBy = currentUser.email;
-            }
 
             // Validação básica
             if (!formData.data || !formData.cliente) {
@@ -671,8 +701,14 @@
             }
         }
 
+        // Função para lidar com o envio do formulário de reserva
         function handleReservaSubmit(e) {
             e.preventDefault();
+            
+            if (!currentUser) {
+                showAlert('Você precisa estar logado para fazer reservas.', 'danger');
+                return;
+            }
             
             const reservaData = {
                 data: document.getElementById('reserva-data').value,
@@ -680,13 +716,9 @@
                 periodo: document.getElementById('reserva-periodo').value,
                 createdAt: firebase.database.ServerValue.TIMESTAMP,
                 status: 'active',
-                tipo: 'reserva'
+                tipo: 'reserva',
+                createdBy: currentUser.email
             };
-
-            // Adiciona email do usuário se não for anônimo
-            if (currentUser && !currentUser.isAnonymous) {
-                reservaData.createdBy = currentUser.email;
-            }
 
             // Validação básica
             if (!reservaData.data || !reservaData.cliente) {
@@ -706,7 +738,7 @@
 
         // Carrega agendamentos do Firebase
         function loadAgendamentos() {
-            database.ref('agendamentos').on('value', snapshot => {
+            database.ref('agendamentos').orderByChild('status').equalTo('active').on('value', snapshot => {
                 const agendamentos = [];
                 snapshot.forEach(childSnapshot => {
                     const agendamento = childSnapshot.val();
@@ -721,16 +753,7 @@
         
         // Filtra agendamentos por data
         function filterAgendamentosByDate() {
-            const dateInputElement = document.getElementById('filter-date');
-            let dateInput = dateInputElement.value;
-
-            // Se o usuário digitou manualmente no formato DD/MM/YYYY, converte para YYYY-MM-DD
-            if (dateInput.includes('/')) {
-                const [day, month, year] = dateInput.split('/');
-                dateInput = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                dateInputElement.value = dateInput; // Atualiza o campo para o formato correto
-            }
-
+            const dateInput = document.getElementById('filter-date').value;
             const container = document.getElementById('agendamentos-container');
             
             if (!dateInput) {
@@ -993,8 +1016,7 @@
                     });
             });
         }
-
-        // Verifica limite de reservas por dia
+                // Verifica limite de reservas por dia
         function checkReservaLimit() {
             const dateInput = document.getElementById('reserva-data');
             const date = dateInput.value;
@@ -1133,7 +1155,8 @@
             
             database.ref('blockedDays/' + date).set({
                 reason: reason || '',
-                blockedAt: firebase.database.ServerValue.TIMESTAMP
+                blockedAt: firebase.database.ServerValue.TIMESTAMP,
+                blockedBy: currentUser.email
             })
             .then(() => showAlert('Dia bloqueado com sucesso!', 'success'))
             .catch(error => showAlert('Erro ao bloquear dia: ' + error.message, 'danger'));
@@ -1277,6 +1300,3 @@
     </script>
 </body>
 </html>
-
-
-
