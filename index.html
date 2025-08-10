@@ -590,6 +590,13 @@
                 throw new Error('Acesso não autorizado');
             }
             showAlert('Login realizado com sucesso!', 'success');
+            
+            // Adicione estas linhas para mostrar o conteúdo do app
+            currentUser = userCredential.user;
+            showAppContent();
+            updateUIForUser(currentUser);
+            loadAgendamentos();
+            loadBlockedDays();
         })
         .catch(error => {
             console.error("Erro no login:", error);
@@ -608,7 +615,6 @@
             showLoginError(errorMessage);
         });
 }
-
         function handleFormSubmit(e) {
             e.preventDefault();
             
@@ -1271,5 +1277,6 @@
     </script>
 </body>
 </html>
+
 
 
