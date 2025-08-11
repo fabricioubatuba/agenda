@@ -14,21 +14,18 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         /* Cores por dia (borda esquerda) */
-.color-dia-1 { border-left-color: #FF6B6B; } /* Vermelho pastel */
-.color-dia-2 { border-left-color: #4ECDC4; } /* Azul pastel */
-.color-dia-3 { border-left-color: #FFD166; } /* Amarelo pastel */
-.color-dia-4 { border-left-color: #A0C4FF; } /* Azul claro */
-.color-dia-5 { border-left-color: #B5EAD7; } /* Verde pastel */
-.color-dia-6 { border-left-color: #C7CEEA; } /* Lilás */
+.color-dia-1 { border-left: 4px solid #FF6B6B; } /* Vermelho */
+.color-dia-2 { border-left: 4px solid #48D597; } /* Verde */
+.color-dia-3 { border-left: 4px solid #FFD166; } /* Amarelo */
+.color-dia-4 { border-left: 4px solid #6A8DFF; } /* Azul */
+.color-dia-5 { border-left: 4px solid #C77DFF; } /* Roxo */
+.color-dia-6 { border-left: 4px solid #FF85A2; } /* Rosa */
 
-/* Cor do botão "Encaixe" */
-.badge-encaixe { background-color: #DC3545; } /* Vermelho */
-        /* Estilo do botão de logout */
-        #logout-btn {
-            font-size: 0.8rem;
-            padding: 0.25rem 0.5rem;
-        }
-
+/* Botão "Encaixe" */
+.badge-encaixe { 
+    background-color: #DC3545 !important; 
+    color: white !important;
+}
         /* Espaçamento entre user-info e botão */
         .gap-3 {
             gap: 1rem !important;
@@ -806,9 +803,10 @@
     let badgeExtra = '';
 
     // --- COR DA BORDA (ÚNICA POR DIA) ---
-    // Gera um número hash baseado na data para selecionar uma cor fixa
-    const hash = agendamento.data.split('-').reduce((acc, val) => acc + parseInt(val), 0);
-    const colorClass = `color-dia-${(hash % 6) + 1}`; // Usa 6 cores pré-definidas
+    // Gera um hash mais eficiente baseado na data
+    const dateHash = agendamento.data.split('-').join('');
+    const colorIndex = (parseInt(dateHash) % 6) + 1; // Gera número de 1 a 6
+    const colorClass = `color-dia-${colorIndex}`;
 
     // --- BOTÃO DO PERÍODO (VERMELHO SE FOR "ENCAIXE") ---
     const badgePeriodoClass = agendamento.periodo === 'Encaixe' ? 'badge-encaixe' : 'bg-primary';
@@ -1315,6 +1313,7 @@ function isWeekday(dateString) {
     </script>
 </body>
 </html>
+
 
 
 
