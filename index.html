@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda de Instalações Ubatuba - Seja Fibra</title>
+    <title>Agenda de Instalações</title>
     <link rel="icon" href="https://raw.githubusercontent.com/fabricioubatuba/agenda/refs/heads/main/faviconsf.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
@@ -14,18 +14,18 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         /* Cores por dia (borda esquerda) */
-.color-dia-1 { border-left: 4px solid #FF6B6B !important; }
-.color-dia-2 { border-left: 4px solid #48D597 !important; }
-.color-dia-3 { border-left: 4px solid #FFD166 !important; }
-.color-dia-4 { border-left: 4px solid #6A8DFF !important; }
-.color-dia-5 { border-left: 4px solid #C77DFF !important; }
-.color-dia-6 { border-left: 4px solid #FFA500 !important; }
+        .color-dia-1 { border-left: 4px solid #FF6B6B !important; }
+        .color-dia-2 { border-left: 4px solid #48D597 !important; }
+        .color-dia-3 { border-left: 4px solid #FFD166 !important; }
+        .color-dia-4 { border-left: 4px solid #6A8DFF !important; }
+        .color-dia-5 { border-left: 4px solid #C77DFF !important; }
+        .color-dia-6 { border-left: 4px solid #FFA500 !important; }
 
-/* Botão "Encaixe" */
-.badge-encaixe { 
-    background-color: #DC3545 !important; 
-    color: white !important;
-}
+        /* Botão "Encaixe" */
+        .badge-encaixe { 
+            background-color: #DC3545 !important; 
+            color: white !important;
+        }
         /* Espaçamento entre user-info e botão */
         .gap-3 {
             gap: 1rem !important;
@@ -68,6 +68,12 @@
         #user-info {
             font-size: 0.9rem;
             color: #6c757d;
+        }
+        #next-available {
+            font-size: 0.8rem;
+            color: #495057;
+            margin-top: -10px;
+            margin-bottom: 10px;
         }
         .badge-roteador {
             background-color: #198754;
@@ -189,6 +195,18 @@
         .app-content {
             display: none;
         }
+        /* Seletor de cidade */
+        .city-selector {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+        }
+        .city-selector .btn-group {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .city-selector .btn {
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -197,18 +215,18 @@
         <div class="card login-card">
             <div class="card-body text-center">
                 <img src="https://sejafibra.net/wp-content/uploads/2023/06/logonovofibra.png" alt="Seja Fibra" class="logo mb-4">
-                <h3 class="mb-4">Agenda de Instalações Ubatuba</h3>
+                <h3 class="mb-4">Agenda de Instalações</h3>
                 <form id="login-form">
-    <div class="mb-3">
-        <label for="login-email" class="form-label">E-mail</label>
-        <input type="email" class="form-control" id="login-email" autocomplete="username" required>
-    </div>
-    <div class="mb-3">
-        <label for="login-password" class="form-label">Senha</label>
-        <input type="password" class="form-control" id="login-password" autocomplete="current-password" required>
-    </div>
-    <button type="submit" class="btn btn-primary w-100">Entrar</button>
-</form>
+                    <div class="mb-3">
+                        <label for="login-email" class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="login-email" autocomplete="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="login-password" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="login-password" autocomplete="current-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                </form>
                 <div id="login-error" class="text-danger mt-3" style="display: none;"></div>
             </div>
         </div>
@@ -223,9 +241,21 @@
                     <img src="https://sejafibra.net/wp-content/uploads/2023/06/logonovofibra.png" alt="Seja Fibra" class="logo">
                 </div>
                 <div class="header-title">
-                    <h1>Agenda de Instalações Ubatuba</h1>
+                    <h1>Agenda de Instalações</h1>
+                    
+                    <!-- Seletor de cidade -->
+                    <div class="city-selector">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary active" id="ubatuba-btn">Ubatuba</button>
+                            <button type="button" class="btn btn-outline-primary" id="caragua-btn">Caraguá</button>
+                        </div>
+                    </div>
+                    
                     <div class="d-flex align-items-center justify-content-center gap-3">
-                        <div id="user-info" class="mb-3"></div>
+                        <div>
+                            <div id="user-info" class="mb-1"></div>
+                            <div id="next-available"></div>
+                        </div>
                         <!-- Botão de Logout (visível quando logado) -->
                         <button id="logout-btn" class="btn btn-sm btn-outline-danger">
                             <i class="bi bi-box-arrow-right"></i> Sair
@@ -415,26 +445,36 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script>
-        // Configuração do Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyArt1k0NSeuHD9qjEHbC9zJNEr331_Zk0A",
-            authDomain: "agendains.firebaseapp.com",
-            projectId: "agendains",
-            storageBucket: "agendains.appspot.com",
-            messagingSenderId: "1060898205140",
-            appId: "1:1060898205140:web:994bd3b9e9e5677168ba41",
-            databaseURL: "https://agendains-default-rtdb.firebaseio.com/"
+        // Configurações do Firebase para cada cidade
+        const firebaseConfigs = {
+            ubatuba: {
+                apiKey: "AIzaSyArt1k0NSeuHD9qjEHbC9zJNEr331_Zk0A",
+                authDomain: "agendains.firebaseapp.com",
+                projectId: "agendains",
+                storageBucket: "agendains.appspot.com",
+                messagingSenderId: "1060898205140",
+                appId: "1:1060898205140:web:994bd3b9e9e5677168ba41",
+                databaseURL: "https://agendains-default-rtdb.firebaseio.com/"
+            },
+            caragua: {
+                apiKey: "AIzaSyBvZSNPpRzvMs__huKkb8GgDaDjq-fxzyI",
+                authDomain: "agendacaragua-4af6c.firebaseapp.com",
+                databaseURL: "https://agendacaragua-4af6c-default-rtdb.firebaseio.com",
+                projectId: "agendacaragua-4af6c",
+                storageBucket: "agendacaragua-4af6c.firebasestorage.app",
+                messagingSenderId: "29707363548",
+                appId: "1:29707363548:web:57b6387921834623cf8019"
+            }
         };
-
-        // Inicializa o Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const auth = firebase.auth();
 
         // Variáveis globais
         let currentUser = null;
         let editingAgendamentoId = null;
         let currentExtraAgendamento = null;
+        let currentCity = 'ubatuba'; // Cidade padrão
+        let app = null;
+        let database = null;
+        let auth = null;
 
         // Inicialização quando o DOM estiver pronto
         document.addEventListener('DOMContentLoaded', function() {
@@ -444,29 +484,69 @@
             document.getElementById('filter-date').min = today;
             document.getElementById('reserva-data').min = today;
             
-            // Inicializa autenticação
-            initAuth();
+            // Inicializa Firebase com a cidade padrão (Ubatuba)
+            initializeFirebase('ubatuba');
             
             // Configura listeners
             setupEventListeners();
         });
 
+        // Inicializa o Firebase com a configuração da cidade selecionada
+        function initializeFirebase(city) {
+            // Se já tiver uma instância do Firebase, limpa antes de inicializar outra
+            if (app) {
+                app.delete().then(() => {
+                    console.log('Firebase app deleted');
+                }).catch(error => {
+                    console.error('Error deleting Firebase app:', error);
+                });
+            }
+
+            currentCity = city;
+            app = firebase.initializeApp(firebaseConfigs[city], city);
+            database = firebase.database(app);
+            auth = firebase.auth(app);
+
+            // Atualiza a UI para refletir a cidade selecionada
+            updateCityUI();
+            
+            // Se já estiver logado, recarrega os dados
+            if (currentUser) {
+                loadAgendamentos();
+                loadBlockedDays();
+            }
+        }
+
+        // Atualiza a UI para refletir a cidade selecionada
+        function updateCityUI() {
+            const ubatubaBtn = document.getElementById('ubatuba-btn');
+            const caraguaBtn = document.getElementById('caragua-btn');
+            
+            if (currentCity === 'ubatuba') {
+                ubatubaBtn.classList.add('active');
+                caraguaBtn.classList.remove('active');
+            } else {
+                ubatubaBtn.classList.remove('active');
+                caraguaBtn.classList.add('active');
+            }
+        }
+
         // Configura a autenticação
         function initAuth() {
-    auth.onAuthStateChanged(user => {
-        if (user && checkAuthorization(user.email)) {
-            currentUser = user;
-            showAppContent();
-            updateUIForUser(user);
-            loadAgendamentos();
-            loadBlockedDays();
-        } else {
-            showLoginScreen();
-            if (user) auth.signOut(); // Desloga se não estiver autorizado
+            auth.onAuthStateChanged(user => {
+                if (user && checkAuthorization(user.email)) {
+                    currentUser = user;
+                    showAppContent();
+                    updateUIForUser(user);
+                    loadAgendamentos();
+                    loadBlockedDays();
+                    updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
+                } else {
+                    showLoginScreen();
+                    if (user) auth.signOut(); // Desloga se não estiver autorizado
+                }
+            });
         }
-    });
-}
-
         // Mostra a tela de login
         function showLoginScreen() {
             document.getElementById('login-container').style.display = 'flex';
@@ -499,6 +579,7 @@
             }
             
             userInfo.textContent = `Logado como: ${user.email}`;
+            updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
         }
 
         // Funções para controlar o acesso
@@ -515,64 +596,75 @@
         // Configura os event listeners
         function setupEventListeners() {
             // Formulário de login
-    document.getElementById('login-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        handleLogin(email, password);
-    });
-    
-    // Botão de logout
-    document.getElementById('logout-btn').addEventListener('click', () => {
-        if (confirm('Deseja realmente sair do sistema?')) {
-            auth.signOut()
-                .then(() => {
-                    showLoginScreen();
-                    showAlert('Logout realizado com sucesso!', 'success');
-                })
-                .catch(error => {
-                    console.error("Erro no logout:", error);
-                    showAlert('Erro ao fazer logout', 'danger');
-                });
+            document.getElementById('login-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                handleLogin(email, password);
+            });
+            
+            // Botão de logout
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                if (confirm('Deseja realmente sair do sistema?')) {
+                    auth.signOut()
+                        .then(() => {
+                            showLoginScreen();
+                            showAlert('Logout realizado com sucesso!', 'success');
+                        })
+                        .catch(error => {
+                            console.error("Erro no logout:", error);
+                            showAlert('Erro ao fazer logout', 'danger');
+                        });
+                }
+            });
+            
+            // Formulário de agendamento
+            document.getElementById('agendamento-form').addEventListener('submit', handleFormSubmit);
+            document.getElementById('cancel-edit-btn').addEventListener('click', cancelEdit);
+            
+            // Formulário de reserva
+            document.getElementById('reserva-form').addEventListener('submit', handleReservaSubmit);
+            
+            // Filtro de data
+            document.getElementById('filter-date').addEventListener('change', filterAgendamentosByDate);
+            
+            // Data do agendamento - verifica limite
+            document.getElementById('data').addEventListener('change', function(e) {
+                const dateInput = e.target;
+                let dateValue = dateInput.value;
+                
+                // Se o usuário digitou no formato DD/MM/YYYY, converte para YYYY-MM-DD
+                if (dateValue.includes('/')) {
+                    const [day, month, year] = dateValue.split('/');
+                    dateValue = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                    dateInput.value = dateValue;
+                }
+                
+                // Chama a verificação de limite
+                checkAgendamentoLimit();
+            });
+            
+            document.getElementById('reserva-data').addEventListener('change', checkReservaLimit);
+            
+            // Botão para adicionar dia bloqueado
+            document.getElementById('add-blocked-day').addEventListener('click', addBlockedDay);
+            
+            // Modal
+            document.getElementById('confirm-extra').addEventListener('click', requestExtraAuthorization);
+            
+            // Seletor de cidade
+            document.getElementById('ubatuba-btn').addEventListener('click', () => switchCity('ubatuba'));
+            document.getElementById('caragua-btn').addEventListener('click', () => switchCity('caragua'));
         }
-    });
-    
-    // Formulário de agendamento
-    document.getElementById('agendamento-form').addEventListener('submit', handleFormSubmit);
-    document.getElementById('cancel-edit-btn').addEventListener('click', cancelEdit);
-    
-    // Formulário de reserva
-    document.getElementById('reserva-form').addEventListener('submit', handleReservaSubmit);
-    
-    // Filtro de data
-    document.getElementById('filter-date').addEventListener('change', filterAgendamentosByDate);
-    
-    // Data do agendamento - verifica limite
-    document.getElementById('data').addEventListener('change', function(e) {
-        const dateInput = e.target;
-        let dateValue = dateInput.value;
-        
-        // Se o usuário digitou no formato DD/MM/YYYY, converte para YYYY-MM-DD
-        if (dateValue.includes('/')) {
-            const [day, month, year] = dateValue.split('/');
-            dateValue = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-            dateInput.value = dateValue;
-        }
-        
-        // Chama a verificação de limite
-        checkAgendamentoLimit();
-    });
-    
-    document.getElementById('reserva-data').addEventListener('change', checkReservaLimit);
-    
-    // Botão para adicionar dia bloqueado
-    document.getElementById('add-blocked-day').addEventListener('click', addBlockedDay);
-    
-    // Modal
-    document.getElementById('confirm-extra').addEventListener('click', requestExtraAuthorization);
-} // <-- Esta chave fecha a função setupEventListeners()
 
-        
+        // Alterna entre as cidades
+        function switchCity(city) {
+            if (currentCity === city) return;
+            
+            showAlert(`Carregando dados de ${city === 'ubatuba' ? 'Ubatuba' : 'Caraguá'}...`, 'info');
+            initializeFirebase(city);
+        }
+
         // Lista de e-mails autorizados
         const AUTHORIZED_EMAILS = [
             'ana@sejafibra.net',
@@ -594,40 +686,144 @@
 
         // Função de login
         function handleLogin(email, password) {
-    // Define a persistência da sessão
-    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-        .then(() => {
-            return auth.signInWithEmailAndPassword(email, password);
-        })
-        .then((userCredential) => {
-            if (!checkAuthorization(userCredential.user.email)) {
-                auth.signOut();
-                throw new Error('Acesso não autorizado');
-            }
-            showAlert('Login realizado com sucesso!', 'success');
-            currentUser = userCredential.user;
-            showAppContent();
-            updateUIForUser(currentUser);
-            loadAgendamentos();
-            loadBlockedDays();
-        })
-        .catch(error => {
-            console.error("Erro no login:", error);
-            let errorMessage = 'Erro ao fazer login';
+            // Define a persistência da sessão
+            auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+                .then(() => {
+                    return auth.signInWithEmailAndPassword(email, password);
+                })
+                .then((userCredential) => {
+                    if (!checkAuthorization(userCredential.user.email)) {
+                        auth.signOut();
+                        throw new Error('Acesso não autorizado');
+                    }
+                    showAlert('Login realizado com sucesso!', 'success');
+                    currentUser = userCredential.user;
+                    showAppContent();
+                    updateUIForUser(currentUser);
+                    loadAgendamentos();
+                    loadBlockedDays();
+                    updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
+                })
+                .catch(error => {
+                    console.error("Erro no login:", error);
+                    let errorMessage = 'Erro ao fazer login';
+                    
+                    if (error.code === 'auth/wrong-password') {
+                        errorMessage = 'Senha incorreta';
+                    } else if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'Usuário não encontrado';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'E-mail inválido';
+                    } else if (error.message.includes('não autorizado')) {
+                        errorMessage = 'Acesso não autorizado';
+                    }
+                    
+                    showLoginError(errorMessage);
+                });
+        }
+
+        // Atualiza os próximos dias disponíveis para agendamento
+        function updateNextAvailableDays() {
+            const nextAvailableElement = document.getElementById('next-available');
+            nextAvailableElement.textContent = 'Carregando próximas vagas...';
             
-            if (error.code === 'auth/wrong-password') {
-                errorMessage = 'Senha incorreta';
-            } else if (error.code === 'auth/user-not-found') {
-                errorMessage = 'Usuário não encontrado';
-            } else if (error.code === 'auth/invalid-email') {
-                errorMessage = 'E-mail inválido';
-            } else if (error.message.includes('não autorizado')) {
-                errorMessage = 'Acesso não autorizado';
-            }
-            
-            showLoginError(errorMessage);
-        });
-}
+            // Obtém todos os agendamentos ativos
+            database.ref('agendamentos').orderByChild('status').equalTo('active').once('value')
+                .then(snapshot => {
+                    const agendamentos = [];
+                    snapshot.forEach(childSnapshot => {
+                        const agendamento = childSnapshot.val();
+                        agendamentos.push(agendamento);
+                    });
+                    
+                    // Obtém os dias bloqueados
+                    return database.ref('blockedDays').once('value').then(blockedSnapshot => {
+                        const blockedDays = {};
+                        blockedSnapshot.forEach(child => {
+                            blockedDays[child.key] = true;
+                        });
+                        
+                        return { agendamentos, blockedDays };
+                    });
+                })
+                .then(({ agendamentos, blockedDays }) => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    const availableDays = [];
+                    let daysChecked = 0;
+                    let daysFound = 0;
+                    
+                    // Verifica os próximos 30 dias (para encontrar 3 dias com vagas)
+                    while (daysChecked < 30 && daysFound < 3) {
+                        const checkDate = new Date(today);
+                        checkDate.setDate(today.getDate() + daysChecked + 1);
+                        daysChecked++;
+                        
+                        // Formata a data como YYYY-MM-DD
+                        const dateStr = checkDate.toISOString().split('T')[0];
+                        
+                        // Pula domingos e dias bloqueados
+                        if (isSunday(dateStr) || blockedDays[dateStr]) {
+                            continue;
+                        }
+                        
+                        // Conta agendamentos para este dia
+                        const count = agendamentos.filter(a => a.data === dateStr).length;
+                        
+                        // Verifica se há vagas disponíveis
+                        const maxSlots = isSaturday(dateStr) ? 1 : 3; // 1 para sábado, 3 para outros dias
+                        const availableSlots = maxSlots - count;
+                        
+                        if (availableSlots > 0) {
+                            // Formata a data para exibição (DD/MM)
+                            const formattedDate = `${checkDate.getDate().toString().padStart(2, '0')}/${(checkDate.getMonth()+1).toString().padStart(2, '0')}`;
+                            availableDays.push({
+                                date: formattedDate,
+                                slots: availableSlots
+                            });
+                            daysFound++;
+                        }
+                    }
+                    
+                    // Atualiza o elemento com as próximas vagas
+                    if (availableDays.length > 0) {
+                        const availableText = availableDays.map(day => `${day.date} (${day.slots})`).join(', ');
+                        nextAvailableElement.textContent = `Próx. vagas: ${availableText}`;
+                    } else {
+                        nextAvailableElement.textContent = 'Nenhuma vaga disponível nos próximos dias';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao calcular próximas vagas:', error);
+                    nextAvailableElement.textContent = 'Erro ao carregar próximas vagas';
+                });
+        }
+
+        // Função para verificar se é fim de semana
+        function isWeekend(dateString) {
+            const parts = dateString.split('-');
+            const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+            const day = date.getUTCDay(); // Usa getUTCDay() em vez de getDay()
+            return day === 0 || day === 6;
+        }
+
+        function isSaturday(dateString) {
+            const parts = dateString.split('-');
+            const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+            return date.getUTCDay() === 6;
+        }
+
+        function isSunday(dateString) {
+            const parts = dateString.split('-');
+            const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+            return date.getUTCDay() === 0;
+        }
+
+        function isWeekday(dateString) {
+            return !isWeekend(dateString);
+        }
+        // Manipulação de agendamentos
         function handleFormSubmit(e) {
             e.preventDefault();
             
@@ -668,6 +864,7 @@
                     .then(() => {
                         showAlert('Agendamento atualizado com sucesso!', 'success');
                         cancelEdit();
+                        updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
                     })
                     .catch(error => {
                         showAlert('Erro ao atualizar agendamento: ' + error.message, 'danger');
@@ -677,6 +874,7 @@
                     .then(() => {
                         showAlert('Agendamento criado com sucesso!', 'success');
                         resetForm();
+                        updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
                     })
                     .catch(error => {
                         showAlert('Erro ao criar agendamento: ' + error.message, 'danger');
@@ -711,6 +909,7 @@
                 .then(() => {
                     showAlert('Reserva realizada com sucesso!', 'success');
                     document.getElementById('reserva-form').reset();
+                    updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
                 })
                 .catch(error => {
                     showAlert('Erro ao criar reserva: ' + error.message, 'danger');
@@ -729,6 +928,7 @@
                     });
                 });
                 renderAgendamentos(agendamentos);
+                updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
             });
         }
         
@@ -785,63 +985,63 @@
 
         // Cria um card de agendamento
         function createAgendamentoCard(agendamento, id) {
-    const card = document.createElement('div');
-    let badgeExtra = '';
+            const card = document.createElement('div');
+            let badgeExtra = '';
 
-    // --- COR DA BORDA (ÚNICA POR DIA) ---
-    // Gera um hash mais eficiente baseado na data
-    const dateHash = agendamento.data.split('-').join('');
-    const colorIndex = (parseInt(dateHash) % 6) + 1; // Gera número de 1 a 6
-    const colorClass = `color-dia-${colorIndex}`;
+            // --- COR DA BORDA (ÚNICA POR DIA) ---
+            // Gera um hash mais eficiente baseado na data
+            const dateHash = agendamento.data.split('-').join('');
+            const colorIndex = (parseInt(dateHash) % 6) + 1; // Gera número de 1 a 6
+            const colorClass = `color-dia-${colorIndex}`;
 
-    // --- BOTÃO DO PERÍODO (VERMELHO SE FOR "ENCAIXE") ---
-    const badgePeriodoClass = agendamento.periodo === 'Encaixe' ? 'badge-encaixe' : 'bg-primary';
+            // --- BOTÃO DO PERÍODO (VERMELHO SE FOR "ENCAIXE") ---
+            const badgePeriodoClass = agendamento.periodo === 'Encaixe' ? 'badge-encaixe' : 'bg-primary';
 
-    // --- BADGE EXTRA (ROTEADOR/RESERVA) ---
-    if (agendamento.tipo === 'reserva') {
-        badgeExtra = '<span class="badge badge-reserva ms-1">Reserva</span>';
-    } else if (agendamento.roteador) {
-        badgeExtra = '<span class="badge badge-roteador ms-1">Roteador OK</span>';
-    }
+            // --- BADGE EXTRA (ROTEADOR/RESERVA) ---
+            if (agendamento.tipo === 'reserva') {
+                badgeExtra = '<span class="badge badge-reserva ms-1">Reserva</span>';
+            } else if (agendamento.roteador) {
+                badgeExtra = '<span class="badge badge-roteador ms-1">Roteador OK</span>';
+            }
 
-    // --- ESTRUTURA DO CARD ---
-    card.className = `card agendamento-card mb-2 ${colorClass}`; // Aplica cor do dia
-    card.innerHTML = `
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <h6 class="card-title">${agendamento.cliente}</h6>
-                    ${agendamento.tipo === 'agendamento' ? `
-                        <p class="card-text mb-1">
-                            <small><strong>Endereço:</strong> ${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
-                        </p>
-                        <p class="card-text mb-1"><small><strong>Bairro:</strong> ${agendamento.bairro}</small></p>
-                    ` : ''}
+            // --- ESTRUTURA DO CARD ---
+            card.className = `card agendamento-card mb-2 ${colorClass}`; // Aplica cor do dia
+            card.innerHTML = `
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title">${agendamento.cliente}</h6>
+                            ${agendamento.tipo === 'agendamento' ? `
+                                <p class="card-text mb-1">
+                                    <small><strong>Endereço:</strong> ${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
+                                </p>
+                                <p class="card-text mb-1"><small><strong>Bairro:</strong> ${agendamento.bairro}</small></p>
+                            ` : ''}
+                        </div>
+                        <div class="text-end">
+                            <span class="badge ${badgePeriodoClass}">${agendamento.periodo}</span>
+                            ${badgeExtra}
+                        </div>
+                    </div>
+                    ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
+                    <div class="d-flex justify-content-between mt-2">
+                        <small class="text-muted">${agendamento.createdBy ? 'Agendado por: ' + agendamento.createdBy : ''}</small>
+                        <div>
+                            <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${id}"></i>
+                            <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${id}"></i>
+                            <i class="bi bi-trash delete-btn" title="Excluir" data-id="${id}"></i>
+                        </div>
+                    </div>
                 </div>
-                <div class="text-end">
-                    <span class="badge ${badgePeriodoClass}">${agendamento.periodo}</span>
-                    ${badgeExtra}
-                </div>
-            </div>
-            ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
-            <div class="d-flex justify-content-between mt-2">
-                <small class="text-muted">${agendamento.createdBy ? 'Agendado por: ' + agendamento.createdBy : ''}</small>
-                <div>
-                    <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${id}"></i>
-                    <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${id}"></i>
-                    <i class="bi bi-trash delete-btn" title="Excluir" data-id="${id}"></i>
-                </div>
-            </div>
-        </div>
-    `;
+            `;
 
-    // Listeners dos botões
-    card.querySelector('.copy-btn').addEventListener('click', copyAgendamentoToClipboard);
-    card.querySelector('.edit-btn').addEventListener('click', editAgendamento);
-    card.querySelector('.delete-btn').addEventListener('click', deleteAgendamento);
+            // Listeners dos botões
+            card.querySelector('.copy-btn').addEventListener('click', copyAgendamentoToClipboard);
+            card.querySelector('.edit-btn').addEventListener('click', editAgendamento);
+            card.querySelector('.delete-btn').addEventListener('click', deleteAgendamento);
 
-    return card;
-}
+            return card;
+        }
 
         // Renderiza a lista de agendamentos
         function renderAgendamentos(agendamentos) {
@@ -892,128 +1092,106 @@
 
         // Formata data corretamente (compensando fuso horário)
         function formatDateCorrectly(dateString) {
-    // Divide a string da data (formato YYYY-MM-DD)
-    const parts = dateString.split('-');
-    if (parts.length !== 3) return dateString; // Se não estiver no formato esperado, retorna original
-    
-    // Cria a data no UTC (sem considerar fuso horário local)
-    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-    
-    // Opções de formatação
-    const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
-        timeZone: 'UTC' // Mantém a formatação em UTC
-    };
-    
-    // Retorna a data formatada corretamente
-    return date.toLocaleDateString('pt-BR', options);
-}
-        // Função para verificar se é fim de semana
-        function isWeekend(dateString) {
-    const parts = dateString.split('-');
-    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-    const day = date.getUTCDay(); // Usa getUTCDay() em vez de getDay()
-    return day === 0 || day === 6;
-}
-
-function isSaturday(dateString) {
-    const parts = dateString.split('-');
-    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-    return date.getUTCDay() === 6;
-}
-
-function isSunday(dateString) {
-    const parts = dateString.split('-');
-    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-    return date.getUTCDay() === 0;
-}
-
-function isWeekday(dateString) {
-    return !isWeekend(dateString);
-}
+            // Divide a string da data (formato YYYY-MM-DD)
+            const parts = dateString.split('-');
+            if (parts.length !== 3) return dateString; // Se não estiver no formato esperado, retorna original
+            
+            // Cria a data no UTC (sem considerar fuso horário local)
+            const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+            
+            // Opções de formatação
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                timeZone: 'UTC' // Mantém a formatação em UTC
+            };
+            
+            // Retorna a data formatada corretamente
+            return date.toLocaleDateString('pt-BR', options);
+        }
         // Verifica limite de agendamentos por dia
         function checkAgendamentoLimit() {
-    const dateInput = document.getElementById('data');
-    const date = dateInput.value;
-    
-    if (!date) return;
-    
-    // Verifica se é domingo (usando a nova função corrigida)
-    if (isSunday(date)) {
-        document.getElementById('data-info').textContent = 'Não é possível agendar aos domingos.';
-        document.getElementById('data-info').className = 'form-text text-danger';
-        document.getElementById('submit-btn').disabled = true;
-        return;
-    }
+            const dateInput = document.getElementById('data');
+            const date = dateInput.value;
             
-    // Verifica se o dia está bloqueado
-    database.ref('blockedDays/' + date).once('value').then(snapshot => {
-        if (snapshot.exists()) {
-            const reason = snapshot.val().reason || '';
-            document.getElementById('data-info').textContent = `Dia bloqueado para agendamentos. ${reason}`;
-            document.getElementById('data-info').className = 'form-text text-danger';
-            document.getElementById('submit-btn').disabled = true;
-            return;
-        }
-        
-        // Se não for domingo e não estiver bloqueado, verifica os agendamentos
-        database.ref('agendamentos').orderByChild('data').equalTo(date).once('value')
-            .then(snapshot => {
-                const count = snapshot.numChildren();
-                const infoElement = document.getElementById('data-info');
-                const submitBtn = document.getElementById('submit-btn');
-                
-                // Define os limites baseados no dia da semana
-                let limiteAviso = 3;
-                let limiteMaximo = 5;
-                
-                if (isSaturday(date)) {
-                    limiteAviso = 1;
-                    limiteMaximo = 3;
-                }
-                
-                if (count >= limiteMaximo) {
-                    infoElement.textContent = `Este dia já atingiu o limite máximo de ${limiteMaximo} agendamentos. Não é possível agendar mais.`;
-                    infoElement.className = 'form-text text-danger';
-                    submitBtn.disabled = true;
+            if (!date) return;
+            
+            // Verifica se é domingo (usando a nova função corrigida)
+            if (isSunday(date)) {
+                document.getElementById('data-info').textContent = 'Não é possível agendar aos domingos.';
+                document.getElementById('data-info').className = 'form-text text-danger';
+                document.getElementById('submit-btn').disabled = true;
+                return;
+            }
+                    
+            // Verifica se o dia está bloqueado
+            database.ref('blockedDays/' + date).once('value').then(snapshot => {
+                if (snapshot.exists()) {
+                    const reason = snapshot.val().reason || '';
+                    document.getElementById('data-info').textContent = `Dia bloqueado para agendamentos. ${reason}`;
+                    document.getElementById('data-info').className = 'form-text text-danger';
+                    document.getElementById('submit-btn').disabled = true;
                     return;
-                } else if (count >= limiteAviso) {
-                    infoElement.textContent = `Este dia já possui ${count} agendamento(s). Agendamentos extras requerem autorização.`;
-                    infoElement.className = 'form-text text-warning';
-                    submitBtn.disabled = false;
-                    
-                    currentExtraAgendamento = {
-                        data: date,
-                        currentCount: count,
-                        isSaturday: isSaturday(date)
-                    };
-                    
-                    // Atualiza mensagem do modal
-                    const modalMessage = document.getElementById('modal-message');
-                    const modalLimite = document.getElementById('modal-limite');
-                    
-                    if (isSaturday(date)) {
-                        modalMessage.textContent = 'Este sábado já possui 1 agendamento. Deseja solicitar autorização para um agendamento extra?';
-                        modalLimite.textContent = 'Máximo de 2 agendamentos extras por sábado (total de 3).';
-                    } else {
-                        modalMessage.textContent = 'Este dia já possui 3 agendamentos. Deseja solicitar autorização para um agendamento extra?';
-                        modalLimite.textContent = 'Máximo de 2 agendamentos extras por dia (total de 5).';
-                    }
-                    
-                    const modal = new bootstrap.Modal(document.getElementById('extraModal'));
-                    modal.show();
-                } else {
-                    infoElement.textContent = `Este dia possui ${count} agendamento(s).`;
-                    infoElement.className = 'form-text text-muted';
-                    submitBtn.disabled = false;
-                    currentExtraAgendamento = null;
                 }
+                
+                // Se não for domingo e não estiver bloqueado, verifica os agendamentos
+                database.ref('agendamentos').orderByChild('data').equalTo(date).once('value')
+                    .then(snapshot => {
+                        const count = snapshot.numChildren();
+                        const infoElement = document.getElementById('data-info');
+                        const submitBtn = document.getElementById('submit-btn');
+                        
+                        // Define os limites baseados no dia da semana
+                        let limiteAviso = 3;
+                        let limiteMaximo = 5;
+                        
+                        if (isSaturday(date)) {
+                            limiteAviso = 1;
+                            limiteMaximo = 3;
+                        }
+                        
+                        if (count >= limiteMaximo) {
+                            infoElement.textContent = `Este dia já atingiu o limite máximo de ${limiteMaximo} agendamentos. Não é possível agendar mais.`;
+                            infoElement.className = 'form-text text-danger';
+                            submitBtn.disabled = true;
+                            return;
+                        } else if (count >= limiteAviso) {
+                            infoElement.textContent = `Este dia já possui ${count} agendamento(s). Agendamentos extras requerem autorização.`;
+                            infoElement.className = 'form-text text-warning';
+                            submitBtn.disabled = false;
+                            
+                            currentExtraAgendamento = {
+                                data: date,
+                                currentCount: count,
+                                isSaturday: isSaturday(date)
+                            };
+                            
+                            // Atualiza mensagem do modal
+                            const modalMessage = document.getElementById('modal-message');
+                            const modalLimite = document.getElementById('modal-limite');
+                            
+                            if (isSaturday(date)) {
+                                modalMessage.textContent = 'Este sábado já possui 1 agendamento. Deseja solicitar autorização para um agendamento extra?';
+                                modalLimite.textContent = 'Máximo de 2 agendamentos extras por sábado (total de 3).';
+                            } else {
+                                modalMessage.textContent = 'Este dia já possui 3 agendamentos. Deseja solicitar autorização para um agendamento extra?';
+                                modalLimite.textContent = 'Máximo de 2 agendamentos extras por dia (total de 5).';
+                            }
+                            
+                            const modal = new bootstrap.Modal(document.getElementById('extraModal'));
+                            modal.show();
+                        } else {
+                            infoElement.textContent = `Este dia possui ${count} agendamento(s).`;
+                            infoElement.className = 'form-text text-muted';
+                            submitBtn.disabled = false;
+                            currentExtraAgendamento = null;
+                        }
+                    });
             });
-    });
-} // <-- Esta chave estava faltando
+        }
+
         // Verifica limite de reservas por dia
         function checkReservaLimit() {
             const dateInput = document.getElementById('reserva-data');
@@ -1135,6 +1313,9 @@ function isWeekday(dateString) {
                 document.querySelectorAll('.delete-blocked-day').forEach(btn => {
                     btn.addEventListener('click', deleteBlockedDay);
                 });
+                
+                // Atualiza os próximos dias disponíveis
+                updateNextAvailableDays();
             });
         }
 
@@ -1155,7 +1336,10 @@ function isWeekday(dateString) {
                 reason: reason || '',
                 blockedAt: firebase.database.ServerValue.TIMESTAMP
             })
-            .then(() => showAlert('Dia bloqueado com sucesso!', 'success'))
+            .then(() => {
+                showAlert('Dia bloqueado com sucesso!', 'success');
+                updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
+            })
             .catch(error => showAlert('Erro ao bloquear dia: ' + error.message, 'danger'));
         }
 
@@ -1165,40 +1349,44 @@ function isWeekday(dateString) {
             if (!confirm(`Desbloquear o dia ${formatDateCorrectly(date)}?`)) return;
             
             database.ref('blockedDays/' + date).remove()
-                .then(() => showAlert('Dia desbloqueado com sucesso!', 'success'))
+                .then(() => {
+                    showAlert('Dia desbloqueado com sucesso!', 'success');
+                    updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
+                })
                 .catch(error => showAlert('Erro ao desbloquear dia: ' + error.message, 'danger'));
         }
 
         // Copia agendamento para clipboard no formato para Excel
         function copyAgendamentoToClipboard(e) {
-    const agendamentoId = e.target.getAttribute('data-id');
-    database.ref('agendamentos/' + agendamentoId).once('value')
-        .then(snapshot => {
-            const agendamento = snapshot.val();
-            
-            // Formata os dados conforme as colunas solicitadas
-            const textToCopy = [
-                agendamento.data,        // 1ª coluna: data do agendamento
-                '',                     // 2ª coluna: vazia
-                agendamento.cliente,     // 3ª coluna: nome do cliente
-                agendamento.tipo === 'agendamento' ? agendamento.endereco : 'RESERVA', // 4ª coluna: endereço
-                agendamento.tipo === 'agendamento' ? agendamento.numero : '',           // 5ª coluna: número
-                agendamento.tipo === 'agendamento' ? (agendamento.complemento || '') : '', // 6ª coluna: complemento
-                agendamento.tipo === 'agendamento' ? agendamento.bairro : '',          // 7ª coluna: bairro
-                agendamento.periodo,     // 8ª coluna: período
-                agendamento.observacoes || '', // 9ª coluna: observação
-                agendamento.tipo === 'agendamento' ? (agendamento.loginPPPoE || '') : '', // 10ª coluna: login pppoe
-                agendamento.tipo === 'agendamento' ? (agendamento.senhaPPPoE || '') : '', // 11ª coluna: senha pppoe
-                agendamento.tipo === 'agendamento' ? (agendamento.nomeWifi || '') : '', // 12ª coluna: nome do wifi
-                agendamento.tipo === 'agendamento' ? (agendamento.senhaWifi || '') : '', // 13ª coluna: senha do wifi
-                agendamento.tipo === 'agendamento' ? (agendamento.roteador ? 'Sim' : 'Não') : '' // 14ª coluna: roteador
-            ].join('\t'); // Tab como separador para Excel
-            
-            navigator.clipboard.writeText(textToCopy)
-                .then(() => showAlert('Dados copiados para a área de transferência!', 'success'))
-                .catch(() => showAlert('Erro ao copiar dados.', 'danger'));
-        });
-}
+            const agendamentoId = e.target.getAttribute('data-id');
+            database.ref('agendamentos/' + agendamentoId).once('value')
+                .then(snapshot => {
+                    const agendamento = snapshot.val();
+                    
+                    // Formata os dados conforme as colunas solicitadas
+                    const textToCopy = [
+                        agendamento.data,        // 1ª coluna: data do agendamento
+                        '',                     // 2ª coluna: vazia
+                        agendamento.cliente,     // 3ª coluna: nome do cliente
+                        agendamento.tipo === 'agendamento' ? agendamento.endereco : 'RESERVA', // 4ª coluna: endereço
+                        agendamento.tipo === 'agendamento' ? agendamento.numero : '',           // 5ª coluna: número
+                        agendamento.tipo === 'agendamento' ? (agendamento.complemento || '') : '', // 6ª coluna: complemento
+                        agendamento.tipo === 'agendamento' ? agendamento.bairro : '',          // 7ª coluna: bairro
+                        agendamento.periodo,     // 8ª coluna: período
+                        agendamento.observacoes || '', // 9ª coluna: observação
+                        agendamento.tipo === 'agendamento' ? (agendamento.loginPPPoE || '') : '', // 10ª coluna: login pppoe
+                        agendamento.tipo === 'agendamento' ? (agendamento.senhaPPPoE || '') : '', // 11ª coluna: senha pppoe
+                        agendamento.tipo === 'agendamento' ? (agendamento.nomeWifi || '') : '', // 12ª coluna: nome do wifi
+                        agendamento.tipo === 'agendamento' ? (agendamento.senhaWifi || '') : '', // 13ª coluna: senha do wifi
+                        agendamento.tipo === 'agendamento' ? (agendamento.roteador ? 'Sim' : 'Não') : '' // 14ª coluna: roteador
+                    ].join('\t'); // Tab como separador para Excel
+                    
+                    navigator.clipboard.writeText(textToCopy)
+                        .then(() => showAlert('Dados copiados para a área de transferência!', 'success'))
+                        .catch(() => showAlert('Erro ao copiar dados.', 'danger'));
+                });
+        }
+
         // Preenche formulário para edição
         function editAgendamento(e) {
             const agendamentoId = e.target.getAttribute('data-id');
@@ -1265,7 +1453,10 @@ function isWeekday(dateString) {
             const agendamentoId = e.target.getAttribute('data-id');
             
             database.ref('agendamentos/' + agendamentoId).remove()
-                .then(() => showAlert('Agendamento excluído com sucesso!', 'success'))
+                .then(() => {
+                    showAlert('Agendamento excluído com sucesso!', 'success');
+                    updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
+                })
                 .catch(error => showAlert('Erro ao excluir agendamento: ' + error.message, 'danger'));
         }
 
