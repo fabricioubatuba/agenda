@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda de Instalações</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Agenda de Instalações - Seja Fibra</title>
     <link rel="icon" href="https://raw.githubusercontent.com/fabricioubatuba/agenda/refs/heads/main/faviconsf.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         body {
@@ -26,6 +25,7 @@
             background-color: #DC3545 !important; 
             color: white !important;
         }
+
         /* Espaçamento entre user-info e botão */
         .gap-3 {
             gap: 1rem !important;
@@ -68,12 +68,6 @@
         #user-info {
             font-size: 0.9rem;
             color: #6c757d;
-        }
-        #next-available {
-            font-size: 0.8rem;
-            color: #495057;
-            margin-top: -10px;
-            margin-bottom: 10px;
         }
         .badge-roteador {
             background-color: #198754;
@@ -195,17 +189,19 @@
         .app-content {
             display: none;
         }
-        /* Seletor de cidade */
-        .city-selector {
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: center;
+
+        /* Estilos novos: seletor de cidade e próximas vagas */
+        #cidade-selector {
+            font-size: 0.85rem;
+            margin-top: -10px;
+            margin-bottom: 5px;
         }
-        .city-selector .btn-group {
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .city-selector .btn {
+        #proximas-vagas {
+            font-size: 0.85rem;
+            color: #198754;
             font-weight: 500;
+            margin-top: -8px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -242,21 +238,15 @@
                 </div>
                 <div class="header-title">
                     <h1>Agenda de Instalações</h1>
-                    
-                    <!-- Seletor de cidade -->
-                    <div class="city-selector">
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-outline-primary active" id="ubatuba-btn">Ubatuba</button>
-                            <button type="button" class="btn btn-outline-primary" id="caragua-btn">Caraguá</button>
-                        </div>
+                    <div>
+                        <select id="cidade-selector" class="form-select form-select-sm w-auto mx-auto">
+                            <option value="ubatuba" selected>Ubatuba</option>
+                            <option value="caragua">Caraguá</option>
+                        </select>
                     </div>
-                    
-                    <div class="d-flex align-items-center justify-content-center gap-3">
-                        <div>
-                            <div id="user-info" class="mb-1"></div>
-                            <div id="next-available"></div>
-                        </div>
-                        <!-- Botão de Logout (visível quando logado) -->
+                    <div class="d-flex flex-column align-items-center">
+                        <div id="user-info" class="mb-1"></div>
+                        <div id="proximas-vagas"></div>
                         <button id="logout-btn" class="btn btn-sm btn-outline-danger">
                             <i class="bi bi-box-arrow-right"></i> Sair
                         </button>
@@ -366,51 +356,95 @@
                                                 <div class="mb-3">
                                                     <label for="reserva-data" class="form-label">Data da Reserva</label>
                                                     <input type="date" class="form-control" id="reserva-data" required>
-                                                    <div id="reserva-data-info" class="form-text"></div>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label for="reserva-cliente" class="form-label">Nome para Reserva</label>
-                                                    <input type="text" class="form-control" id="reserva-cliente" required>
+                                                <div class="form-section">
+                                                    <div class="form-section-title">Informações do Cliente</div>
+                                                    <div class="mb-3">
+                                                        <label for="reserva-cliente" class="form-label">Nome do Cliente</label>
+                                                        <input type="text" class="form-control" id="reserva-cliente" required>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-8">
+                                                            <label for="reserva-endereco" class="form-label">Endereço</label>
+                                                            <input type="text" class="form-control" id="reserva-endereco" required>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label for="reserva-numero" class="form-label">Número</label>
+                                                            <input type="text" class="form-control" id="reserva-numero" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="reserva-complemento" class="form-label">Complemento (opcional)</label>
+                                                        <input type="text" class="form-control" id="reserva-complemento">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="reserva-bairro" class="form-label">Bairro</label>
+                                                        <input type="text" class="form-control" id="reserva-bairro" required>
+                                                    </div>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label for="reserva-periodo" class="form-label">Período Desejado</label>
-                                                    <select class="form-select" id="reserva-periodo" required>
-                                                        <option value="">Selecione...</option>
-                                                        <option value="Manhã">Manhã</option>
-                                                        <option value="Tarde">Tarde</option>
-                                                        <option value="Horário Comercial">Horário Comercial</option>
-                                                    </select>
+                                                <div class="form-section">
+                                                    <div class="form-section-title">Detalhes da Reserva</div>
+                                                    <div class="mb-3">
+                                                        <label for="reserva-periodo" class="form-label">Período</label>
+                                                        <select class="form-select" id="reserva-periodo" required>
+                                                            <option value="">Selecione...</option>
+                                                            <option value="Inicial">Inicial</option>
+                                                            <option value="Manhã">Manhã</option>
+                                                            <option value="Tarde">Tarde</option>
+                                                            <option value="Horário Comercial">Horário Comercial</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="reserva-observacoes" class="form-label">Observações (opcional)</label>
+                                                        <textarea class="form-control" id="reserva-observacoes" rows="2"></textarea>
+                                                    </div>
                                                 </div>
-                                                <button type="submit" class="btn btn-outline-primary w-100" id="submit-reserva-btn">Reservar</button>
+                                                <input type="hidden" id="reserva-id">
+                                                <button type="submit" class="btn btn-secondary w-100" id="submit-reserva-btn">Reservar</button>
+                                                <button type="button" class="btn btn-secondary w-100 mt-2 d-none" id="cancel-reserva-edit-btn">Cancelar Edição</button>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="card mt-4">
-                                <div class="card-header bg-warning text-dark">
-                                    <h5 class="card-title mb-0">Dias Bloqueados</h5>
+                            <!-- BLOQUEIO DE DIAS -->
+                            <div class="card mt-3">
+                                <div class="card-header bg-danger text-white">
+                                    Bloquear Dia
                                 </div>
                                 <div class="card-body">
-                                    <div id="blocked-days-container"></div>
-                                    <button id="add-blocked-day" class="btn btn-sm btn-outline-warning mt-2">+ Adicionar Dia Bloqueado</button>
+                                    <form id="bloqueio-form">
+                                        <div class="mb-3">
+                                            <label for="bloqueio-data" class="form-label">Data</label>
+                                            <input type="date" class="form-control" id="bloqueio-data" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-danger w-100">Bloquear</button>
+                                    </form>
+                                    <div id="dias-bloqueados" class="mt-3"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- COLUNA DIREITA (AGENDAMENTOS) -->
-                        <div class="col-md-6 agendamentos-column">
-                            <div class="card">
+                        <!-- COLUNA DIREITA -->
+                        <div class="col-md-7 agendamentos-column">
+                            <!-- LISTA DE AGENDAMENTOS -->
+                            <div class="card mb-3">
                                 <div class="card-header bg-success text-white">
-                                    <h5 class="card-title mb-0">Agendamentos</h5>
+                                    Agendamentos
                                 </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label for="filter-date" class="form-label">Filtrar por Data:</label>
-                                        <input type="date" class="form-control" id="filter-date">
-                                    </div>
-                                    <div id="agendamentos-container"></div>
+                                <div class="card-body" id="agendamentos-list">
+                                    <!-- Lista dinâmica de agendamentos -->
+                                </div>
+                            </div>
+
+                            <!-- LISTA DE RESERVAS -->
+                            <div class="card">
+                                <div class="card-header bg-secondary text-white">
+                                    Reservas
+                                </div>
+                                <div class="card-body" id="reservas-list">
+                                    <!-- Lista dinâmica de reservas -->
                                 </div>
                             </div>
                         </div>
@@ -420,1073 +454,935 @@
         </div>
     </div>
 
-    <!-- Modal para confirmação de agendamento extra -->
-    <div class="modal fade" id="extraModal" tabindex="-1" aria-hidden="true">
+    <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirmação Necessária</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <p id="modal-message">Este dia já possui 3 agendamentos. Deseja solicitar autorização para um agendamento extra?</p>
-                    <p class="text-muted" id="modal-limite">Máximo de 2 agendamentos extras por dia (total de 5).</p>
+                    Tem certeza que deseja excluir este agendamento?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="confirm-extra">Solicitar Autorização</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Excluir</button>
                 </div>
             </div>
         </div>
     </div>
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-    <script>
-        // Configurações do Firebase para cada cidade
-        const firebaseConfigs = {
-            ubatuba: {
-                apiKey: "AIzaSyArt1k0NSeuHD9qjEHbC9zJNEr331_Zk0A",
-                authDomain: "agendains.firebaseapp.com",
-                projectId: "agendains",
-                storageBucket: "agendains.appspot.com",
-                messagingSenderId: "1060898205140",
-                appId: "1:1060898205140:web:994bd3b9e9e5677168ba41",
-                databaseURL: "https://agendains-default-rtdb.firebaseio.com/"
-            },
-            caragua: {
-                apiKey: "AIzaSyBvZSNPpRzvMs__huKkb8GgDaDjq-fxzyI",
-                authDomain: "agendacaragua-4af6c.firebaseapp.com",
-                databaseURL: "https://agendacaragua-4af6c-default-rtdb.firebaseio.com",
-                projectId: "agendacaragua-4af6c",
-                storageBucket: "agendacaragua-4af6c.firebasestorage.app",
-                messagingSenderId: "29707363548",
-                appId: "1:29707363548:web:57b6387921834623cf8019"
-            }
-        };
+<script>
+/*
+  Script principal integrado:
+  - Firebase dinâmico por cidade (ubatuba / caragua)
+  - Autenticação (compat)
+  - Carregamento / CRUD de agendamentos
+  - Bloqueio de dias
+  - Função calcularProximasVagas() (sáb = 1, semana = 3)
+  - Reaproveitamento da lógica original sempre que possível
+*/
 
-        // Variáveis globais
-        let currentUser = null;
-        let editingAgendamentoId = null;
-        let currentExtraAgendamento = null;
-        let currentCity = 'ubatuba'; // Cidade padrão
-        let app = null;
-        let database = null;
-        let auth = null;
+/* ---------- Configs Firebase por cidade ---------- */
+const firebaseConfigs = {
+    ubatuba: {
+        apiKey: "AIzaSyArt1k0NSeuHD9qjEHbC9zJNEr331_Zk0A",
+        authDomain: "agendains.firebaseapp.com",
+        projectId: "agendains",
+        storageBucket: "agendains.firebasestorage.app",
+        messagingSenderId: "1060898205140",
+        appId: "1:1060898205140:web:994bd3b9e9e5677168ba41",
+        databaseURL: "https://agendains-default-rtdb.firebaseio.com/"
+    },
+    caragua: {
+        apiKey: "AIzaSyBvZSNPpRzvMs__huKkb8GgDaDjq-fxzyI",
+        authDomain: "agendacaragua-4af6c.firebaseapp.com",
+        projectId: "agendacaragua-4af6c",
+        storageBucket: "agendacaragua-4af6c.firebasestorage.app",
+        messagingSenderId: "29707363548",
+        appId: "1:29707363548:web:57b6387921834623cf8019",
+        databaseURL: "https://agendacaragua-4af6c-default-rtdb.firebaseio.com/"
+    }
+};
 
-        // Inicialização quando o DOM estiver pronto
-        document.addEventListener('DOMContentLoaded', function() {
-            // Configura data mínima para hoje
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('data').min = today;
-            document.getElementById('filter-date').min = today;
-            document.getElementById('reserva-data').min = today;
-            
-            // Inicializa Firebase com a cidade padrão (Ubatuba)
-            initializeFirebase('ubatuba');
-            
-            // Configura listeners
-            setupEventListeners();
+let currentCity = 'ubatuba';
+let firebaseApp = null;
+let database = null;
+let auth = null;
+
+/* Inicializa o firebase para cidade especificada.
+   Observação: usamos a compat lib (initializeApp) e criamos app nomeado para evitar conflito */
+function initFirebase(city) {
+    try {
+        // tenta deletar app anterior se existir
+        if (firebaseApp && typeof firebaseApp.delete === 'function') {
+            firebaseApp.delete();
+        }
+    } catch (err) {
+        // alguns ambientes não expõem delete; ignoramos
+    }
+
+    currentCity = city || currentCity;
+
+    // Se já existe um app com esse nome, reutiliza; senão inicializa
+    try {
+        // inicializa app com nome único
+        firebaseApp = firebase.initializeApp(firebaseConfigs[currentCity], "app-" + currentCity);
+    } catch (err) {
+        // se já existir, pega instância existente
+        firebaseApp = firebase.app("app-" + currentCity);
+    }
+
+    // atualiza referências
+    database = firebaseApp.database();
+    auth = firebaseApp.auth();
+}
+
+/* Inicializa com a cidade padrão */
+initFirebase(currentCity);
+
+/* ---------- Variáveis globais de estado ---------- */
+let currentUser = null;
+let editingAgendamentoId = null;
+let currentExtraAgendamento = null;
+
+/* ---------- Lista de e-mails autorizados (mantida) ---------- */
+const AUTHORIZED_EMAILS = [
+    'ana@sejafibra.net',
+    'eduarda@sejafibra.net',
+    'tais@sejafibra.net',
+    'alissia@sejafibra.net',
+    'juliana@sejafibra.net',
+    'isabela@sejafibra.net',
+    'wagner@sejafibra.net',
+    'aguinaldo@sejafibra.net',
+    'supervisor@sejafibra.net',
+    'bioranss@gmail.com'
+];
+
+/* ---------- Utilitários de data / formatação ---------- */
+function formatDateCorrectly(dateString) {
+    const parts = dateString.split('-');
+    if (parts.length !== 3) return dateString;
+    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        timeZone: 'UTC'
+    };
+    return date.toLocaleDateString('pt-BR', options);
+}
+
+function isWeekend(dateString) {
+    const parts = dateString.split('-');
+    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    const day = date.getUTCDay();
+    return day === 0 || day === 6;
+}
+
+function isSaturday(dateString) {
+    const parts = dateString.split('-');
+    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    return date.getUTCDay() === 6;
+}
+
+function isSunday(dateString) {
+    const parts = dateString.split('-');
+    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    return date.getUTCDay() === 0;
+}
+
+/* ---------- UI helpers (show/hide screens) ---------- */
+function showLoginScreen() {
+    document.getElementById('login-container').style.display = 'flex';
+    document.getElementById('app-content').style.display = 'none';
+}
+
+function showAppContent() {
+    document.getElementById('login-container').style.display = 'none';
+    document.getElementById('app-content').style.display = 'block';
+}
+
+function showLoginError(message) {
+    const errorElement = document.getElementById('login-error');
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+    setTimeout(() => { errorElement.style.display = 'none'; }, 5000);
+}
+
+/* ---------- showAlert (visual) ---------- */
+function showAlert(message, type) {
+    document.querySelectorAll('.alert-fixed').forEach(a => a.remove());
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} alert-dismissible fade show alert-fixed`;
+    alert.role = 'alert';
+    alert.innerHTML = `${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+    document.body.appendChild(alert);
+    setTimeout(() => {
+        alert.classList.remove('show');
+        setTimeout(() => alert.remove(), 150);
+    }, 5000);
+}
+
+/* ---------- Autenticação e controle de acesso ---------- */
+function checkAuthorization(email) {
+    return AUTHORIZED_EMAILS.includes(email.toLowerCase());
+}
+
+function initAuth() {
+    auth.onAuthStateChanged(user => {
+        if (user && checkAuthorization(user.email)) {
+            currentUser = user;
+            showAppContent();
+            updateUIForUser(user);
+            loadAgendamentos();
+            loadBlockedDays();
+        } else {
+            showLoginScreen();
+            if (user) auth.signOut();
+        }
+    });
+}
+
+/* ---------- Atualiza UI com dados do usuário ---------- */
+function updateUIForUser(user) {
+    const userInfo = document.getElementById('user-info');
+    if (!user) {
+        userInfo.innerHTML = '<span class="text-danger">Acesso não autenticado</span>';
+        return;
+    }
+    userInfo.textContent = `Logado como: ${user.email}`;
+}
+
+/* ---------- Event listeners da UI (forms, botões) ---------- */
+function setupEventListeners() {
+    // login
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        handleLogin(email, password);
+    });
+
+    // logout
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        if (!confirm('Deseja realmente sair do sistema?')) return;
+        auth.signOut().then(() => {
+            showLoginScreen();
+            showAlert('Logout realizado com sucesso!', 'success');
+        }).catch(err => {
+            console.error('Erro no logout:', err);
+            showAlert('Erro ao fazer logout', 'danger');
         });
+    });
 
-        // Inicializa o Firebase com a configuração da cidade selecionada
-        function initializeFirebase(city) {
-            // Se já tiver uma instância do Firebase, limpa antes de inicializar outra
-            if (app) {
-                app.delete().then(() => {
-                    console.log('Firebase app deleted');
-                }).catch(error => {
-                    console.error('Error deleting Firebase app:', error);
-                });
-            }
+    // submit agendamento
+    document.getElementById('agendamento-form').addEventListener('submit', handleFormSubmit);
+    document.getElementById('cancel-edit-btn').addEventListener('click', cancelEdit);
 
-            currentCity = city;
-            app = firebase.initializeApp(firebaseConfigs[city], city);
-            database = firebase.database(app);
-            auth = firebase.auth(app);
+    // submit reserva
+    document.getElementById('reserva-form').addEventListener('submit', handleReservaSubmit);
+    document.getElementById('cancel-reserva-edit-btn').addEventListener('click', cancelReservaEdit);
 
-            // Atualiza a UI para refletir a cidade selecionada
-            updateCityUI();
-            
-            // Se já estiver logado, recarrega os dados
-            if (currentUser) {
-                loadAgendamentos();
-                loadBlockedDays();
-            }
+    // filtro data
+    const filterDate = document.getElementById('filter-date');
+    if (filterDate) filterDate.addEventListener('change', filterAgendamentosByDate);
+
+    // data input change
+    document.getElementById('data').addEventListener('change', function(e) {
+        let dateValue = e.target.value;
+        if (dateValue.includes('/')) {
+            const [day, month, year] = dateValue.split('/');
+            dateValue = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
+            e.target.value = dateValue;
         }
+        checkAgendamentoLimit();
+    });
 
-        // Atualiza a UI para refletir a cidade selecionada
-        function updateCityUI() {
-            const ubatubaBtn = document.getElementById('ubatuba-btn');
-            const caraguaBtn = document.getElementById('caragua-btn');
-            
-            if (currentCity === 'ubatuba') {
-                ubatubaBtn.classList.add('active');
-                caraguaBtn.classList.remove('active');
-            } else {
-                ubatubaBtn.classList.remove('active');
-                caraguaBtn.classList.add('active');
-            }
+    document.getElementById('reserva-data').addEventListener('change', function(e) {
+        let dateValue = e.target.value;
+        if (dateValue.includes('/')) {
+            const [day, month, year] = dateValue.split('/');
+            dateValue = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
+            e.target.value = dateValue;
         }
+        checkReservaLimit();
+    });
 
-        // Configura a autenticação
-        function initAuth() {
-            auth.onAuthStateChanged(user => {
-                if (user && checkAuthorization(user.email)) {
-                    currentUser = user;
-                    showAppContent();
-                    updateUIForUser(user);
-                    loadAgendamentos();
-                    loadBlockedDays();
-                    updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
-                } else {
-                    showLoginScreen();
-                    if (user) auth.signOut(); // Desloga se não estiver autorizado
-                }
+    // add blocked day button/form
+    document.getElementById('add-blocked-day')?.addEventListener('click', addBlockedDay);
+    document.getElementById('bloqueio-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const date = document.getElementById('bloqueio-data').value;
+        if (!date) { showAlert('Preencha a data', 'danger'); return; }
+        const reason = ''; // campo opcional (não incluído na UI atual)
+        database.ref('blockedDays/' + date).set({ reason: reason, blockedAt: firebase.database.ServerValue.TIMESTAMP })
+            .then(()=> showAlert('Dia bloqueado com sucesso!', 'success'))
+            .catch(err => showAlert('Erro ao bloquear dia: ' + err.message, 'danger'));
+    });
+
+    // modal extra
+    document.getElementById('confirm-extra')?.addEventListener('click', requestExtraAuthorization);
+
+    // cidade selector
+    document.getElementById('cidade-selector')?.addEventListener('change', (e) => {
+        const selectedCity = e.target.value;
+        initFirebase(selectedCity);
+        // rebind listeners for auth events with new auth instance
+        initAuth();
+        if (auth.currentUser) {
+            loadAgendamentos();
+            loadBlockedDays();
+            calcularProximasVagas();
+        }
+    });
+}
+
+/* ---------- Login handler ---------- */
+function handleLogin(email, password) {
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => auth.signInWithEmailAndPassword(email, password))
+        .then((userCredential) => {
+            if (!checkAuthorization(userCredential.user.email)) {
+                auth.signOut();
+                throw new Error('Acesso não autorizado');
+            }
+            showAlert('Login realizado com sucesso!', 'success');
+            currentUser = userCredential.user;
+            showAppContent();
+            updateUIForUser(currentUser);
+            loadAgendamentos();
+            loadBlockedDays();
+            calcularProximasVagas();
+        })
+        .catch(error => {
+            console.error("Erro no login:", error);
+            let errorMessage = 'Erro ao fazer login';
+            if (error.code === 'auth/wrong-password') errorMessage = 'Senha incorreta';
+            else if (error.code === 'auth/user-not-found') errorMessage = 'Usuário não encontrado';
+            else if (error.code === 'auth/invalid-email') errorMessage = 'E-mail inválido';
+            else if (error.message && error.message.includes('não autorizado')) errorMessage = 'Acesso não autorizado';
+            showLoginError(errorMessage);
+        });
+}
+
+/* ---------- Manipulação de formulários (agendamento / reserva) ---------- */
+function handleFormSubmit(e) {
+    e.preventDefault();
+    const formData = {
+        data: document.getElementById('data').value,
+        cliente: document.getElementById('cliente').value,
+        endereco: document.getElementById('endereco').value,
+        numero: document.getElementById('numero').value,
+        complemento: document.getElementById('complemento').value,
+        bairro: document.getElementById('bairro').value,
+        periodo: document.getElementById('periodo').value,
+        observacoes: document.getElementById('observacoes').value,
+        loginPPPoE: document.getElementById('login-pppoe').value,
+        senhaPPPoE: document.getElementById('senha-pppoe').value,
+        nomeWifi: document.getElementById('nome-wifi').value,
+        senhaWifi: document.getElementById('senha-wifi').value,
+        roteador: document.getElementById('roteador').checked,
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        status: 'active',
+        tipo: 'agendamento'
+    };
+
+    if (currentUser && !currentUser.isAnonymous) {
+        formData.createdBy = currentUser.email;
+    }
+
+    if (!formData.data || !formData.cliente) {
+        showAlert('Preencha todos os campos obrigatórios!', 'danger');
+        return;
+    }
+
+    // Mantemos a lógica de cadastro já existente (limites por cadastro intactos)
+    if (editingAgendamentoId) {
+        database.ref('agendamentos/' + editingAgendamentoId).update(formData)
+            .then(() => {
+                showAlert('Agendamento atualizado com sucesso!', 'success');
+                cancelEdit();
+            })
+            .catch(error => showAlert('Erro ao atualizar agendamento: ' + error.message, 'danger'));
+    } else {
+        database.ref('agendamentos').push(formData)
+            .then(() => {
+                showAlert('Agendamento criado com sucesso!', 'success');
+                resetForm();
+            })
+            .catch(error => showAlert('Erro ao criar agendamento: ' + error.message, 'danger'));
+    }
+}
+
+function handleReservaSubmit(e) {
+    e.preventDefault();
+    const reservaData = {
+        data: document.getElementById('reserva-data').value,
+        cliente: document.getElementById('reserva-cliente').value,
+        periodo: document.getElementById('reserva-periodo').value,
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        status: 'active',
+        tipo: 'reserva'
+    };
+    if (currentUser && !currentUser.isAnonymous) reservaData.createdBy = currentUser.email;
+    if (!reservaData.data || !reservaData.cliente) {
+        showAlert('Preencha todos os campos obrigatórios!', 'danger');
+        return;
+    }
+    database.ref('agendamentos').push(reservaData)
+        .then(() => {
+            showAlert('Reserva realizada com sucesso!', 'success');
+            document.getElementById('reserva-form').reset();
+        })
+        .catch(error => showAlert('Erro ao criar reserva: ' + error.message, 'danger'));
+}
+
+/* ---------- Load & render agendamentos ---------- */
+function loadAgendamentos() {
+    // Observador (on) para manter feed em tempo real
+    database.ref('agendamentos').on('value', snapshot => {
+        const agendamentos = [];
+        snapshot.forEach(childSnapshot => {
+            const ag = childSnapshot.val();
+            agendamentos.push({
+                id: childSnapshot.key,
+                ...ag
             });
-        }
-        // Mostra a tela de login
-        function showLoginScreen() {
-            document.getElementById('login-container').style.display = 'flex';
-            document.getElementById('app-content').style.display = 'none';
-        }
+        });
+        renderAgendamentos(agendamentos);
+    });
+}
 
-        // Mostra o conteúdo da aplicação
-        function showAppContent() {
-            document.getElementById('login-container').style.display = 'none';
-            document.getElementById('app-content').style.display = 'block';
-        }
-
-        // Mostra mensagem de erro no login
-        function showLoginError(message) {
-            const errorElement = document.getElementById('login-error');
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
-            setTimeout(() => {
-                errorElement.style.display = 'none';
-            }, 5000);
-        }
-
-        // Atualiza a UI baseado no usuário logado
-        function updateUIForUser(user) {
-            const userInfo = document.getElementById('user-info');
-            
-            if (!user) {
-                userInfo.innerHTML = '<span class="text-danger">Acesso não autenticado</span>';
-                return;
-            }
-            
-            userInfo.textContent = `Logado como: ${user.email}`;
-            updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
-        }
-
-        // Funções para controlar o acesso
-        function disableAppFunctions() {
-            document.querySelectorAll('#agendamento-form input, #agendamento-form select, #agendamento-form button, #reserva-form input, #reserva-form select, #reserva-form button, .edit-btn, .delete-btn, #add-blocked-day')
-                .forEach(el => el.disabled = true);
-        }
-
-        function enableAppFunctions() {
-            document.querySelectorAll('#agendamento-form input, #agendamento-form select, #agendamento-form button, #reserva-form input, #reserva-form select, #reserva-form button, .edit-btn, .delete-btn, #add-blocked-day')
-                .forEach(el => el.disabled = false);
-        }
-
-        // Configura os event listeners
-        function setupEventListeners() {
-            // Formulário de login
-            document.getElementById('login-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
-                handleLogin(email, password);
-            });
-            
-            // Botão de logout
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                if (confirm('Deseja realmente sair do sistema?')) {
-                    auth.signOut()
-                        .then(() => {
-                            showLoginScreen();
-                            showAlert('Logout realizado com sucesso!', 'success');
-                        })
-                        .catch(error => {
-                            console.error("Erro no logout:", error);
-                            showAlert('Erro ao fazer logout', 'danger');
-                        });
-                }
-            });
-            
-            // Formulário de agendamento
-            document.getElementById('agendamento-form').addEventListener('submit', handleFormSubmit);
-            document.getElementById('cancel-edit-btn').addEventListener('click', cancelEdit);
-            
-            // Formulário de reserva
-            document.getElementById('reserva-form').addEventListener('submit', handleReservaSubmit);
-            
-            // Filtro de data
-            document.getElementById('filter-date').addEventListener('change', filterAgendamentosByDate);
-            
-            // Data do agendamento - verifica limite
-            document.getElementById('data').addEventListener('change', function(e) {
-                const dateInput = e.target;
-                let dateValue = dateInput.value;
-                
-                // Se o usuário digitou no formato DD/MM/YYYY, converte para YYYY-MM-DD
-                if (dateValue.includes('/')) {
-                    const [day, month, year] = dateValue.split('/');
-                    dateValue = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                    dateInput.value = dateValue;
-                }
-                
-                // Chama a verificação de limite
-                checkAgendamentoLimit();
-            });
-            
-            document.getElementById('reserva-data').addEventListener('change', checkReservaLimit);
-            
-            // Botão para adicionar dia bloqueado
-            document.getElementById('add-blocked-day').addEventListener('click', addBlockedDay);
-            
-            // Modal
-            document.getElementById('confirm-extra').addEventListener('click', requestExtraAuthorization);
-            
-            // Seletor de cidade
-            document.getElementById('ubatuba-btn').addEventListener('click', () => switchCity('ubatuba'));
-            document.getElementById('caragua-btn').addEventListener('click', () => switchCity('caragua'));
-        }
-
-        // Alterna entre as cidades
-        function switchCity(city) {
-            if (currentCity === city) return;
-            
-            showAlert(`Carregando dados de ${city === 'ubatuba' ? 'Ubatuba' : 'Caraguá'}...`, 'info');
-            initializeFirebase(city);
-        }
-
-        // Lista de e-mails autorizados
-        const AUTHORIZED_EMAILS = [
-            'ana@sejafibra.net',
-            'eduarda@sejafibra.net',
-            'tais@sejafibra.net',
-            'alissia@sejafibra.net',
-            'juliana@sejafibra.net',
-            'isabela@sejafibra.net',
-            'wagner@sejafibra.net',
-            'aguinaldo@sejafibra.net',
-            'supervisor@sejafibra.net',
-            'bioranss@gmail.com'
-        ];
-
-        // Função para verificar acesso
-        function checkAuthorization(email) {
-            return AUTHORIZED_EMAILS.includes(email.toLowerCase());
-        }
-
-        // Função de login
-        function handleLogin(email, password) {
-            // Define a persistência da sessão
-            auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-                .then(() => {
-                    return auth.signInWithEmailAndPassword(email, password);
-                })
-                .then((userCredential) => {
-                    if (!checkAuthorization(userCredential.user.email)) {
-                        auth.signOut();
-                        throw new Error('Acesso não autorizado');
-                    }
-                    showAlert('Login realizado com sucesso!', 'success');
-                    currentUser = userCredential.user;
-                    showAppContent();
-                    updateUIForUser(currentUser);
-                    loadAgendamentos();
-                    loadBlockedDays();
-                    updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
-                })
-                .catch(error => {
-                    console.error("Erro no login:", error);
-                    let errorMessage = 'Erro ao fazer login';
-                    
-                    if (error.code === 'auth/wrong-password') {
-                        errorMessage = 'Senha incorreta';
-                    } else if (error.code === 'auth/user-not-found') {
-                        errorMessage = 'Usuário não encontrado';
-                    } else if (error.code === 'auth/invalid-email') {
-                        errorMessage = 'E-mail inválido';
-                    } else if (error.message.includes('não autorizado')) {
-                        errorMessage = 'Acesso não autorizado';
-                    }
-                    
-                    showLoginError(errorMessage);
-                });
-        }
-
-        // Atualiza os próximos dias disponíveis para agendamento
-        function updateNextAvailableDays() {
-            const nextAvailableElement = document.getElementById('next-available');
-            nextAvailableElement.textContent = 'Carregando próximas vagas...';
-            
-            // Obtém todos os agendamentos ativos
-            database.ref('agendamentos').orderByChild('status').equalTo('active').once('value')
-                .then(snapshot => {
-                    const agendamentos = [];
-                    snapshot.forEach(childSnapshot => {
-                        const agendamento = childSnapshot.val();
-                        agendamentos.push(agendamento);
-                    });
-                    
-                    // Obtém os dias bloqueados
-                    return database.ref('blockedDays').once('value').then(blockedSnapshot => {
-                        const blockedDays = {};
-                        blockedSnapshot.forEach(child => {
-                            blockedDays[child.key] = true;
-                        });
-                        
-                        return { agendamentos, blockedDays };
-                    });
-                })
-                .then(({ agendamentos, blockedDays }) => {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    
-                    const availableDays = [];
-                    let daysChecked = 0;
-                    let daysFound = 0;
-                    
-                    // Verifica os próximos 30 dias (para encontrar 3 dias com vagas)
-                    while (daysChecked < 30 && daysFound < 3) {
-                        const checkDate = new Date(today);
-                        checkDate.setDate(today.getDate() + daysChecked + 1);
-                        daysChecked++;
-                        
-                        // Formata a data como YYYY-MM-DD
-                        const dateStr = checkDate.toISOString().split('T')[0];
-                        
-                        // Pula domingos e dias bloqueados
-                        if (isSunday(dateStr) || blockedDays[dateStr]) {
-                            continue;
-                        }
-                        
-                        // Conta agendamentos para este dia
-                        const count = agendamentos.filter(a => a.data === dateStr).length;
-                        
-                        // Verifica se há vagas disponíveis
-                        const maxSlots = isSaturday(dateStr) ? 1 : 3; // 1 para sábado, 3 para outros dias
-                        const availableSlots = maxSlots - count;
-                        
-                        if (availableSlots > 0) {
-                            // Formata a data para exibição (DD/MM)
-                            const formattedDate = `${checkDate.getDate().toString().padStart(2, '0')}/${(checkDate.getMonth()+1).toString().padStart(2, '0')}`;
-                            availableDays.push({
-                                date: formattedDate,
-                                slots: availableSlots
-                            });
-                            daysFound++;
-                        }
-                    }
-                    
-                    // Atualiza o elemento com as próximas vagas
-                    if (availableDays.length > 0) {
-                        const availableText = availableDays.map(day => `${day.date} (${day.slots})`).join(', ');
-                        nextAvailableElement.textContent = `Próx. vagas: ${availableText}`;
-                    } else {
-                        nextAvailableElement.textContent = 'Nenhuma vaga disponível nos próximos dias';
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro ao calcular próximas vagas:', error);
-                    nextAvailableElement.textContent = 'Erro ao carregar próximas vagas';
-                });
-        }
-
-        // Função para verificar se é fim de semana
-        function isWeekend(dateString) {
-            const parts = dateString.split('-');
-            const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-            const day = date.getUTCDay(); // Usa getUTCDay() em vez de getDay()
-            return day === 0 || day === 6;
-        }
-
-        function isSaturday(dateString) {
-            const parts = dateString.split('-');
-            const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-            return date.getUTCDay() === 6;
-        }
-
-        function isSunday(dateString) {
-            const parts = dateString.split('-');
-            const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-            return date.getUTCDay() === 0;
-        }
-
-        function isWeekday(dateString) {
-            return !isWeekend(dateString);
-        }
-        // Manipulação de agendamentos
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            
-            // Captura dos dados
-            const formData = {
-                data: document.getElementById('data').value,
-                cliente: document.getElementById('cliente').value,
-                endereco: document.getElementById('endereco').value,
-                numero: document.getElementById('numero').value,
-                complemento: document.getElementById('complemento').value,
-                bairro: document.getElementById('bairro').value,
-                periodo: document.getElementById('periodo').value,
-                observacoes: document.getElementById('observacoes').value,
-                loginPPPoE: document.getElementById('login-pppoe').value,
-                senhaPPPoE: document.getElementById('senha-pppoe').value,
-                nomeWifi: document.getElementById('nome-wifi').value,
-                senhaWifi: document.getElementById('senha-wifi').value,
-                roteador: document.getElementById('roteador').checked,
-                createdAt: firebase.database.ServerValue.TIMESTAMP,
-                status: 'active',
-                tipo: 'agendamento'
-            };
-
-            // Adiciona email do usuário se não for anônimo
-            if (currentUser && !currentUser.isAnonymous) {
-                formData.createdBy = currentUser.email;
-            }
-
-            // Validação básica
-            if (!formData.data || !formData.cliente) {
-                showAlert('Preencha todos os campos obrigatórios!', 'danger');
-                return;
-            }
-
-            // Cria ou atualiza
-            if (editingAgendamentoId) {
-                database.ref('agendamentos/' + editingAgendamentoId).update(formData)
-                    .then(() => {
-                        showAlert('Agendamento atualizado com sucesso!', 'success');
-                        cancelEdit();
-                        updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
-                    })
-                    .catch(error => {
-                        showAlert('Erro ao atualizar agendamento: ' + error.message, 'danger');
-                    });
-            } else {
-                database.ref('agendamentos').push(formData)
-                    .then(() => {
-                        showAlert('Agendamento criado com sucesso!', 'success');
-                        resetForm();
-                        updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
-                    })
-                    .catch(error => {
-                        showAlert('Erro ao criar agendamento: ' + error.message, 'danger');
-                    });
-            }
-        }
-
-        function handleReservaSubmit(e) {
-            e.preventDefault();
-            
-            const reservaData = {
-                data: document.getElementById('reserva-data').value,
-                cliente: document.getElementById('reserva-cliente').value,
-                periodo: document.getElementById('reserva-periodo').value,
-                createdAt: firebase.database.ServerValue.TIMESTAMP,
-                status: 'active',
-                tipo: 'reserva'
-            };
-
-            // Adiciona email do usuário se não for anônimo
-            if (currentUser && !currentUser.isAnonymous) {
-                reservaData.createdBy = currentUser.email;
-            }
-
-            // Validação básica
-            if (!reservaData.data || !reservaData.cliente) {
-                showAlert('Preencha todos os campos obrigatórios!', 'danger');
-                return;
-            }
-
-            database.ref('agendamentos').push(reservaData)
-                .then(() => {
-                    showAlert('Reserva realizada com sucesso!', 'success');
-                    document.getElementById('reserva-form').reset();
-                    updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
-                })
-                .catch(error => {
-                    showAlert('Erro ao criar reserva: ' + error.message, 'danger');
-                });
-        }
-
-        // Carrega agendamentos do Firebase
-        function loadAgendamentos() {
-            database.ref('agendamentos').on('value', snapshot => {
-                const agendamentos = [];
-                snapshot.forEach(childSnapshot => {
-                    const agendamento = childSnapshot.val();
-                    agendamentos.push({
-                        id: childSnapshot.key,
-                        ...agendamento
-                    });
-                });
-                renderAgendamentos(agendamentos);
-                updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
-            });
-        }
-        
-        // Filtra agendamentos por data
-        function filterAgendamentosByDate() {
-            const dateInputElement = document.getElementById('filter-date');
-            let dateInput = dateInputElement.value;
-
-            // Se o usuário digitou manualmente no formato DD/MM/YYYY, converte para YYYY-MM-DD
-            if (dateInput.includes('/')) {
-                const [day, month, year] = dateInput.split('/');
-                dateInput = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                dateInputElement.value = dateInput; // Atualiza o campo para o formato correto
-            }
-
-            const container = document.getElementById('agendamentos-container');
-            
-            if (!dateInput) {
-                loadAgendamentos();
-                return;
-            }
-
-            database.ref('agendamentos').orderByChild('data').equalTo(dateInput).once('value')
-                .then(snapshot => {
-                    container.innerHTML = '';
-                    
-                    if (!snapshot.exists()) {
-                        container.innerHTML = '<p class="text-muted">Nenhum agendamento encontrado.</p>';
-                        return;
-                    }
-
-                    // Formata data corretamente
-                    const dataFormatada = formatDateCorrectly(dateInput);
-                    
-                    // Cria cabeçalho com a data
-                    const dateHeader = document.createElement('div');
-                    dateHeader.className = 'd-flex justify-content-between align-items-center mb-3';
-                    dateHeader.innerHTML = `
-                        <h5>${dataFormatada}</h5>
-                        <span class="agendamento-count">
-                            ${snapshot.numChildren()} agendamento(s)
-                        </span>
-                    `;
-                    container.appendChild(dateHeader);
-
-                    // Renderiza os agendamentos
-                    snapshot.forEach(childSnapshot => {
-                        const agendamento = childSnapshot.val();
-                        const card = createAgendamentoCard(agendamento, childSnapshot.key);
-                        container.appendChild(card);
-                    });
-                });
-        }
-
-        // Cria um card de agendamento
-        function createAgendamentoCard(agendamento, id) {
-            const card = document.createElement('div');
-            let badgeExtra = '';
-
-            // --- COR DA BORDA (ÚNICA POR DIA) ---
-            // Gera um hash mais eficiente baseado na data
-            const dateHash = agendamento.data.split('-').join('');
-            const colorIndex = (parseInt(dateHash) % 6) + 1; // Gera número de 1 a 6
-            const colorClass = `color-dia-${colorIndex}`;
-
-            // --- BOTÃO DO PERÍODO (VERMELHO SE FOR "ENCAIXE") ---
-            const badgePeriodoClass = agendamento.periodo === 'Encaixe' ? 'badge-encaixe' : 'bg-primary';
-
-            // --- BADGE EXTRA (ROTEADOR/RESERVA) ---
-            if (agendamento.tipo === 'reserva') {
-                badgeExtra = '<span class="badge badge-reserva ms-1">Reserva</span>';
-            } else if (agendamento.roteador) {
-                badgeExtra = '<span class="badge badge-roteador ms-1">Roteador OK</span>';
-            }
-
-            // --- ESTRUTURA DO CARD ---
-            card.className = `card agendamento-card mb-2 ${colorClass}`; // Aplica cor do dia
-            card.innerHTML = `
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="card-title">${agendamento.cliente}</h6>
-                            ${agendamento.tipo === 'agendamento' ? `
-                                <p class="card-text mb-1">
-                                    <small><strong>Endereço:</strong> ${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
-                                </p>
-                                <p class="card-text mb-1"><small><strong>Bairro:</strong> ${agendamento.bairro}</small></p>
-                            ` : ''}
-                        </div>
-                        <div class="text-end">
-                            <span class="badge ${badgePeriodoClass}">${agendamento.periodo}</span>
-                            ${badgeExtra}
-                        </div>
-                    </div>
-                    ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
-                    <div class="d-flex justify-content-between mt-2">
-                        <small class="text-muted">${agendamento.createdBy ? 'Agendado por: ' + agendamento.createdBy : ''}</small>
-                        <div>
-                            <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${id}"></i>
-                            <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${id}"></i>
-                            <i class="bi bi-trash delete-btn" title="Excluir" data-id="${id}"></i>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Listeners dos botões
-            card.querySelector('.copy-btn').addEventListener('click', copyAgendamentoToClipboard);
-            card.querySelector('.edit-btn').addEventListener('click', editAgendamento);
-            card.querySelector('.delete-btn').addEventListener('click', deleteAgendamento);
-
-            return card;
-        }
-
-        // Renderiza a lista de agendamentos
-        function renderAgendamentos(agendamentos) {
-            const container = document.getElementById('agendamentos-container');
+function filterAgendamentosByDate() {
+    const dateInputElement = document.getElementById('filter-date');
+    let dateInput = dateInputElement.value;
+    if (!dateInput) { loadAgendamentos(); return; }
+    if (dateInput.includes('/')) {
+        const [day, month, year] = dateInput.split('/');
+        dateInput = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
+        dateInputElement.value = dateInput;
+    }
+    const container = document.getElementById('agendamentos-container') || document.getElementById('agendamentos-list');
+    database.ref('agendamentos').orderByChild('data').equalTo(dateInput).once('value')
+        .then(snapshot => {
             container.innerHTML = '';
-
-            if (agendamentos.length === 0) {
+            if (!snapshot.exists()) {
                 container.innerHTML = '<p class="text-muted">Nenhum agendamento encontrado.</p>';
                 return;
             }
-
-            // Agrupa por data
-            const agendamentosPorData = agendamentos.reduce((acc, agendamento) => {
-                if (!acc[agendamento.data]) {
-                    acc[agendamento.data] = [];
-                }
-                acc[agendamento.data].push(agendamento);
-                return acc;
-            }, {});
-
-            // Ordena as datas
-            const sortedDates = Object.keys(agendamentosPorData).sort();
-
-            sortedDates.forEach(data => {
-                const agendamentosDoDia = agendamentosPorData[data];
-                
-                // Cabeçalho com data formatada corretamente
-                const dateHeader = document.createElement('div');
-                dateHeader.className = 'd-flex justify-content-between align-items-center mb-3';
-                
-                const dataFormatada = formatDateCorrectly(data);
-                
-                dateHeader.innerHTML = `
-                    <h5>${dataFormatada}</h5>
-                    <span class="agendamento-count ${agendamentosDoDia.length > 3 ? 'warning-count' : ''}">
-                        ${agendamentosDoDia.length} agendamento(s)
-                    </span>
-                `;
-                container.appendChild(dateHeader);
-
-                // Renderiza cada agendamento
-                agendamentosDoDia.forEach(agendamento => {
-                    const card = createAgendamentoCard(agendamento, agendamento.id);
-                    container.appendChild(card);
-                });
+            const dataFormatada = formatDateCorrectly(dateInput);
+            const dateHeader = document.createElement('div');
+            dateHeader.className = 'd-flex justify-content-between align-items-center mb-3';
+            dateHeader.innerHTML = `<h5>${dataFormatada}</h5>
+                <span class="agendamento-count">${snapshot.numChildren()} agendamento(s)</span>`;
+            container.appendChild(dateHeader);
+            snapshot.forEach(childSnapshot => {
+                const agendamento = childSnapshot.val();
+                const card = createAgendamentoCard(agendamento, childSnapshot.key);
+                container.appendChild(card);
             });
+        });
+}
+
+function createAgendamentoCard(agendamento, id) {
+    const card = document.createElement('div');
+
+    // cor da borda com hash simples
+    const dateHash = (agendamento.data || '').split('-').join('');
+    const colorIndex = (parseInt(dateHash || '0') % 6) + 1;
+    const colorClass = `color-dia-${colorIndex}`;
+
+    const badgePeriodoClass = agendamento.periodo === 'Encaixe' ? 'badge-encaixe' : 'bg-primary';
+    let badgeExtra = '';
+    if (agendamento.tipo === 'reserva') badgeExtra = '<span class="badge badge-reserva ms-1">Reserva</span>';
+    else if (agendamento.roteador) badgeExtra = '<span class="badge badge-roteador ms-1">Roteador OK</span>';
+
+    card.className = `card agendamento-card mb-2 ${colorClass}`;
+    card.innerHTML = `
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="card-title">${agendamento.cliente}</h6>
+                    ${agendamento.tipo === 'agendamento' ? `
+                        <p class="card-text mb-1"><small><strong>Endereço:</strong> ${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small></p>
+                        <p class="card-text mb-1"><small><strong>Bairro:</strong> ${agendamento.bairro}</small></p>
+                    ` : ''}
+                </div>
+                <div class="text-end">
+                    <span class="badge ${badgePeriodoClass}">${agendamento.periodo}</span>
+                    ${badgeExtra}
+                </div>
+            </div>
+            ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
+            <div class="d-flex justify-content-between mt-2">
+                <small class="text-muted">${agendamento.createdBy ? 'Agendado por: ' + agendamento.createdBy : ''}</small>
+                <div>
+                    <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${id}"></i>
+                    <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${id}"></i>
+                    <i class="bi bi-trash delete-btn" title="Excluir" data-id="${id}"></i>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // listeners
+    card.querySelector('.copy-btn')?.addEventListener('click', copyAgendamentoToClipboard);
+    card.querySelector('.edit-btn')?.addEventListener('click', editAgendamento);
+    card.querySelector('.delete-btn')?.addEventListener('click', deleteAgendamento);
+
+    return card;
+}
+
+function renderAgendamentos(agendamentos) {
+    const container = document.getElementById('agendamentos-container') || document.getElementById('agendamentos-list');
+    container.innerHTML = '';
+    if (!agendamentos || agendamentos.length === 0) {
+        container.innerHTML = '<p class="text-muted">Nenhum agendamento encontrado.</p>';
+        return;
+    }
+
+    // agrupa por data
+    const agendamentosPorData = agendamentos.reduce((acc, ag) => {
+        if (!acc[ag.data]) acc[ag.data] = [];
+        acc[ag.data].push(ag);
+        return acc;
+    }, {});
+
+    const sortedDates = Object.keys(agendamentosPorData).sort();
+
+    sortedDates.forEach(data => {
+        const ags = agendamentosPorData[data];
+        const dateHeader = document.createElement('div');
+        dateHeader.className = 'd-flex justify-content-between align-items-center mb-3';
+        const dataFormatada = formatDateCorrectly(data);
+        dateHeader.innerHTML = `<h5>${dataFormatada}</h5>
+            <span class="agendamento-count ${ags.length > 3 ? 'warning-count' : ''}">${ags.length} agendamento(s)</span>`;
+        container.appendChild(dateHeader);
+        ags.forEach(ag => {
+            const card = createAgendamentoCard(ag, ag.id);
+            container.appendChild(card);
+        });
+    });
+}
+
+/* ---------- Verificadores de limite (mantidos) ---------- */
+function checkAgendamentoLimit() {
+    const dateInput = document.getElementById('data');
+    const date = dateInput.value;
+    if (!date) return;
+
+    if (isSunday(date)) {
+        document.getElementById('data-info').textContent = 'Não é possível agendar aos domingos.';
+        document.getElementById('data-info').className = 'form-text text-danger';
+        document.getElementById('submit-btn').disabled = true;
+        return;
+    }
+
+    database.ref('blockedDays/' + date).once('value').then(snapshot => {
+        if (snapshot.exists()) {
+            const reason = snapshot.val().reason || '';
+            document.getElementById('data-info').textContent = `Dia bloqueado para agendamentos. ${reason}`;
+            document.getElementById('data-info').className = 'form-text text-danger';
+            document.getElementById('submit-btn').disabled = true;
+            return;
         }
 
-        // Formata data corretamente (compensando fuso horário)
-        function formatDateCorrectly(dateString) {
-            // Divide a string da data (formato YYYY-MM-DD)
-            const parts = dateString.split('-');
-            if (parts.length !== 3) return dateString; // Se não estiver no formato esperado, retorna original
-            
-            // Cria a data no UTC (sem considerar fuso horário local)
-            const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-            
-            // Opções de formatação
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                timeZone: 'UTC' // Mantém a formatação em UTC
-            };
-            
-            // Retorna a data formatada corretamente
-            return date.toLocaleDateString('pt-BR', options);
-        }
-        // Verifica limite de agendamentos por dia
-        function checkAgendamentoLimit() {
-            const dateInput = document.getElementById('data');
-            const date = dateInput.value;
-            
-            if (!date) return;
-            
-            // Verifica se é domingo (usando a nova função corrigida)
-            if (isSunday(date)) {
-                document.getElementById('data-info').textContent = 'Não é possível agendar aos domingos.';
-                document.getElementById('data-info').className = 'form-text text-danger';
-                document.getElementById('submit-btn').disabled = true;
-                return;
-            }
-                    
-            // Verifica se o dia está bloqueado
-            database.ref('blockedDays/' + date).once('value').then(snapshot => {
-                if (snapshot.exists()) {
-                    const reason = snapshot.val().reason || '';
-                    document.getElementById('data-info').textContent = `Dia bloqueado para agendamentos. ${reason}`;
-                    document.getElementById('data-info').className = 'form-text text-danger';
-                    document.getElementById('submit-btn').disabled = true;
+        database.ref('agendamentos').orderByChild('data').equalTo(date).once('value')
+            .then(snapshot => {
+                const count = snapshot.numChildren();
+                const infoElement = document.getElementById('data-info');
+                const submitBtn = document.getElementById('submit-btn');
+
+                // limites originais de cadastro (mantidos)
+                let limiteAviso = 3;
+                let limiteMaximo = 5;
+                if (isSaturday(date)) {
+                    limiteAviso = 1;
+                    limiteMaximo = 3;
+                }
+
+                if (count >= limiteMaximo) {
+                    infoElement.textContent = `Este dia já atingiu o limite máximo de ${limiteMaximo} agendamentos. Não é possível agendar mais.`;
+                    infoElement.className = 'form-text text-danger';
+                    submitBtn.disabled = true;
                     return;
-                }
-                
-                // Se não for domingo e não estiver bloqueado, verifica os agendamentos
-                database.ref('agendamentos').orderByChild('data').equalTo(date).once('value')
-                    .then(snapshot => {
-                        const count = snapshot.numChildren();
-                        const infoElement = document.getElementById('data-info');
-                        const submitBtn = document.getElementById('submit-btn');
-                        
-                        // Define os limites baseados no dia da semana
-                        let limiteAviso = 3;
-                        let limiteMaximo = 5;
-                        
-                        if (isSaturday(date)) {
-                            limiteAviso = 1;
-                            limiteMaximo = 3;
-                        }
-                        
-                        if (count >= limiteMaximo) {
-                            infoElement.textContent = `Este dia já atingiu o limite máximo de ${limiteMaximo} agendamentos. Não é possível agendar mais.`;
-                            infoElement.className = 'form-text text-danger';
-                            submitBtn.disabled = true;
-                            return;
-                        } else if (count >= limiteAviso) {
-                            infoElement.textContent = `Este dia já possui ${count} agendamento(s). Agendamentos extras requerem autorização.`;
-                            infoElement.className = 'form-text text-warning';
-                            submitBtn.disabled = false;
-                            
-                            currentExtraAgendamento = {
-                                data: date,
-                                currentCount: count,
-                                isSaturday: isSaturday(date)
-                            };
-                            
-                            // Atualiza mensagem do modal
-                            const modalMessage = document.getElementById('modal-message');
-                            const modalLimite = document.getElementById('modal-limite');
-                            
-                            if (isSaturday(date)) {
-                                modalMessage.textContent = 'Este sábado já possui 1 agendamento. Deseja solicitar autorização para um agendamento extra?';
-                                modalLimite.textContent = 'Máximo de 2 agendamentos extras por sábado (total de 3).';
-                            } else {
-                                modalMessage.textContent = 'Este dia já possui 3 agendamentos. Deseja solicitar autorização para um agendamento extra?';
-                                modalLimite.textContent = 'Máximo de 2 agendamentos extras por dia (total de 5).';
-                            }
-                            
-                            const modal = new bootstrap.Modal(document.getElementById('extraModal'));
-                            modal.show();
-                        } else {
-                            infoElement.textContent = `Este dia possui ${count} agendamento(s).`;
-                            infoElement.className = 'form-text text-muted';
-                            submitBtn.disabled = false;
-                            currentExtraAgendamento = null;
-                        }
-                    });
-            });
-        }
+                } else if (count >= limiteAviso) {
+                    infoElement.textContent = `Este dia já possui ${count} agendamento(s). Agendamentos extras requerem autorização.`;
+                    infoElement.className = 'form-text text-warning';
+                    submitBtn.disabled = false;
 
-        // Verifica limite de reservas por dia
-        function checkReservaLimit() {
-            const dateInput = document.getElementById('reserva-data');
-            const date = dateInput.value;
-            
-            if (!date) return;
-            
-            // Verifica se é domingo
-            if (isSunday(date)) {
-                document.getElementById('reserva-data-info').textContent = 'Não é possível reservar aos domingos.';
-                document.getElementById('reserva-data-info').className = 'form-text text-danger';
-                document.getElementById('submit-reserva-btn').disabled = true;
-                return;
-            }
-            
-            // Verifica se o dia está bloqueado
-            database.ref('blockedDays/' + date).once('value').then(snapshot => {
-                if (snapshot.exists()) {
-                    const reason = snapshot.val().reason || '';
-                    document.getElementById('reserva-data-info').textContent = `Dia bloqueado para reservas. ${reason}`;
-                    document.getElementById('reserva-data-info').className = 'form-text text-danger';
-                    document.getElementById('submit-reserva-btn').disabled = true;
-                    return;
-                }
-                
-                // Se não for domingo e não estiver bloqueado, verifica os agendamentos
-                database.ref('agendamentos').orderByChild('data').equalTo(date).once('value')
-                    .then(snapshot => {
-                        const count = snapshot.numChildren();
-                        const infoElement = document.getElementById('reserva-data-info');
-                        const submitBtn = document.getElementById('submit-reserva-btn');
-                        
-                        // Define os limites baseados no dia da semana
-                        let limiteAviso = 3;
-                        let limiteMaximo = 5;
-                        
-                        if (isSaturday(date)) {
-                            limiteAviso = 1;
-                            limiteMaximo = 3;
-                        }
-                        
-                        if (count >= limiteMaximo) {
-                            infoElement.textContent = `Este dia já atingiu o limite máximo de ${limiteMaximo} agendamentos. Não é possível reservar mais.`;
-                            infoElement.className = 'form-text text-danger';
-                            submitBtn.disabled = true;
-                            return;
-                        } else if (count >= limiteAviso) {
-                            infoElement.textContent = `Este dia já possui ${count} agendamento(s). Reservas extras requerem autorização.`;
-                            infoElement.className = 'form-text text-warning';
-                            submitBtn.disabled = false;
-                            
-                            currentExtraAgendamento = {
-                                data: date,
-                                currentCount: count,
-                                isSaturday: isSaturday(date)
-                            };
-                            
-                            // Atualiza mensagem do modal
-                            const modalMessage = document.getElementById('modal-message');
-                            const modalLimite = document.getElementById('modal-limite');
-                            
-                            if (isSaturday(date)) {
-                                modalMessage.textContent = 'Este sábado já possui 1 agendamento. Deseja solicitar autorização para uma reserva extra?';
-                                modalLimite.textContent = 'Máximo de 2 reservas extras por sábado (total de 3).';
-                            } else {
-                                modalMessage.textContent = 'Este dia já possui 3 agendamentos. Deseja solicitar autorização para uma reserva extra?';
-                                modalLimite.textContent = 'Máximo de 2 reservas extras por dia (total de 5).';
-                            }
-                            
-                            const modal = new bootstrap.Modal(document.getElementById('extraModal'));
-                            modal.show();
-                        } else {
-                            infoElement.textContent = `Este dia possui ${count} agendamento(s).`;
-                            infoElement.className = 'form-text text-muted';
-                            submitBtn.disabled = false;
-                            currentExtraAgendamento = null;
-                        }
-                    });
-            });
-        }
+                    currentExtraAgendamento = { data: date, currentCount: count, isSaturday: isSaturday(date) };
 
-        // Solicita autorização para agendamento extra
-        function requestExtraAuthorization() {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('extraModal'));
-            modal.hide();
-            
-            if (currentExtraAgendamento) {
-                const limiteMaximo = currentExtraAgendamento.isSaturday ? 3 : 5;
-                const message = currentExtraAgendamento.isSaturday ? 
-                    'Este sábado já possui 1 agendamento. Máximo de 3 agendamentos permitidos.' :
-                    'Este dia já possui 3 agendamentos. Máximo de 5 agendamentos permitidos.';
-                
-                showAlert(message, 'info');
-            }
-            
-            currentExtraAgendamento = null;
-        }
+                    const modalMessage = document.getElementById('modal-message');
+                    const modalLimite = document.getElementById('modal-limite');
 
-        // Carrega dias bloqueados
-        function loadBlockedDays() {
-            database.ref('blockedDays').on('value', snapshot => {
-                const container = document.getElementById('blocked-days-container');
-                container.innerHTML = '';
-                
-                snapshot.forEach(childSnapshot => {
-                    const date = childSnapshot.key;
-                    const reason = childSnapshot.val().reason || '';
-                    
-                    const dayElement = document.createElement('div');
-                    dayElement.className = 'blocked-day';
-                    dayElement.innerHTML = `
-                        <span>${formatDateCorrectly(date)} ${reason ? ' - ' + reason : ''}</span>
-                        <i class="bi bi-x-lg delete-blocked-day" data-date="${date}"></i>
-                    `;
-                    container.appendChild(dayElement);
-                });
-                
-                // Adiciona listeners para excluir dias bloqueados
-                document.querySelectorAll('.delete-blocked-day').forEach(btn => {
-                    btn.addEventListener('click', deleteBlockedDay);
-                });
-                
-                // Atualiza os próximos dias disponíveis
-                updateNextAvailableDays();
-            });
-        }
-
-        // Adiciona um dia bloqueado
-        function addBlockedDay() {
-            const date = prompt('Digite a data a ser bloqueada (YYYY-MM-DD):');
-            if (!date) return;
-            
-            // Valida formato da data
-            if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-                showAlert('Formato de data inválido. Use YYYY-MM-DD.', 'danger');
-                return;
-            }
-            
-            const reason = prompt('Motivo do bloqueio (opcional):');
-            
-            database.ref('blockedDays/' + date).set({
-                reason: reason || '',
-                blockedAt: firebase.database.ServerValue.TIMESTAMP
-            })
-            .then(() => {
-                showAlert('Dia bloqueado com sucesso!', 'success');
-                updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
-            })
-            .catch(error => showAlert('Erro ao bloquear dia: ' + error.message, 'danger'));
-        }
-
-        // Exclui um dia bloqueado
-        function deleteBlockedDay(e) {
-            const date = e.target.getAttribute('data-date');
-            if (!confirm(`Desbloquear o dia ${formatDateCorrectly(date)}?`)) return;
-            
-            database.ref('blockedDays/' + date).remove()
-                .then(() => {
-                    showAlert('Dia desbloqueado com sucesso!', 'success');
-                    updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
-                })
-                .catch(error => showAlert('Erro ao desbloquear dia: ' + error.message, 'danger'));
-        }
-
-        // Copia agendamento para clipboard no formato para Excel
-        function copyAgendamentoToClipboard(e) {
-            const agendamentoId = e.target.getAttribute('data-id');
-            database.ref('agendamentos/' + agendamentoId).once('value')
-                .then(snapshot => {
-                    const agendamento = snapshot.val();
-                    
-                    // Formata os dados conforme as colunas solicitadas
-                    const textToCopy = [
-                        agendamento.data,        // 1ª coluna: data do agendamento
-                        '',                     // 2ª coluna: vazia
-                        agendamento.cliente,     // 3ª coluna: nome do cliente
-                        agendamento.tipo === 'agendamento' ? agendamento.endereco : 'RESERVA', // 4ª coluna: endereço
-                        agendamento.tipo === 'agendamento' ? agendamento.numero : '',           // 5ª coluna: número
-                        agendamento.tipo === 'agendamento' ? (agendamento.complemento || '') : '', // 6ª coluna: complemento
-                        agendamento.tipo === 'agendamento' ? agendamento.bairro : '',          // 7ª coluna: bairro
-                        agendamento.periodo,     // 8ª coluna: período
-                        agendamento.observacoes || '', // 9ª coluna: observação
-                        agendamento.tipo === 'agendamento' ? (agendamento.loginPPPoE || '') : '', // 10ª coluna: login pppoe
-                        agendamento.tipo === 'agendamento' ? (agendamento.senhaPPPoE || '') : '', // 11ª coluna: senha pppoe
-                        agendamento.tipo === 'agendamento' ? (agendamento.nomeWifi || '') : '', // 12ª coluna: nome do wifi
-                        agendamento.tipo === 'agendamento' ? (agendamento.senhaWifi || '') : '', // 13ª coluna: senha do wifi
-                        agendamento.tipo === 'agendamento' ? (agendamento.roteador ? 'Sim' : 'Não') : '' // 14ª coluna: roteador
-                    ].join('\t'); // Tab como separador para Excel
-                    
-                    navigator.clipboard.writeText(textToCopy)
-                        .then(() => showAlert('Dados copiados para a área de transferência!', 'success'))
-                        .catch(() => showAlert('Erro ao copiar dados.', 'danger'));
-                });
-        }
-
-        // Preenche formulário para edição
-        function editAgendamento(e) {
-            const agendamentoId = e.target.getAttribute('data-id');
-            
-            database.ref('agendamentos/' + agendamentoId).once('value')
-                .then(snapshot => {
-                    if (!snapshot.exists()) {
-                        showAlert('Agendamento não encontrado!', 'danger');
-                        return;
-                    }
-
-                    const agendamento = snapshot.val();
-                    
-                    // Verifica se é reserva ou agendamento completo
-                    if (agendamento.tipo === 'reserva') {
-                        // Preenche formulário de reserva
-                        document.getElementById('reserva-tab').click();
-                        document.getElementById('reserva-data').value = agendamento.data;
-                        document.getElementById('reserva-cliente').value = agendamento.cliente;
-                        document.getElementById('reserva-periodo').value = agendamento.periodo;
+                    if (isSaturday(date)) {
+                        modalMessage.textContent = 'Este sábado já possui 1 agendamento. Deseja solicitar autorização para um agendamento extra?';
+                        modalLimite.textContent = 'Máximo de 2 agendamentos extras por sábado (total de 3).';
                     } else {
-                        // Preenche formulário de agendamento completo
-                        document.getElementById('agendamento-tab').click();
-                        document.getElementById('data').value = agendamento.data;
-                        document.getElementById('cliente').value = agendamento.cliente;
-                        document.getElementById('endereco').value = agendamento.endereco;
-                        document.getElementById('numero').value = agendamento.numero;
-                        document.getElementById('complemento').value = agendamento.complemento || '';
-                        document.getElementById('bairro').value = agendamento.bairro;
-                        document.getElementById('periodo').value = agendamento.periodo;
-                        document.getElementById('observacoes').value = agendamento.observacoes || '';
-                        document.getElementById('login-pppoe').value = agendamento.loginPPPoE || '';
-                        document.getElementById('senha-pppoe').value = agendamento.senhaPPPoE || '';
-                        document.getElementById('nome-wifi').value = agendamento.nomeWifi || '';
-                        document.getElementById('senha-wifi').value = agendamento.senhaWifi || '';
-                        document.getElementById('roteador').checked = agendamento.roteador || false;
+                        modalMessage.textContent = 'Este dia já possui 3 agendamentos. Deseja solicitar autorização para um agendamento extra?';
+                        modalLimite.textContent = 'Máximo de 2 agendamentos extras por dia (total de 5).';
                     }
 
-                    // Ativa modo edição
-                    editingAgendamentoId = agendamentoId;
-                    document.getElementById('submit-btn').textContent = 'Atualizar';
-                    document.getElementById('cancel-edit-btn').classList.remove('d-none');
-                    
-                    // Rola para o formulário
-                    document.getElementById('agendamento-form').scrollIntoView({ behavior: 'smooth' });
-                })
-                .catch(error => {
-                    showAlert('Erro ao carregar agendamento: ' + error.message, 'danger');
-                });
-        }
+                    const modal = new bootstrap.Modal(document.getElementById('extraModal'));
+                    modal.show();
+                } else {
+                    infoElement.textContent = `Este dia possui ${count} agendamento(s).`;
+                    infoElement.className = 'form-text text-muted';
+                    submitBtn.disabled = false;
+                    currentExtraAgendamento = null;
+                }
+            });
+    });
+}
 
-        // Cancela a edição
-        function cancelEdit() {
-            resetForm();
-            editingAgendamentoId = null;
-            document.getElementById('submit-btn').textContent = 'Agendar';
-            document.getElementById('cancel-edit-btn').classList.add('d-none');
+function checkReservaLimit() {
+    const dateInput = document.getElementById('reserva-data');
+    const date = dateInput.value;
+    if (!date) return;
+    if (isSunday(date)) {
+        document.getElementById('reserva-data-info').textContent = 'Não é possível reservar aos domingos.';
+        document.getElementById('reserva-data-info').className = 'form-text text-danger';
+        document.getElementById('submit-reserva-btn').disabled = true;
+        return;
+    }
+    database.ref('blockedDays/' + date).once('value').then(snapshot => {
+        if (snapshot.exists()) {
+            const reason = snapshot.val().reason || '';
+            document.getElementById('reserva-data-info').textContent = `Dia bloqueado para reservas. ${reason}`;
+            document.getElementById('reserva-data-info').className = 'form-text text-danger';
+            document.getElementById('submit-reserva-btn').disabled = true;
+            return;
         }
+        database.ref('agendamentos').orderByChild('data').equalTo(date).once('value')
+            .then(snapshot => {
+                const count = snapshot.numChildren();
+                const infoElement = document.getElementById('reserva-data-info');
+                const submitBtn = document.getElementById('submit-reserva-btn');
 
-        // Exclui um agendamento
-        function deleteAgendamento(e) {
-            if (!confirm('Tem certeza que deseja excluir este agendamento?')) return;
-            
-            const agendamentoId = e.target.getAttribute('data-id');
-            
-            database.ref('agendamentos/' + agendamentoId).remove()
-                .then(() => {
-                    showAlert('Agendamento excluído com sucesso!', 'success');
-                    updateNextAvailableDays(); // Atualiza os próximos dias disponíveis
-                })
-                .catch(error => showAlert('Erro ao excluir agendamento: ' + error.message, 'danger'));
-        }
+                let limiteAviso = 3;
+                let limiteMaximo = 5;
+                if (isSaturday(date)) {
+                    limiteAviso = 1;
+                    limiteMaximo = 3;
+                }
 
-        // Reseta o formulário
-        function resetForm() {
-            document.getElementById('agendamento-form').reset();
-            document.getElementById('data-info').textContent = '';
-        }
+                if (count >= limiteMaximo) {
+                    infoElement.textContent = `Este dia já atingiu o limite máximo de ${limiteMaximo} agendamentos. Não é possível reservar mais.`;
+                    infoElement.className = 'form-text text-danger';
+                    submitBtn.disabled = true;
+                    return;
+                } else if (count >= limiteAviso) {
+                    infoElement.textContent = `Este dia já possui ${count} agendamento(s). Reservas extras requerem autorização.`;
+                    infoElement.className = 'form-text text-warning';
+                    submitBtn.disabled = false;
 
-        // Mostra alerta
-        function showAlert(message, type) {
-            // Remove alertas existentes
-            document.querySelectorAll('.alert-fixed').forEach(alert => alert.remove());
-            
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show alert-fixed`;
-            alert.role = 'alert';
-            alert.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            `;
-            
-            document.body.appendChild(alert);
-            
-            // Remove após 5 segundos
-            setTimeout(() => {
-                alert.classList.remove('show');
-                setTimeout(() => alert.remove(), 150);
-            }, 5000);
+                    currentExtraAgendamento = { data: date, currentCount: count, isSaturday: isSaturday(date) };
+
+                    const modalMessage = document.getElementById('modal-message');
+                    const modalLimite = document.getElementById('modal-limite');
+
+                    if (isSaturday(date)) {
+                        modalMessage.textContent = 'Este sábado já possui 1 agendamento. Deseja solicitar autorização para uma reserva extra?';
+                        modalLimite.textContent = 'Máximo de 2 reservas extras por sábado (total de 3).';
+                    } else {
+                        modalMessage.textContent = 'Este dia já possui 3 agendamentos. Deseja solicitar autorização para uma reserva extra?';
+                        modalLimite.textContent = 'Máximo de 2 reservas extras por dia (total de 5).';
+                    }
+
+                    const modal = new bootstrap.Modal(document.getElementById('extraModal'));
+                    modal.show();
+                } else {
+                    infoElement.textContent = `Este dia possui ${count} agendamento(s).`;
+                    infoElement.className = 'form-text text-muted';
+                    submitBtn.disabled = false;
+                    currentExtraAgendamento = null;
+                }
+            });
+    });
+}
+
+/* ---------- Extra Authorization (modal) ---------- */
+function requestExtraAuthorization() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('extraModal'));
+    if (modal) modal.hide();
+
+    if (currentExtraAgendamento) {
+        const limiteMaximo = currentExtraAgendamento.isSaturday ? 3 : 5;
+        const message = currentExtraAgendamento.isSaturday ?
+            'Este sábado já possui 1 agendamento. Máximo de 3 agendamentos permitidos.' :
+            'Este dia já possui 3 agendamentos. Máximo de 5 agendamentos permitidos.';
+        showAlert(message, 'info');
+    }
+    currentExtraAgendamento = null;
+}
+
+/* ---------- Dias bloqueados: load, add, delete ---------- */
+function loadBlockedDays() {
+    database.ref('blockedDays').on('value', snapshot => {
+        const container = document.getElementById('blocked-days-container') || document.getElementById('dias-bloqueados');
+        container.innerHTML = '';
+        snapshot.forEach(childSnapshot => {
+            const date = childSnapshot.key;
+            const reason = childSnapshot.val().reason || '';
+            const dayElement = document.createElement('div');
+            dayElement.className = 'blocked-day';
+            dayElement.innerHTML = `<span>${formatDateCorrectly(date)} ${reason ? ' - ' + reason : ''}</span>
+                <i class="bi bi-x-lg delete-blocked-day" data-date="${date}" style="cursor:pointer"></i>`;
+            container.appendChild(dayElement);
+        });
+
+        document.querySelectorAll('.delete-blocked-day').forEach(btn => {
+            btn.addEventListener('click', deleteBlockedDay);
+        });
+    });
+}
+
+function addBlockedDay() {
+    const date = prompt('Digite a data a ser bloqueada (YYYY-MM-DD):');
+    if (!date) return;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        showAlert('Formato de data inválido. Use YYYY-MM-DD.', 'danger');
+        return;
+    }
+    const reason = prompt('Motivo do bloqueio (opcional):') || '';
+    database.ref('blockedDays/' + date).set({
+        reason: reason,
+        blockedAt: firebase.database.ServerValue.TIMESTAMP
+    })
+    .then(()=> showAlert('Dia bloqueado com sucesso!', 'success'))
+    .catch(err => showAlert('Erro ao bloquear dia: ' + err.message, 'danger'));
+}
+
+function deleteBlockedDay(e) {
+    const date = e.target.getAttribute('data-date');
+    if (!confirm(`Desbloquear o dia ${formatDateCorrectly(date)}?`)) return;
+    database.ref('blockedDays/' + date).remove()
+        .then(()=> showAlert('Dia desbloqueado com sucesso!', 'success'))
+        .catch(err => showAlert('Erro ao desbloquear dia: ' + err.message, 'danger'));
+}
+
+/* ---------- Copiar, editar, excluir agendamento ---------- */
+function copyAgendamentoToClipboard(e) {
+    const id = e.target.getAttribute('data-id');
+    database.ref('agendamentos/' + id).once('value')
+        .then(snapshot => {
+            const agendamento = snapshot.val();
+            const textToCopy = [
+                agendamento.data || '',
+                '',
+                agendamento.cliente || '',
+                agendamento.tipo === 'agendamento' ? (agendamento.endereco || '') : 'RESERVA',
+                agendamento.tipo === 'agendamento' ? (agendamento.numero || '') : '',
+                agendamento.tipo === 'agendamento' ? (agendamento.complemento || '') : '',
+                agendamento.tipo === 'agendamento' ? (agendamento.bairro || '') : '',
+                agendamento.periodo || '',
+                agendamento.observacoes || '',
+                agendamento.tipo === 'agendamento' ? (agendamento.loginPPPoE || '') : '',
+                agendamento.tipo === 'agendamento' ? (agendamento.senhaPPPoE || '') : '',
+                agendamento.tipo === 'agendamento' ? (agendamento.nomeWifi || '') : '',
+                agendamento.tipo === 'agendamento' ? (agendamento.senhaWifi || '') : '',
+                agendamento.tipo === 'agendamento' ? (agendamento.roteador ? 'Sim' : 'Não') : ''
+            ].join('\t');
+            return navigator.clipboard.writeText(textToCopy);
+        })
+        .then(()=> showAlert('Dados copiados para a área de transferência!', 'success'))
+        .catch(err => showAlert('Erro ao copiar dados: ' + (err.message || err), 'danger'));
+}
+
+function editAgendamento(e) {
+    const agendamentoId = e.target.getAttribute('data-id');
+    database.ref('agendamentos/' + agendamentoId).once('value')
+        .then(snapshot => {
+            if (!snapshot.exists()) { showAlert('Agendamento não encontrado!', 'danger'); return; }
+            const agendamento = snapshot.val();
+            if (agendamento.tipo === 'reserva') {
+                document.getElementById('reserva-tab').click();
+                document.getElementById('reserva-data').value = agendamento.data || '';
+                document.getElementById('reserva-cliente').value = agendamento.cliente || '';
+                document.getElementById('reserva-periodo').value = agendamento.periodo || '';
+            } else {
+                document.getElementById('agendamento-tab').click();
+                document.getElementById('data').value = agendamento.data || '';
+                document.getElementById('cliente').value = agendamento.cliente || '';
+                document.getElementById('endereco').value = agendamento.endereco || '';
+                document.getElementById('numero').value = agendamento.numero || '';
+                document.getElementById('complemento').value = agendamento.complemento || '';
+                document.getElementById('bairro').value = agendamento.bairro || '';
+                document.getElementById('periodo').value = agendamento.periodo || '';
+                document.getElementById('observacoes').value = agendamento.observacoes || '';
+                document.getElementById('login-pppoe').value = agendamento.loginPPPoE || '';
+                document.getElementById('senha-pppoe').value = agendamento.senhaPPPoE || '';
+                document.getElementById('nome-wifi').value = agendamento.nomeWifi || '';
+                document.getElementById('senha-wifi').value = agendamento.senhaWifi || '';
+                document.getElementById('roteador').checked = !!agendamento.roteador;
+            }
+            editingAgendamentoId = agendamentoId;
+            document.getElementById('submit-btn').textContent = 'Atualizar';
+            document.getElementById('cancel-edit-btn').classList.remove('d-none');
+            document.getElementById('agendamento-form').scrollIntoView({ behavior: 'smooth' });
+        })
+        .catch(err => showAlert('Erro ao carregar agendamento: ' + err.message, 'danger'));
+}
+
+function deleteAgendamento(e) {
+    if (!confirm('Tem certeza que deseja excluir este agendamento?')) return;
+    const id = e.target.getAttribute('data-id');
+    database.ref('agendamentos/' + id).remove()
+        .then(()=> showAlert('Agendamento excluído com sucesso!', 'success'))
+        .catch(err => showAlert('Erro ao excluir agendamento: ' + err.message, 'danger'));
+}
+
+/* ---------- Cancel Edit / Reset ---------- */
+function cancelEdit() {
+    resetForm();
+    editingAgendamentoId = null;
+    document.getElementById('submit-btn').textContent = 'Agendar';
+    document.getElementById('cancel-edit-btn').classList.add('d-none');
+}
+
+function cancelReservaEdit() {
+    document.getElementById('reserva-form').reset();
+    document.getElementById('cancel-reserva-edit-btn').classList.add('d-none');
+    document.getElementById('submit-reserva-btn').textContent = 'Reservar';
+}
+
+function resetForm() {
+    document.getElementById('agendamento-form').reset();
+    document.getElementById('data-info').textContent = '';
+}
+
+/* ---------- Função calcularProximasVagas() (sáb=1, semana=3) ---------- */
+function calcularProximasVagas() {
+    const hoje = new Date();
+    hoje.setHours(0,0,0,0);
+
+    const proximosDias = [];
+    const maxDiasVerificados = 30;
+    let diasVerificados = 0;
+
+    function verificarDia(data) {
+        return new Promise((resolve) => {
+            const yyyy = data.getFullYear();
+            const mm = String(data.getMonth() + 1).padStart(2, '0');
+            const dd = String(data.getDate()).padStart(2, '0');
+            const dataStr = `${yyyy}-${mm}-${dd}`;
+
+            // Ignora domingos
+            if (data.getDay() === 0) {
+                resolve(null);
+                return;
+            }
+
+            // Verifica bloqueado
+            database.ref('blockedDays/' + dataStr).once('value').then(snapshot => {
+                if (snapshot.exists()) { resolve(null); return; }
+
+                // limite para exibição de próximas vagas (requisitado): sábado=1, semana=3
+                const limite = (data.getDay() === 6) ? 1 : 3;
+
+                database.ref('agendamentos').orderByChild('data').equalTo(dataStr).once('value')
+                    .then(agSnap => {
+                        const total = agSnap.numChildren();
+                        const vagas = limite - total;
+                        if (vagas > 0) {
+                            proximosDias.push({ data: `${dd}/${mm}`, vagas });
+                        }
+                        resolve();
+                    });
+            });
+        });
+    }
+
+    (async function() {
+        // percorre dias a partir de amanhã até preencher 3 dias com vagas ou alcançar limite de dias verificados
+        while (proximosDias.length < 3 && diasVerificados < maxDiasVerificados) {
+            hoje.setDate(hoje.getDate() + 1);
+            await verificarDia(new Date(hoje));
+            diasVerificados++;
         }
-    </script>
+        const vagasTexto = proximosDias.map(d => `${d.data} (${d.vagas})`).join(', ');
+        document.getElementById('proximas-vagas').textContent =
+            proximosDias.length > 0 ? `Próx. vagas: ${vagasTexto}` : 'Nenhuma vaga disponível nos próximos dias';
+    })();
+}
+
+/* ---------- Interceptadores para recalcular vagas após loads ---------- */
+/* Substitui os handlers originais para adicionar chamada ao calcularProximasVagas */
+(function wrapLoads() {
+    const originalLoadAgendamentos = loadAgendamentos;
+    loadAgendamentos = function() {
+        // registra com on(value) e depois chama cálculo
+        database.ref('agendamentos').on('value', snapshot => {
+            // chama render original via re-obtenção dos dados
+            const agendamentos = [];
+            snapshot.forEach(childSnapshot => {
+                const ag = childSnapshot.val();
+                agendamentos.push({ id: childSnapshot.key, ...ag });
+            });
+            renderAgendamentos(agendamentos);
+            calcularProximasVagas();
+        });
+    };
+
+    const originalLoadBlockedDays = loadBlockedDays;
+    loadBlockedDays = function() {
+        database.ref('blockedDays').on('value', snapshot => {
+            const container = document.getElementById('blocked-days-container') || document.getElementById('dias-bloqueados');
+            container.innerHTML = '';
+            snapshot.forEach(childSnapshot => {
+                const date = childSnapshot.key;
+                const reason = childSnapshot.val().reason || '';
+                const dayElement = document.createElement('div');
+                dayElement.className = 'blocked-day';
+                dayElement.innerHTML = `<span>${formatDateCorrectly(date)} ${reason ? ' - ' + reason : ''}</span>
+                    <i class="bi bi-x-lg delete-blocked-day" data-date="${date}" style="cursor:pointer"></i>`;
+                container.appendChild(dayElement);
+            });
+
+            document.querySelectorAll('.delete-blocked-day').forEach(btn => {
+                btn.addEventListener('click', deleteBlockedDay);
+            });
+
+            calcularProximasVagas();
+        });
+    };
+})();
+
+/* ---------- Inicialização final após DOM pronto ---------- */
+document.addEventListener('DOMContentLoaded', function() {
+    // configura datas mínimas nos inputs
+    const todayISO = new Date().toISOString().split('T')[0];
+    document.getElementById('data').min = todayISO;
+    const fd = document.getElementById('filter-date'); if (fd) fd.min = todayISO;
+    const rd = document.getElementById('reserva-data'); if (rd) rd.min = todayISO;
+    const bd = document.getElementById('bloqueio-data'); if (bd) bd.min = todayISO;
+
+    setupEventListeners();
+
+    // inicializa auth listener e, se já estiver logado, carrega dados
+    initAuth();
+
+    // Se já houver usuário ativo (persistência), garantir load e cálculo
+    if (auth.currentUser) {
+        currentUser = auth.currentUser;
+        showAppContent();
+        updateUIForUser(currentUser);
+        loadAgendamentos();
+        loadBlockedDays();
+        calcularProximasVagas();
+    }
+});
+</script>
 </body>
 </html>
