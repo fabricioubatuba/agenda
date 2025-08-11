@@ -13,13 +13,6 @@
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        #proximas-vagas {
-    background-color: #f8f9fa;
-    padding: 0.375rem 0.75rem;
-    border-radius: 0.25rem;
-    border: 1px solid #dee2e6;
-    white-space: nowrap;
-}
         /* Cores por dia (borda esquerda) */
 .color-dia-1 { border-left: 4px solid #FF6B6B !important; }
 .color-dia-2 { border-left: 4px solid #48D597 !important; }
@@ -264,9 +257,7 @@
                                             <form id="agendamento-form">
                                                 <div class="mb-3">
                                                     <label for="data" class="form-label">Data do Agendamento</label>
-                                                    <div class="d-flex align-items-center gap-2"> <!-- Flexbox para alinhar -->
                                                     <input type="date" class="form-control" id="data" required>
-                                                        <div id="proximas-vagas" class="text-muted small"></div>
                                                     <div id="data-info" class="form-text"></div>
                                                 </div>
                                                 <div class="form-section">
@@ -521,68 +512,6 @@
                 .forEach(el => el.disabled = false);
         }
 
-        function atualizarProximasVagas() {
-    const hoje = new Date();
-    const diasDisponiveis = [];
-    const limiteDias = 7; // Verifica os próximos 7 dias
-
-    // Verifica cada dia a partir de hoje
-    for (let i = 0; i < limiteDias && diasDisponiveis.length < 3; i++) {
-        const data = new Date(hoje);
-        data.setDate(hoje.getDate() + i);
-        
-        // Ignora domingos e dias bloqueados
-        if (data.getDay() === 0) continue;
-        
-        const dataStr = data.toISOString().split('T')[0];
-        
-        // Verifica se o dia está bloqueado
-        database.ref('blockedDays/' + dataStr).once('value').then(blockedSnapshot => {
-            if (!blockedSnapshot.exists()) {
-                // Conta agendamentos existentes
-                database.ref('agendamentos').orderByChild('data').equalTo(dataStr).once('value')
-                    .then(snapshot => {
-                        const count = snapshot.numChildren();
-                        const vagas = calcularVagasDisponiveis(data, count);
-                        
-                        if (vagas > 0) {
-                            diasDisponiveis.push({
-                                data: dataStr,
-                                vagas: vagas
-                            });
-                            
-                            // Atualiza a UI quando tiver 3 dias ou acabarem os dias
-                            if (diasDisponiveis.length === 3 || i === limiteDias - 1) {
-                                exibirProximasVagas(diasDisponiveis);
-                            }
-                        }
-                    });
-            }
-        });
-    }
-}
-
-function calcularVagasDisponiveis(data, agendamentosCount) {
-    const isSabado = data.getDay() === 6;
-    const limiteMaximo = isSabado ? 3 : 5; // Sábado: 3 vagas, outros dias: 5
-    return Math.max(0, limiteMaximo - agendamentosCount);
-}
-
-function exibirProximasVagas(dias) {
-    const divVagas = document.getElementById('proximas-vagas');
-    if (dias.length === 0) {
-        divVagas.innerHTML = '<em>Nenhuma vaga disponível nos próximos dias.</em>';
-        return;
-    }
-    
-    const html = dias.map(dia => {
-        const dataFormatada = formatDateCorrectly(dia.data);
-        return `${dataFormatada.split(',')[1].trim()} (${dia.vagas})`;
-    }).join(', ');
-    
-    divVagas.innerHTML = `<strong>Próx. vagas:</strong> ${html}`;
-}
-        
         // Configura os event listeners
         function setupEventListeners() {
             // Formulário de login
@@ -641,18 +570,8 @@ function exibirProximasVagas(dias) {
     
     // Modal
     document.getElementById('confirm-extra').addEventListener('click', requestExtraAuthorization);
-
-            // No final da função setupEventListeners():
-document.getElementById('data').addEventListener('focus', atualizarProximasVagas);
-document.getElementById('filter-date').addEventListener('focus', atualizarProximasVagas);
-
-// E também quando o usuário faz login:
-auth.onAuthStateChanged(user => {
-    if (user) {
-        atualizarProximasVagas();
-    }
-});
 } // <-- Esta chave fecha a função setupEventListeners()
+
         
         // Lista de e-mails autorizados
         const AUTHORIZED_EMAILS = [
@@ -1380,17 +1299,3 @@ function isWeekday(dateString) {
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
