@@ -13,6 +13,16 @@
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+        /* Cores por dia (borda esquerda) */
+.color-dia-1 { border-left-color: #FF6B6B; } /* Vermelho pastel */
+.color-dia-2 { border-left-color: #4ECDC4; } /* Azul pastel */
+.color-dia-3 { border-left-color: #FFD166; } /* Amarelo pastel */
+.color-dia-4 { border-left-color: #A0C4FF; } /* Azul claro */
+.color-dia-5 { border-left-color: #B5EAD7; } /* Verde pastel */
+.color-dia-6 { border-left-color: #C7CEEA; } /* Lilás */
+
+/* Cor do botão "Encaixe" */
+.badge-encaixe { background-color: #DC3545; } /* Vermelho */
         /* Estilo do botão de logout */
         #logout-btn {
             font-size: 0.8rem;
@@ -785,57 +795,62 @@
 
         // Cria um card de agendamento
         function createAgendamentoCard(agendamento, id) {
-            const card = document.createElement('div');
-            let periodoClass = '';
-            let badgeExtra = '';
-            
-            if (agendamento.tipo === 'reserva') {
-                periodoClass = 'reserva';
-                badgeExtra = '<span class="badge badge-reserva ms-1">Reserva</span>';
-            } else {
-                periodoClass = agendamento.periodo.toLowerCase().replace(' ', '-');
-                if (agendamento.roteador) {
-                    badgeExtra = '<span class="badge badge-roteador ms-1">Roteador OK</span>';
-                }
-            }
-            
-            card.className = `card agendamento-card mb-2 ${periodoClass}`;
-            card.innerHTML = `
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="card-title">${agendamento.cliente}</h6>
-                            ${agendamento.tipo === 'agendamento' ? `
-                                <p class="card-text mb-1">
-                                    <small><strong>Endereço:</strong> ${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
-                                </p>
-                                <p class="card-text mb-1"><small><strong>Bairro:</strong> ${agendamento.bairro}</small></p>
-                            ` : ''}
-                        </div>
-                        <div class="text-end">
-                            <span class="badge bg-primary">${agendamento.periodo}</span>
-                            ${badgeExtra}
-                        </div>
-                    </div>
-                    ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
-                    <div class="d-flex justify-content-between mt-2">
-                        <small class="text-muted">${agendamento.createdBy ? 'Agendado por: ' + agendamento.createdBy : ''}</small>
-                        <div>
-                            <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${id}"></i>
-                            <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${id}"></i>
-                            <i class="bi bi-trash delete-btn" title="Excluir" data-id="${id}"></i>
-                        </div>
-                    </div>
+    const card = document.createElement('div');
+    let badgeExtra = '';
+
+    // --- COR DA BORDA (ÚNICA POR DIA) ---
+    // Gera um número hash baseado na data para selecionar uma cor fixa
+    const hash = agendamento.data.split('-').reduce((acc, val) => acc + parseInt(val), 0);
+    const colorClass = `color-dia-${(hash % 6) + 1}`; // Usa 6 cores pré-definidas
+
+    // --- BOTÃO DO PERÍODO (VERMELHO SE FOR "ENCAIXE") ---
+    const badgePeriodoClass = agendamento.periodo === 'Encaixe' ? 'badge-encaixe' : 'bg-primary';
+
+    // --- BADGE EXTRA (ROTEADOR/RESERVA) ---
+    if (agendamento.tipo === 'reserva') {
+        badgeExtra = '<span class="badge badge-reserva ms-1">Reserva</span>';
+    } else if (agendamento.roteador) {
+        badgeExtra = '<span class="badge badge-roteador ms-1">Roteador OK</span>';
+    }
+
+    // --- ESTRUTURA DO CARD ---
+    card.className = `card agendamento-card mb-2 ${colorClass}`; // Aplica cor do dia
+    card.innerHTML = `
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="card-title">${agendamento.cliente}</h6>
+                    ${agendamento.tipo === 'agendamento' ? `
+                        <p class="card-text mb-1">
+                            <small><strong>Endereço:</strong> ${agendamento.endereco}, ${agendamento.numero} ${agendamento.complemento ? ' - ' + agendamento.complemento : ''}</small>
+                        </p>
+                        <p class="card-text mb-1"><small><strong>Bairro:</strong> ${agendamento.bairro}</small></p>
+                    ` : ''}
                 </div>
-            `;
-            
-            // Adiciona listeners aos botões
-            card.querySelector('.copy-btn').addEventListener('click', copyAgendamentoToClipboard);
-            card.querySelector('.edit-btn').addEventListener('click', editAgendamento);
-            card.querySelector('.delete-btn').addEventListener('click', deleteAgendamento);
-            
-            return card;
-        }
+                <div class="text-end">
+                    <span class="badge ${badgePeriodoClass}">${agendamento.periodo}</span>
+                    ${badgeExtra}
+                </div>
+            </div>
+            ${agendamento.observacoes ? `<p class="card-text mt-2"><small><strong>Obs:</strong> ${agendamento.observacoes}</small></p>` : ''}
+            <div class="d-flex justify-content-between mt-2">
+                <small class="text-muted">${agendamento.createdBy ? 'Agendado por: ' + agendamento.createdBy : ''}</small>
+                <div>
+                    <i class="bi bi-clipboard copy-btn me-2" title="Copiar para Excel" data-id="${id}"></i>
+                    <i class="bi bi-pencil edit-btn me-2" title="Editar" data-id="${id}"></i>
+                    <i class="bi bi-trash delete-btn" title="Excluir" data-id="${id}"></i>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Listeners dos botões
+    card.querySelector('.copy-btn').addEventListener('click', copyAgendamentoToClipboard);
+    card.querySelector('.edit-btn').addEventListener('click', editAgendamento);
+    card.querySelector('.delete-btn').addEventListener('click', deleteAgendamento);
+
+    return card;
+}
 
         // Renderiza a lista de agendamentos
         function renderAgendamentos(agendamentos) {
@@ -1293,6 +1308,7 @@ function isWeekday(dateString) {
     </script>
 </body>
 </html>
+
 
 
 
