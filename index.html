@@ -206,16 +206,16 @@
                 <img src="https://sejafibra.net/wp-content/uploads/2023/06/logonovofibra.png" alt="Seja Fibra" class="logo mb-4">
                 <h3 class="mb-4">Agenda de Instalações</h3>
                 <form id="login-form">
-                    <div class="mb-3">
-                        <label for="login-email" class="form-label">E-mail</label>
-                        <input type="email" class="form-control" id="login-email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="login-password" class="form-label">Senha</label>
-                        <input type="password" class="form-control" id="login-password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
-                </form>
+    <div class="mb-3">
+        <label for="login-email" class="form-label">E-mail</label>
+        <input type="email" class="form-control" id="login-email" autocomplete="username" required>
+    </div>
+    <div class="mb-3">
+        <label for="login-password" class="form-label">Senha</label>
+        <input type="password" class="form-control" id="login-password" autocomplete="current-password" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+</form>
                 <div id="login-error" class="text-danger mt-3" style="display: none;"></div>
             </div>
         </div>
@@ -460,23 +460,19 @@
 
         // Configura a autenticação
         function initAuth() {
-            auth.onAuthStateChanged(user => {
-                if (user && user.emailVerified) {
-                    if (checkAuthorization(user.email)) {
-                        currentUser = user;
-                        showAppContent();
-                        updateUIForUser(user);
-                        loadAgendamentos();
-                        loadBlockedDays();
-                    } else {
-                        auth.signOut();
-                        showLoginError('Acesso não autorizado');
-                    }
-                } else {
-                    showLoginScreen();
-                }
-            });
+    auth.onAuthStateChanged(user => {
+        if (user && checkAuthorization(user.email)) {
+            currentUser = user;
+            showAppContent();
+            updateUIForUser(user);
+            loadAgendamentos();
+            loadBlockedDays();
+        } else {
+            showLoginScreen();
+            if (user) auth.signOut(); // Desloga se não estiver autorizado
         }
+    });
+}
 
         // Mostra a tela de login
         function showLoginScreen() {
@@ -598,15 +594,17 @@
 
         // Função de login
         function handleLogin(email, password) {
-    auth.signInWithEmailAndPassword(email, password)
+    // Define a persistência da sessão
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => {
+            return auth.signInWithEmailAndPassword(email, password);
+        })
         .then((userCredential) => {
             if (!checkAuthorization(userCredential.user.email)) {
                 auth.signOut();
                 throw new Error('Acesso não autorizado');
             }
             showAlert('Login realizado com sucesso!', 'success');
-            
-            // Adicione estas linhas para mostrar o conteúdo do app
             currentUser = userCredential.user;
             showAppContent();
             updateUIForUser(currentUser);
@@ -1295,6 +1293,7 @@ function isWeekday(dateString) {
     </script>
 </body>
 </html>
+
 
 
 
